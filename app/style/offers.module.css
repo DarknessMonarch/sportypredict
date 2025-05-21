@@ -1,0 +1,104 @@
+.bonus {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.boImg {
+  width: 100%;
+  height: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.imgOffer {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.imgOfferSkeleton {
+  background-color: #f0f0f0;
+  min-height: 120px;
+}
+
+.boOff {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f8f8f8;
+  font-weight: 500;
+}
+
+.bonusFormC {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+}
+
+.bonusNoc {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.bonusForm {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.promoH {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputCode {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.bonusBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.iconBonus {
+  width: 20px;
+  height: 20px;
+}
+
+.btnOfferSpy {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #0070f3;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: auto;
+  transition: background-color 0.2s ease;
+}
+
+.btnOfferSpy:hover {
+  background-color: #0060d3;
+}

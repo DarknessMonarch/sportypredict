@@ -1,0 +1,333 @@
+/* blog.module.css */
+
+.blogContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  color: var(--primary-color);
+  background-color: var(--background-color);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 0;
+  background: var(--linear-gradient-color);
+  color: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow-background-color);
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.actionsBar {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover {
+  background-color: var(--dark-secondary-color);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.categoryFilter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.select {
+  padding: 8px 12px;
+  border: 1px solid var(--light-primary-color);
+  border-radius: 4px;
+  background-color: white;
+  color: var(--primary-color);
+  min-width: 150px;
+}
+
+.formContainer {
+  background-color: var(--light-background-color);
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-background-color);
+}
+
+.formContainer h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.formGroup label {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.input, .textarea {
+  padding: 10px;
+  border: 1px solid var(--light-primary-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.submitButton {
+  padding: 12px 20px;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.submitButton:hover {
+  background-color: var(--dark-secondary-color);
+}
+
+.submitButton:disabled {
+  background-color: var(--light-secondary-color);
+  cursor: not-allowed;
+}
+
+.articlesContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.articleCard {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-background-color);
+  transition: transform 0.2s;
+}
+
+.articleCard:hover {
+  transform: translateY(-5px);
+}
+
+.articleImage {
+  width: 100%;
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+
+.articleMeta {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 20px 0;
+  color: var(--light-primary-color);
+  font-size: 0.9rem;
+}
+
+.category {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+.articleTitle {
+  padding: 0 20px;
+  margin: 10px 0;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.articleAuthor {
+  padding: 0 20px;
+  margin: 0 0 10px;
+  font-style: italic;
+  color: var(--light-primary-color);
+}
+
+.articleContent {
+  padding: 0 20px 20px;
+  line-height: 1.6;
+}
+
+.articleActions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 20px 15px;
+  gap: 10px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--light-primary-color);
+  transition: color 0.2s;
+  padding: 5px;
+}
+
+.iconButton:hover {
+  color: var(--secondary-color);
+}
+
+.loading, .noResults {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: var(--light-primary-color);
+}
+
+.featuredMatchesSection {
+  margin-bottom: 40px;
+}
+
+.featuredMatchesSection h2 {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.matchesGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.matchCard {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--shadow-background-color);
+}
+
+.matchTeams {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.teamName {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.teamScore {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.versus {
+  font-size: 1rem;
+  color: var(--light-primary-color);
+}
+
+.matchInfo {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 15px;
+  border-top: 1px solid var(--light-background-color);
+}
+
+.matchStatus {
+  font-weight: bold;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 60px;
+  padding: 20px 0;
+  border-top: 1px solid var(--light-background-color);
+  color: var(--light-primary-color);
+}
+
+/* Media Queries */
+@media only screen and (min-width: 48em) {
+  .articlesContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .matchesGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ipad pro screens & laptop */
+@media only screen and (min-width: 49em) and (max-width: 64em) {
+  .articlesContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* large screens : Desktop and 4k screens */
+@media only screen and (min-width: 64.063em) and (max-width: 90em) {
+  .articlesContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 5k screens and above */
+@media only screen and (min-width: 91em) {
+  .blogContainer {
+    max-width: 1400px;
+  }
+
+  .articlesContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -1,0 +1,301 @@
+/* Footer.module.css */
+.footer {
+  background: linear-gradient(to right, #0f172a, #1e293b);
+  color: #f8fafc;
+  padding: 4rem 0 1.5rem;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.footerContainer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 3rem;
+}
+
+.footerColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.columnTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #f8fafc;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.columnTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3rem;
+  height: 3px;
+  background: #4f46e5;
+  border-radius: 2px;
+}
+
+.contactDesc, .socialDesc {
+  color: #cbd5e1;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contactItem:hover {
+  transform: translateX(5px);
+}
+
+.contactIcon {
+  color: #4f46e5;
+  font-size: 1.25rem;
+  margin-right: 0.75rem;
+}
+
+.contactText {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.appDownloadSection {
+  margin-top: 1.5rem;
+}
+
+.downloadTitle {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #e2e8f0;
+}
+
+.downloadButtons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.downloadBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.3s ease;
+}
+
+.downloadBtn:hover {
+  transform: scale(1.05);
+}
+
+.downloadImage {
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.linkSection {
+  margin-bottom: 2rem;
+}
+
+.footerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footerLink {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  position: relative;
+  width: fit-content;
+}
+
+.footerLink::before {
+  content: '→';
+  margin-right: 0.5rem;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.footerLink:hover {
+  color: #f8fafc;
+  padding-left: 0.5rem;
+}
+
+.footerLink:hover::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.whatsappForm {
+  margin-bottom: 2rem;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.inputWrapper:focus-within {
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5);
+  border-color: #4f46e5;
+}
+
+.whatsappInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #f8fafc;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.whatsappInput::placeholder {
+  color: #94a3b8;
+}
+
+.whatsappButton {
+  background-color: #4f46e5;
+  border: none;
+  color: white;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.whatsappButton:hover {
+  background-color: #4338ca;
+}
+
+.whatsappIcon {
+  font-size: 1.25rem;
+}
+
+.errorMessage {
+  color: #f87171;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.socialLinks {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.socialButton {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.socialButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.facebook {
+  background-color: #1877f2;
+}
+
+.twitter {
+  background-color: #1da1f2;
+}
+
+.telegram {
+  background-color: #0088cc;
+}
+
+.instagram {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.tiktok {
+  background: #000;
+}
+
+.youtube {
+  background-color: #ff0000;
+}
+
+.copyright {
+  text-align: center;
+  padding-top: 2rem;
+  margin-top: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .linkSection {
+    margin-bottom: 1.5rem;
+  }
+  
+  .footer {
+    padding: 3rem 0 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .downloadButtons {
+    justify-content: center;
+  }
+  
+  .socialLinks {
+    justify-content: center;
+  }
+}

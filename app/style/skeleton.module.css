@@ -1,0 +1,41 @@
+@media screen {
+
+
+.skeleton {
+  cursor: progress;
+  border-radius: 12px;
+  background: linear-gradient(0.25turn, transparent, var(--background-color), transparent),
+    linear-gradient(var(--loading-color), var(--loading-color)),
+    radial-gradient(38px circle at 19px 19px, var(--draw-color) 50%, transparent 51%),
+    linear-gradient(var(--draw-color), var(--draw-color));
+  background-repeat: no-repeat;
+  background-position: -315px 0, 0 0, 0px 190px, 50px 195px;
+  animation: loading 2s infinite;
+}
+
+@keyframes loading {
+  to {
+    background-position: 315px 0, 0 0, 0 190px, 50px 195px;
+  }
+}
+
+
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+
+}
+
+/* ipad pro screens & laptop */
+@media only screen and (min-width: 49em) and (max-width: 64em) {
+}
+
+/* large screens : Desktop and 4k screens */
+
+@media only screen and (min-width: 64.063em) and (max-width: 90em) {
+}
+
+/* 5k screens and above */
+@media only screen and (min-width: 91em) {
+}

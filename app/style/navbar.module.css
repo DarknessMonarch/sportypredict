@@ -1,0 +1,148 @@
+@media screen {
+  .navContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    z-index: 1000;
+    height: var(--navbar-mobile-height);
+    box-shadow: var(--shadow-background-color);
+    background-color: var(--background-color);
+    border-bottom: 2px solid var(--light-background-color);
+
+  }
+
+  .menuContainer {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+  .menuicon {
+    width: 30px;
+    height: 100%;
+  }
+
+  .navContainerInner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .navlinksContainer {
+    gap: 20px;
+    display: flex;
+  }
+
+  .navlinks {
+    font-size: 1rem;
+    color: var(--primary-color);
+  }
+
+  .navlinks:hover {
+    color: var(--secondary-color);
+  }
+
+  .activeNavLinks {
+    color: var(--secondary-color);
+  }
+
+  .navStart {
+    display: none;
+  }
+
+  .profileImg {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    object-fit: cover;
+    border-radius: 360%;
+    object-position: center;
+  }
+
+  .navButton {
+    gap: 10px;
+    display: flex;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    color: var(--background-color);
+    background-color: var(--secondary-color);
+  }
+
+  .navButton:hover {
+    background-color: var(--dark-secondary-color);
+  }
+
+  .userIcon {
+    font-size: 20px;
+  }
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .navContainer {
+    width: 100%;
+    display: flex;
+    position: relative;
+    box-shadow: none;
+    height: var(--navbar-height);
+    justify-content: space-between;
+  }
+
+  .logo {
+    height: 100%;
+    width: 120px;
+  }
+
+  .navContainerInner {
+    position: relative;
+    justify-content: space-between;
+  }
+
+  .navStart {
+    gap: 10px;
+    display: flex;
+  }
+
+
+
+  .navStartContainer {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .userContainerDetails {
+    gap: 10px;
+    display: flex;
+    text-transform: capitalize;
+  }
+
+  .userContainer {
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .userContainer h1 {
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  .userContainer h2 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--secondary-color);
+  }
+}
