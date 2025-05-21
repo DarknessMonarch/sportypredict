@@ -9,7 +9,7 @@ const roboto_Condensed = Roboto_Condensed({
 });
 
 const SITE_URL = "https://sportypredict.433tips.com";
-const BANNER_URL = "https://raw.githubusercontent.com/zero-stealth/sportypredict/master/src/assets/banner.png";
+const BANNER_URL = "https://raw.githubusercontent.com/DarknessMonarch/sportypredict/refs/heads/master/public/assets/banner.png";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
