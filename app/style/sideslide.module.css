@@ -1,0 +1,83 @@
+@media screen {
+  .sideMain {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: flex;
+    position: fixed;
+    justify-content: flex-end;
+    backdrop-filter: blur(5px);
+  }
+
+  .sideModal {
+    width: 100%;
+    height: 100%;
+    animation: slideIn 0.3s ease-out;
+    background-color: var(--background-color);
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  .sideHeader {
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: var(--slidenav-header-height);
+    background-color: var(--background-color);
+    border-bottom: 2px solid var(--light-background-color);
+  }
+
+  .closeMainBtn {
+    z-index: 10;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    display: flex;
+    cursor: pointer;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background: var(--light-primary-color);
+  }
+
+  .closeIcon {
+    font-size: 30px;
+    color: var(--background-color);
+  }
+
+  .closeMainBtn:hover {
+    background-color: var(--secondary-color);
+    color: var(--background-color);
+  }
+
+  .sideContent {
+    width: 100%;
+    padding: 10px;
+    overflow: hidden;
+    overflow-y: auto;
+    height: calc(100% - var(--slidenav-header-height));
+  }
+}
+
+@media only screen and (min-width: 48em) {
+  .sideModal {
+    width: var(--slidenav-header-width);
+  }
+
+  .sideContent {
+    padding: 10px;
+  }
+}

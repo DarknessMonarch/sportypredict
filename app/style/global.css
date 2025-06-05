@@ -1,0 +1,154 @@
+@media screen {
+  * {
+    /* dynamic style */
+    --loose-color: #d00219;
+    --win-color: #458700;
+    --offer-color: #ffa800;
+    --draw-color: #a8a9a2;
+    --primary-color: #031e3c;
+    --light-primary-color: #72869e;
+    --secondary-color: #25c7e7;
+    --light-secondary-color: #54daf5;
+    --dark-secondary-color: #08a7c7;
+    --background-color: #ffffff;
+    --light-background-color: #f2f4f7;
+    --nav-shadow-box: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-box: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-background-color: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    --linear-gradient-color: linear-gradient(
+      45deg,
+      rgba(3, 30, 60, 1) 36%,
+      rgba(37, 199, 231, 1) 100%
+    );
+
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    /* global-width */
+    --sidenav-width: 10vw;
+    --navbar-height: 9vh;
+    --sidenav-mobile-width: 80%;
+    --navbar-mobile-height: 10vh;
+    --slidenav-header-width: 50%;
+    --slidenav-header-height: 10vh;
+  }
+
+  /* ::-webkit-scrollbar {
+      display: none;
+    } */
+
+  body {
+    font-weight: 300;
+    color: var(--primary-color);
+  }
+
+  a,
+  router-link {
+    text-decoration: none;
+  }
+
+  input {
+    outline: none;
+  }
+
+  /* Prevent zoom on input focus for mobile devices */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px; /* Minimum 16px prevents zoom on iOS Safari */
+  }
+
+  button {
+    border: none;
+    outline: none;
+  }
+
+  input:focus,
+  input:hover {
+    outline: none;
+  }
+
+  textarea {
+    outline: none;
+  }
+
+  textarea:focus,
+  textarea:hover {
+    outline: none;
+  }
+
+  select {
+    outline: none;
+  }
+}
+
+.skeleton {
+  cursor: progress;
+  background: linear-gradient(
+    90deg,
+    var(--background-color) 25%,
+    #f2f2f3 50%,
+    var(--background-color) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  box-shadow: var(--shadow-background-color);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.mobileIcon {
+  fill: var(--secondary-color);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) var(--background-color);
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--primary-color);
+  border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border: 2px solid var(--background-color);
+  border-radius: 8px;
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  /* Works on Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* ipad pro screens & laptop */
+@media only screen and (min-width: 49em) and (max-width: 64em) {
+}
+
+/* large screens : Desktop and 4k screens */
+
+@media only screen and (min-width: 64.063em) and (max-width: 90em) {
+}
+
+/* 5k screens and above */
+@media only screen and (min-width: 91em) {
+}

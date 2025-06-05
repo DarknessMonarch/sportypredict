@@ -1,0 +1,136 @@
+@media screen {
+  .articleCard {
+    width: 100%;
+    display: flex;
+    border-radius: 15px;
+    flex-direction: column;
+    box-shadow: var(--shadow-box);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .articleCard:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .articleImageWrapper {
+    margin: 10px;
+    height: 200px;
+    position: relative;
+    border-radius: 15px;
+  }
+
+  .articleImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+
+  .articleCard:hover {
+    transform: scale(1.02);
+  }
+
+  .articleContent {
+    gap: 15px;
+    flex-grow: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .articleHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .articleHeader span {
+    font-size: 0.8rem;
+    padding: 10px 15px;
+    border-radius: 15px;
+    text-transform: uppercase;
+    color: var(--primary-color);
+    background-color: var(--light-background-color);
+  }
+
+  .shareIcon {
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--primary-color);
+  }
+
+  .shareIcon:hover {
+    color: var(--secondary-color);
+  }
+
+  .articleHeader p {
+    font-size: 1rem;
+    color: var(--light-primary-color);
+    margin-bottom: 15px;
+    flex-grow: 1;
+  }
+
+  .articleMeta {
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    justify-content: space-between;
+    color: var(--light-primary-color);
+  }
+
+  .articleTags {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .articleTags span {
+    font-size: 0.8rem;
+    text-transform: capitalize;
+  }
+
+  .readMoreBtn {
+    gap: 5px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .readMoreIcon {
+    font-size: 18px;
+  }
+
+  .readMoreBtn:hover {
+    color: var(--secondary-color);
+  }
+
+  .readMoreBtn:hover .readMoreIcon {
+    color: var(--secondary-color);
+  }
+
+  .articleFooter {
+    display: flex;
+    margin-top: auto;
+    padding-top: 15px;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--light-background-color);
+  }
+
+  .readTime {
+    gap: 5px;
+    display: flex;
+    font-size: 0.9rem;
+    align-items: center;
+    color: var(--light-primary-color);
+  }
+}
+
+@media only screen and (min-width: 48em) {
+  .articleCard {
+    width: 400px;
+  }
+}

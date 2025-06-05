@@ -1,0 +1,167 @@
+@media screen {
+  .bonusMain {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    padding: 10px;
+    overflow: hidden;
+    overflow-y: auto;
+    flex-direction: column;
+  }
+
+  .bonusHeader {
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bonusHeader h1 {
+    font-weight: 500;
+    font-size: 1.5rem;
+    text-decoration: underline;
+  }
+
+  .bonusContainer {
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bonus {
+    gap: 10px;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    border-radius: 15px;
+    flex-direction: column;
+    box-shadow: var(--shadow-box);
+    justify-content: space-between;
+    border: 0.5px solid var(--light-primary-color);
+  }
+
+  .bonusTitle {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    border-radius: 15px;
+    color: var(--background-color);
+    background-color: var(--primary-color);
+  }
+
+  .bonusImgContainer {
+    height: 100px;
+    width: 100%;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bonusImage {
+    width: 100%;
+    height: 100%;
+  }
+
+  .bonusFormContainer {
+    width: 100%;
+    text-align: center;
+  }
+
+  .bonusFormContainer span {
+    font-size: 0.8rem;
+  }
+
+  .bonusFormContainer span strong {
+    color: var(--secondary-color);
+  }
+
+  .bonusForm {
+    height: 60px;
+    display: flex;
+    border-radius: 10px;
+    justify-content: space-between;
+  }
+
+  .promoForm {
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 10px 0 0 10px;
+    border: 2px dotted var(--primary-color);
+    border-right: none;
+  }
+
+  .bonusBtn {
+    gap: 20px;
+    height: 100%;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 10px 10px 0;
+    color: var(--background-color);
+    background-color: var(--primary-color);
+  }
+
+  .iconBonus {
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .bonusInfo {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bonusInfo h2 {
+    font-size: 1.4rem;
+    text-transform: capitalize;
+    text-decoration: underline;
+    color: var(--tertiary-color);
+  }
+
+  .bonusInfo p {
+    font-size: 1rem;
+    text-align: justify;
+  }
+
+  .bonusInfo p span {
+    font-weight: 500;
+    color: var(--secondary-color);
+  }
+}
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .bonusMain {
+    height: calc(100% - var(--navbar-height));
+  }
+
+  .bonus {
+    flex-direction: row;
+  }
+
+  .bonusImgContainer {
+    height: 100%;
+    width: 100px;
+  }
+
+  .bonusTitle {
+    padding: 0;
+    width: auto;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    background-color: transparent;
+  }
+}

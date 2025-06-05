@@ -1,0 +1,95 @@
+@media screen {
+  .exclusiveContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .offerContainer {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    padding: 0 10px;
+    cursor: pointer;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .offerContainer span {
+    font-weight: 200;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+  }
+
+  .offerWrap {
+    gap: 5px;
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    justify-content: space-between;
+    border: 1px solid var(--light-primary-color);
+  }
+
+  .offerWrap h1 {
+    width: 50%;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--win-color);
+  }
+
+  .offerlogo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .offerInner {
+    gap: 10px;
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    justify-content: space-between;
+    border: 1px solid var(--light-primary-color);
+  }
+
+  .offerInner h2 {
+    width: 50%;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--offer-color);
+  }
+
+  .arrowIcon {
+    font-size: 30px;
+    color: var(--offer-color);
+  }
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .offerContainer {
+    padding: 0;
+    width: 70%;
+  }
+
+  .offerWrap h1 {
+    font-size: 1.4rem;
+  }
+
+ 
+
+  .offerInner h2 {
+    font-size: 1.4rem;
+  }
+
+  .arrowIcon {
+    font-size: 40px;
+  }
+
+}
+

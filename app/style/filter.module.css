@@ -1,0 +1,134 @@
+@media screen {
+  .filterContainer {
+    gap: 20px;
+    height: 100%;
+    display: none;
+    max-width: 330px;
+    min-width: 330px;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  .filterContainer h1 {
+    font-size: 1.2rem;
+  }
+
+  .filterWrapperInner {
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filterHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .filterHeader h1 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+
+  .filterHeader span {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .filterHeader span:hover {
+    color: var(--secondary-color);
+  }
+
+  .filterWrapper {
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .gameFilterContainer {
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .filterCard {
+    gap: 10px;
+    display: flex;
+    cursor: pointer;
+    min-height: 80px;
+    border-radius: 8px;
+    align-items: center;
+    width: calc(50% - 5px);
+    flex-direction: column;
+    justify-content: center;
+    color: var(--background-color);
+    background-color: var(--primary-color);
+  }
+
+  .filterCard:hover {
+    background-color: var(--secondary-color);
+  }
+
+  .filterCardActive {
+    background-color: var(--secondary-color);
+  }
+
+  .filterCard h3 {
+    font-size: 0.8rem;
+    font-weight: 300;
+  }
+
+  .leagueFilterContainer {
+    gap: 10px;
+    display: flex;
+    padding: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    overflow-y: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+    border-radius: 10px;
+    flex-direction: column;
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .leagueCard {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .leagueImg {
+    width: auto;
+    height: 50px;
+    padding: 10px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .leagueCardText {
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .leagueCardText h2 {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .leagueCardText h3 {
+    font-size: 0.9rem;
+    font-weight: 200;
+  }
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .filterContainer {
+    display: flex;
+  }
+}

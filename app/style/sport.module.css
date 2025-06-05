@@ -1,0 +1,120 @@
+@media screen {
+  .sportContainer {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    overflow-y: auto;
+    flex-direction: column;
+  }
+
+  .content {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    padding: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .matchPreview {
+    gap: 4px;
+    width: 100%;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary-color);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .matchPreview span {
+    font-size: 0.8rem;
+  }
+
+  .matchPreview:hover {
+    gap: 10px;
+  }
+
+  .emptyCard {
+    width: 100%;
+    height: 350px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .defaultContainer {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .defaultContain {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 15px;
+    flex-direction: column;
+    color: var(--primary-color);
+    background-color: var(--tertiary-color);
+  }
+
+
+  .loginIcon {
+    font-size: 50px;
+    color: var(--primary-color);
+  }
+
+  .defaultContain h1 {
+    font-weight: 300;
+    font-size: 1.2rem;
+  }
+
+  .defaultButton {
+    width: 100%;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 15px;
+    color: var(--background-color);
+    background-color: var(--primary-color);
+  }
+
+    .defaultButton:hover {
+    background-color: var(--secondary-color);
+  }
+
+  .leagueImage {
+    width: auto;
+    height: 60px;
+  }
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .sportContainer {
+    height: calc(100vh - var(--navbar-height));
+  }
+
+  .content {
+    padding: 10px 0;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+
+  .defaultContainer {
+    height: 100%;
+    min-height: auto;
+  }
+
+
+  .matchPreview span {
+    font-size: 0.9rem;
+  }
+
+  .emptyCard {
+    width: 450px;
+  }
+}

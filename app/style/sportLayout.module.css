@@ -1,0 +1,28 @@
+@media screen {
+  .sportLayout {
+    gap: 10px;
+    display: flex;
+  }
+
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .sportLayout {
+    height: 100%;
+    padding: 10px;
+    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    justify-content: space-between;
+  }
+ 
+  /* .sportLayout::-webkit-scrollbar {
+    display: none;
+  } */
+/* 
+  .sportLayout {
+    scrollbar-width: none;
+
+  } */
+}

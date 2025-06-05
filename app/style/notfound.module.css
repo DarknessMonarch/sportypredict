@@ -1,0 +1,73 @@
+@media screen {
+  .pageLayout {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    position: fixed;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+
+  .pageContent {
+    background-color: var(-background-color);
+    width: 100%;
+    height: 100%;
+
+  }
+
+  .notFound {
+    gap: 40px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+  }
+
+  .notFound p {
+    color: var(--tertiary-color);
+    text-align: center;
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  .notFoundImg {
+    height: 150px;
+    width: auto;
+  }
+
+
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+   .pageLayout {
+    width: 100%;
+    height: 100vh;
+    overflow-y: hidden;
+  }
+
+  .notFoundImg {
+    height: 300px;
+    width: auto;
+  }
+
+}
+
+/* ipad pro screens & laptop */
+@media only screen and (min-width: 49em) and (max-width: 64em) {
+}
+
+/* large screens : Desktop and 4k screens */
+
+@media only screen and (min-width: 64.063em) and (max-width: 90em) {
+}
+
+/* 5k screens and above */
+@media only screen and (min-width: 91em) {
+}

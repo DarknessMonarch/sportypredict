@@ -1,0 +1,13 @@
+@media screen {
+  .telegramAds {
+    height: 300px;
+    cursor: pointer;
+    border-radius: 15px;
+  }
+}
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .telegramAds {
+    height: 500px;
+  }
+}

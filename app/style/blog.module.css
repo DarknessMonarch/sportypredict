@@ -1,0 +1,441 @@
+@media screen {
+  .blogContainer {
+    gap: 10px;
+    display: flex;
+    overflow: hidden;
+    overflow-y: auto;
+    flex-direction: column;
+    color: var(--primary-color);
+  }
+
+  .blogBanner {
+    display: flex;
+    min-height: 300px;
+    padding: 20px 10px;
+    align-items: center;
+    justify-content: center;
+    color: var(--background-color);
+    background: var(--linear-gradient-color);
+  }
+
+  .blogHeader {
+    gap: 10px;
+    display: flex;
+    padding: 10px;
+    border-radius: 15px;
+    flex-direction: column;
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .blogContent {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: var(--background-color);
+  }
+
+  .blogContent h1 {
+    font-size: 2rem;
+    font-weight: 500;
+  }
+
+  .blogContent p {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .searchBar {
+    width: 100%;
+    display: flex;
+    padding: 10px;
+    margin: 0 auto;
+    border-radius: 25px;
+    align-items: center;
+    background-color: var(--background-color);
+  }
+
+  .searchInput {
+    width: 100%;
+    border: none;
+    font-size: 1rem;
+    border-radius: inherit;
+    transition: all 0.3s ease;
+    color: var(--primary-color);
+  }
+
+  .searchIcon {
+    font-size: 24px;
+    color: var(--primary-color);
+  }
+
+  .dropdownContainerWp {
+    gap: 10px;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .dropdownContainerWp h2 {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  .dropdownContainerInner {
+    min-width: 140px;
+    width: fit-content;
+
+  }
+
+  .categoriesContainer {
+    gap: 10px;
+    display: flex;
+    padding: 0 10px;
+    overflow-x: auto;
+    min-height: 50px;
+    align-items: center;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    justify-content: flex-start;
+    scroll-snap-type: x mandatory;
+  }
+
+  .categoryCard {
+    height: 40px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    min-width: 100px;
+    border-radius: 10px;
+    scroll-snap-align: center;
+    text-transform: capitalize;
+    color: var(--primary-color);
+    box-shadow: var(--shadow-box);
+    background-color: var(--background-color);
+  }
+
+  .categoryCard:hover {
+    color: var(--background-color);
+    background-color: var(--secondary-color);
+  }
+
+  .activeCategory {
+    color: var(--background-color);
+    background-color: var(--secondary-color);
+  }
+
+  .categoriesInnerContainer {
+    gap: 10px;
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+  }
+
+  .featuredArticle {
+    gap: 20px;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  .featuredImageWrapper {
+    flex: 50%;
+    height: 300px;
+    position: relative;
+    border-radius: 15px;
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .featuredImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    transition: transform 0.5s ease;
+  }
+
+  .featuredImage:hover {
+    transform: scale(1.03);
+  }
+
+  .featuredContent {
+    flex: 50%;
+    gap: 20px;
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .featuredContent h2 {
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  .featuredContent p {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--primary-color);
+  }
+
+  .category {
+    gap: 10px;
+    display: flex;
+    padding: 15px;
+    font-size: 0.8rem;
+    font-weight: 300px;
+    width: fit-content;
+    border-radius: 15px;
+    text-transform: uppercase;
+    color: var(--background-color);
+    background-color: var(--primary-color);
+  }
+
+  .articleMeta {
+    gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    align-items: center;
+    color: var(--light-primary-color);
+  }
+
+  .articleMeta span {
+    font-weight: 300;
+  }
+
+  .articleTags {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .articleTags span {
+    font-size: 0.8rem;
+    text-transform: capitalize;
+  }
+
+  .dateAndTime {
+    gap: 15px;
+    display: flex;
+    align-items: center;
+  }
+
+  .dateAndTime span {
+    gap: 5px;
+    align-items: center;
+    display: flex;
+  }
+
+  .readMoreBtn {
+    border: none;
+    display: flex;
+    cursor: pointer;
+    padding: 10px 30px;
+    width: fit-content;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    color: var(--background-color);
+    background-color: var(--secondary-color);
+  }
+
+  .readMoreBtn:hover {
+    transform: translateY(-2px);
+    background-color: var(--dark-secondary-color);
+  }
+
+  .blogMainContent {
+    gap: 30px;
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+  }
+
+  .blogMainContent h2 {
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
+
+  .articlesContent {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .telegramContent {
+    height: 300px;
+    display: flex;
+    border-radius: 15px;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--background-color);
+    background: var(--linear-gradient-color);
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .telegramCard {
+    gap: 15px;
+    display: flex;
+    padding: 20px;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .telegramCard h2 {
+    font-size: 2rem;
+    font-weight: 500;
+  }
+
+  .telegramCard p {
+    font-size: 1rem;
+    color: var(--light-background-color);
+  }
+
+  .telegramButton {
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 10px 40px;
+    border-radius: 30px;
+    color: var(--primary-color);
+    background-color: var(--background-color);
+  }
+
+  .telegramButton:hover {
+    color: var(--background-color);
+    background-color: var(--secondary-color);
+  }
+
+  /* side slide content */
+
+  .sideSlideContent {
+    gap: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sideSlideContentHeader {
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .socialShareLinks {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .socialIconBtn {
+    width: 30px;
+    height: 30px;
+    padding: 10px;
+    display: flex;
+    cursor: pointer;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    background-color: var(--light-background-color);
+  }
+
+  .socialIconBtn:hover {
+    color: var(--background-color);
+    background-color: var(--secondary-color);
+  }
+
+  .socialIcon {
+    font-size: 18px;
+  }
+
+  .sideSlideImageContainer {
+    width: 100%;
+    height: 400px;
+    min-height: 400px;
+    position: relative;
+    border-radius: 15px;
+  }
+
+  .sideSlideImage {
+    border-radius: inherit;
+  }
+
+  .sideSlideHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sideSlideInnerContentDetails {
+    gap: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+  }
+
+   .authorContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sideSlideInnerContent {
+    height: 100%;
+    padding: 10px;
+    text-wrap: wrap;
+    min-height: 100px;
+    border-radius: 15px;
+    background-color: var(--light-background-color);
+  }
+
+ 
+
+  .SideSlideFooter {
+    gap: 10px;
+    display: flex;
+    padding-top: 10px;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--light-background-color);
+  }
+}
+
+@media only screen and (min-width: 48em) {
+  .blogContainer {
+    height: calc(100% - var(--navbar-height));
+  }
+
+  .searchBar {
+    width: 500px;
+  }
+
+ 
+  .articlesContent {
+    padding: 10px;
+  }
+
+  .categoriesInnerContainer {
+    width: calc(90%);
+    margin: 0 auto;
+  }
+
+  .featuredArticle {
+    height: 400px;
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .featuredImage {
+    height: 100%;
+  }
+
+  .featuredImageWrapper {
+    height: 100%;
+  }
+}
