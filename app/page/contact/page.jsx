@@ -72,7 +72,6 @@ export default function Contact() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     
-    // Clear specific error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -81,7 +80,6 @@ export default function Contact() {
   const validateForm = () => {
     const newErrors = {};
     
-    // Username validation
     if (!formData.username.trim()) {
       newErrors.username = "Username is required";
     } else if (formData.username.trim().length < 2) {
@@ -90,14 +88,12 @@ export default function Contact() {
       newErrors.username = "Username must be less than 50 characters";
     }
     
-    // Email validation
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
     
-    // Message validation
     if (!formData.message.trim()) {
       newErrors.message = "Message is required";
     } else if (formData.message.trim().length < 10) {
@@ -108,7 +104,6 @@ export default function Contact() {
 
     setErrors(newErrors);
     
-    // Show toast for validation errors
     if (Object.keys(newErrors).length > 0) {
       const firstError = Object.values(newErrors)[0];
       toast.error(firstError);
@@ -143,7 +138,6 @@ export default function Contact() {
     } catch (error) {
       console.error("Contact form error:", error);
       
-      // More specific error handling
       if (error.name === 'NetworkError' || error.message.includes('fetch')) {
         toast.error("Network error. Please check your connection and try again.");
       } else if (error.status === 429) {
@@ -276,7 +270,7 @@ export default function Contact() {
             </div>
             <div className={styles.contactNote}>
               <p>
-                You can also send us a message once you've paid for VIP membership to have it processed quickly.
+                You can also send us a message once you&apos;ve paid for VIP membership to have it processed quickly.
                 For urgent matters, contact us directly via WhatsApp or Telegram.
               </p>
             </div>

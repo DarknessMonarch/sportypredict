@@ -1,7 +1,8 @@
 "use client";
-import toast from "sonner";
+
 import Link from "next/link";
 import Image from "next/image";
+import { toast } from 'sonner';
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import LogoImg from "@/public/assets/logoWhite.png";
@@ -111,7 +112,7 @@ export default function Footer() {
           </div>
 
           <div className={styles.footerColumn}>
-          {/* Sports Predictions Column */}
+            {/* Sports Predictions Column */}
 
             <div className={styles.linkSection}>
               <h3 className={styles.columnTitle}>Sports Predictions</h3>
@@ -138,9 +139,9 @@ export default function Footer() {
                 </Link>
               </nav>
             </div>
-          {/* Services Column */}
+            {/* Services Column */}
 
-              <div className={styles.linkSection}>
+            <div className={styles.linkSection}>
               <h3 className={styles.columnTitle}>Services</h3>
               <nav className={styles.footerNav}>
                 <Link href="/page/vip" className={styles.footerLink}>
@@ -158,7 +159,6 @@ export default function Footer() {
               </nav>
             </div>
           </div>
-
 
           {/* Content & Information Column */}
           <div className={styles.footerColumn}>
@@ -370,7 +370,6 @@ export default function Footer() {
               <Link href="/page/disclaimer" className={styles.bottomLink}>
                 Disclaimer
               </Link>
-             
             </div>
           </div>
         </div>
