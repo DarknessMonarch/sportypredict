@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Footer from "@/app/components/Footer";
 import styles from "@/app/style/info.module.css";
 
 export default function TermsConditions() {
@@ -32,7 +33,7 @@ export default function TermsConditions() {
   return (
     <div className={styles.termsContainer}>
       <div className={styles.termsCard}>
-        <h1 className={styles.mainHeading}>Terms & Conditions</h1>
+        <h1>Terms & Conditions</h1>
 
         <div className={styles.section}>
           <p>
@@ -108,7 +109,7 @@ export default function TermsConditions() {
         </div>
 
         <div className={styles.section}>
-          <h2 className={styles.subHeading}>OUR LIABILITY</h2>
+          <h2>OUR LIABILITY</h2>
           <p>
             Sportypredict does not accept any liability for damages,
             liabilities, or losses arising from or connected to the services,
@@ -132,12 +133,12 @@ export default function TermsConditions() {
           <p>
             Sportypredict ensures the accuracy and currency of all information
             presented on its site. However, Sportypredict.com cannot be held
-            responsible for users&apos; individual calculations or accumulations, as
-            we provide accumulations in our Accumulator category. By accessing
-            or using predictions and betting tips on the Sportypredict.com
-            website or any of our affiliate sites, pages, accounts, or signing
-            up on the website, you agree to be bound by our terms and
-            conditions. By creating a profile and signing up to use
+            responsible for users&apos; individual calculations or
+            accumulations, as we provide accumulations in our Accumulator
+            category. By accessing or using predictions and betting tips on the
+            Sportypredict.com website or any of our affiliate sites, pages,
+            accounts, or signing up on the website, you agree to be bound by our
+            terms and conditions. By creating a profile and signing up to use
             Sportypredict.com, you confirm your acceptance of the summarized
             terms and conditions. Additionally, by signing up, you have
             entrusted us with your email and subscription details, and we are
@@ -146,7 +147,7 @@ export default function TermsConditions() {
         </div>
 
         <div className={styles.section}>
-          <h2 className={styles.subHeading}>OTHER PROVISIONS</h2>
+          <h2>OTHER PROVISIONS</h2>
           <p>
             These Terms and Conditions, along with the Privacy Policy, Cookies
             Policy, Rules, and any referenced documents, guidelines, or rules
@@ -210,6 +211,7 @@ export default function TermsConditions() {
             failure.
           </p>
         </div>
+        <Footer />
       </div>
     </div>
   );

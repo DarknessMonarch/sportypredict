@@ -1,9 +1,10 @@
 "use client";
 
-import { toast } from 'sonner';
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Banner from "@/app/components/Banner";
+import Footer from "@/app/components/Footer";
 import SportCard from "@/app/components/Card";
 import Nothing from "@/app/components/Nothing";
 import styles from "@/app/style/sport.module.css";
@@ -25,16 +26,11 @@ export default function Sport() {
   const [leagueKey, setLeagueKey] = useState("");
   const [countryKey, setCountryKey] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  
+
   const currentCategory = decodeURIComponent(pathname.split("/").pop());
-  
-  const { 
-    predictions, 
-    loading, 
-    error, 
-    fetchPredictions, 
-    clearError 
-  } = usePredictionStore();
+
+  const { predictions, loading, error, fetchPredictions, clearError } =
+    usePredictionStore();
 
   useEffect(() => {
     const handleResize = () => {
@@ -57,7 +53,7 @@ export default function Sport() {
     if (urlDate) {
       setSelectedDate(urlDate);
     } else {
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       setSelectedDate(today);
     }
   }, [searchParams]);
@@ -65,11 +61,11 @@ export default function Sport() {
   useEffect(() => {
     const loadPredictions = async () => {
       if (!selectedDate) return;
-      
-      const category = currentCategory.toLowerCase(); 
-      
+
+      const category = currentCategory.toLowerCase();
+
       const result = await fetchPredictions(selectedDate, category);
-      
+
       if (!result.success && result.message) {
         toast.error(result.message);
       }
@@ -97,7 +93,7 @@ export default function Sport() {
 
   const handleDateChange = async (date) => {
     setSelectedDate(date);
-    
+
     const params = new URLSearchParams(searchParams);
     if (date) {
       params.set("date", date);
@@ -107,26 +103,37 @@ export default function Sport() {
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const filteredPredictions = predictions.filter(prediction => {
-    const matchesSearch = !searchKey || 
+  const filteredPredictions = predictions.filter((prediction) => {
+    const matchesSearch =
+      !searchKey ||
       prediction.teamA.toLowerCase().includes(searchKey.toLowerCase()) ||
       prediction.teamB.toLowerCase().includes(searchKey.toLowerCase()) ||
       prediction.tip.toLowerCase().includes(searchKey.toLowerCase());
-    
-    const matchesLeague = !leagueKey || 
+
+    const matchesLeague =
+      !leagueKey ||
       prediction.league.toLowerCase().includes(leagueKey.toLowerCase());
-    
-    const matchesCountry = !countryKey || 
+
+    const matchesCountry =
+      !countryKey ||
       prediction.country.toLowerCase().includes(countryKey.toLowerCase());
-    
+
     // Filter by category instead of sport
-    const matchesCategory = prediction.category.toLowerCase() === currentCategory.toLowerCase();
-    
+    const matchesCategory =
+      prediction.category.toLowerCase() === currentCategory.toLowerCase();
+
     const predictionType = searchParams.get("prediction");
-    const matchesPredictionType = !predictionType || 
+    const matchesPredictionType =
+      !predictionType ||
       prediction.tip.toLowerCase().includes(predictionType.toLowerCase());
-    
-    return matchesSearch && matchesLeague && matchesCountry && matchesCategory && matchesPredictionType;
+
+    return (
+      matchesSearch &&
+      matchesLeague &&
+      matchesCountry &&
+      matchesCategory &&
+      matchesPredictionType
+    );
   });
 
   const shouldShowNothing = !loading && filteredPredictions.length === 0;
@@ -144,7 +151,10 @@ export default function Sport() {
 
   const handleCardClick = (teamA, teamB, id) => {
     if (id !== "empty") {
-      router.push(`${currentCategory}/single/${teamA}-vs-${teamB}?date=${selectedDate}`, { scroll: false });
+      router.push(
+        `${currentCategory}/single/${teamA}-vs-${teamB}?date=${selectedDate}`,
+        { scroll: false }
+      );
     }
   };
 
@@ -153,7 +163,7 @@ export default function Sport() {
       <div className={styles.sportContainer}>
         <Banner />
         <div className={styles.filtersContainer}>
-          <MobileFilter 
+          <MobileFilter
             searchKey={searchKey}
             setSearchKey={setSearchKey}
             leagueKey={leagueKey}
@@ -161,7 +171,6 @@ export default function Sport() {
             countryKey={countryKey}
             setCountryKey={setCountryKey}
           />
-  
         </div>
         <ExclusiveOffers />
         <div className={styles.content}>{renderEmptyCards()}</div>
@@ -173,7 +182,7 @@ export default function Sport() {
     <div className={styles.sportContainer}>
       <Banner />
       <div className={styles.filtersContainer}>
-        <MobileFilter 
+        <MobileFilter
           searchKey={searchKey}
           setSearchKey={setSearchKey}
           leagueKey={leagueKey}
@@ -185,15 +194,24 @@ export default function Sport() {
       <ExclusiveOffers />
 
       {shouldShowNothing ? (
-        <Nothing
-          Alt="No prediction"
-          NothingImage={EmptySportImage}
-          Text={
-            searchKey || leagueKey || countryKey || searchParams.get("prediction")
-              ? `No ${currentCategory} predictions match your filters${selectedDate ? ` for ${new Date(selectedDate).toLocaleDateString()}` : ""}`
-              : `No ${currentCategory} predictions yet! Check back later.`
-          }
-        />
+        <div className={styles.content}>
+          <Nothing
+            Alt="No prediction"
+            NothingImage={EmptySportImage}
+            Text={
+              searchKey ||
+              leagueKey ||
+              countryKey ||
+              searchParams.get("prediction")
+                ? `No ${currentCategory} predictions match your filters${
+                    selectedDate
+                      ? ` for ${new Date(selectedDate).toLocaleDateString()}`
+                      : ""
+                  }`
+                : `No ${currentCategory} predictions yet! Check back later.`
+            }
+          />
+        </div>
       ) : (
         <div className={styles.content}>
           {filteredPredictions.map((data, index) => (
@@ -216,9 +234,11 @@ export default function Sport() {
               showScore={data.showScore}
               showBtn={data.showBtn}
               component={
-                <div 
-                  className={styles.matchPreview} 
-                  onClick={() => handleCardClick(data.teamA, data.teamB, data._id)}
+                <div
+                  className={styles.matchPreview}
+                  onClick={() =>
+                    handleCardClick(data.teamA, data.teamB, data._id)
+                  }
                 >
                   <span>Match Preview </span>
                   <RightIcon
@@ -233,6 +253,9 @@ export default function Sport() {
           {isMobile && <VipResults />}
         </div>
       )}
+      <div className={styles.footerMobile}>
+        <Footer />
+      </div>
     </div>
   );
 }

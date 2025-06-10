@@ -49,15 +49,22 @@ export const useNewsStore = create(
         }
       },
 
-      fetchArticles: async (limit = 50, category = '', featured = false, search = '', sort = '-publishDate') => {
+      fetchArticles: async (page = 1, limit = 1000, search = '', featured = false, category = '', sort = '-publishDate') => {
         try {
           set({ loading: true, error: null });
           
           let url = `${SERVER_API}/news?limit=${limit}&sort=${sort}`;
           
-          if (category && category !== 'all') url += `&category=${encodeURIComponent(category)}`;
-          if (featured) url += `&featured=true`;
-          if (search) url += `&search=${encodeURIComponent(search)}`;
+          if (category && category !== 'all' && category !== '') {
+            url += `&category=${encodeURIComponent(category)}`;
+          }
+          if (featured) {
+            url += `&featured=true`;
+          }
+          if (search && search.trim() !== '') {
+            url += `&search=${encodeURIComponent(search)}`;
+          }
+          
           
           const response = await fetch(url);
       
@@ -114,9 +121,14 @@ export const useNewsStore = create(
         }
       },
 
-      fetchNewsByCategory: async (category, limit = 50) => {
+      fetchNewsByCategory: async (category, page = 1, limit = 1000) => {
         try {
           set({ loading: true, error: null });
+          
+          if (!category || category === 'all') {
+            // If no category or 'all', fetch all articles
+            return await get().fetchArticles(page, limit);
+          }
           
           const response = await fetch(`${SERVER_API}/news/category/${category}?limit=${limit}`);
       
@@ -145,12 +157,12 @@ export const useNewsStore = create(
         }
       },
 
-      searchNews: async (query, limit = 50) => {
+      searchNews: async (query, limit = 1000) => {
         try {
           set({ loading: true, error: null });
           
           if (!query || query.trim() === '') {
-            throw new Error('Search query is required');
+            return await get().fetchArticles(1, limit);
           }
           
           const response = await fetch(`${SERVER_API}/news/search?q=${encodeURIComponent(query)}&limit=${limit}`);
@@ -180,12 +192,179 @@ export const useNewsStore = create(
         }
       },
 
-   
+      createArticle: async (articleData) => {
+        try {
+          set({ loading: true, error: null });
+          const accessToken = useAuthStore.getState().accessToken;
 
-      // Clear error
+          if (!accessToken) {
+            throw new Error('Authentication required');
+          }
+
+          if (!(articleData instanceof FormData)) {
+            throw new Error('Article data must be provided as FormData');
+          }
+          
+          const requestOptions = {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            },
+            body: articleData
+          };
+
+          const response = await fetch(`${SERVER_API}/news`, requestOptions);
+          const data = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(data.message || 'Failed to create news article');
+          }
+
+          if (data.success) {
+            set(state => ({
+              articles: [data.article, ...state.articles],
+              totalArticles: state.totalArticles + 1
+            }));
+            return { success: true, data: data.article };
+          }
+          
+          throw new Error(data.message || 'Failed to create news article');
+        } catch (error) {
+          set({ error: error.message });
+          return { success: false, message: error.message };
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      updateArticle: async (id, articleData) => {
+        try {
+          set({ loading: true, error: null });
+          const accessToken = useAuthStore.getState().accessToken;
+
+          if (!accessToken) {
+            throw new Error('Authentication required');
+          }
+
+          if (!(articleData instanceof FormData)) {
+            throw new Error('Article data must be provided as FormData');
+          }
+          
+          const requestOptions = {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            },
+            body: articleData
+          };
+
+          const response = await fetch(`${SERVER_API}/news/${id}`, requestOptions);
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Failed to update news article');
+          }
+
+          if (data.success) {
+            set(state => ({
+              articles: state.articles.map(article => 
+                article._id === id ? data.article : article
+              ),
+              singleArticle: state.singleArticle?._id === id ? data.article : state.singleArticle,
+              featuredArticles: state.featuredArticles.map(article => 
+                article._id === id ? data.article : article
+              )
+            }));
+            return { success: true, data: data.article };
+          }
+          
+          throw new Error(data.message || 'Failed to update news article');
+        } catch (error) {
+          set({ error: error.message });
+          return { success: false, message: error.message };
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      deleteArticle: async (id) => {
+        try {
+          set({ loading: true, error: null });
+          const accessToken = useAuthStore.getState().accessToken;
+          
+          if (!accessToken) {
+            throw new Error('Authentication required');
+          }
+
+          const response = await fetch(`${SERVER_API}/news/${id}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Failed to delete news article');
+          }
+
+          if (data.success) {
+            set(state => ({
+              articles: state.articles.filter(article => article._id !== id),
+              singleArticle: state.singleArticle?._id === id ? null : state.singleArticle,
+              featuredArticles: state.featuredArticles.filter(article => article._id !== id),
+              totalArticles: Math.max(0, state.totalArticles - 1)
+            }));
+            return { success: true, message: data.message };
+          }
+          
+          throw new Error(data.message || 'Failed to delete news article');
+        } catch (error) {
+          set({ error: error.message });
+          return { success: false, message: error.message };
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      fetchNewsStats: async () => {
+        try {
+          set({ loading: true, error: null });
+          const accessToken = useAuthStore.getState().accessToken;
+          
+          if (!accessToken) {
+            throw new Error('Authentication required');
+          }
+
+          const response = await fetch(`${SERVER_API}/news/admin/stats`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || 'Failed to fetch news statistics');
+          }
+
+          if (data.success) {
+            set({ newsStats: data });
+            return { success: true, data: data };
+          }
+          
+          throw new Error(data.message || 'Failed to fetch news statistics');
+        } catch (error) {
+          set({ error: error.message });
+          return { success: false, message: error.message };
+        } finally {
+          set({ loading: false });
+        }
+      },
+
       clearError: () => set({ error: null }),
 
-      // Reset store
       resetStore: () => set({
         articles: [],
         singleArticle: null,

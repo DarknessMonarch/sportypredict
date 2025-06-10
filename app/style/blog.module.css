@@ -1,6 +1,6 @@
 @media screen {
   .blogContainer {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
     overflow: hidden;
     overflow-y: auto;
@@ -10,8 +10,8 @@
 
   .blogBanner {
     display: flex;
-    min-height: 300px;
-    padding: 20px 10px;
+    min-height: var(--font-weight-light);
+    padding: 20px var(--padding-sm);
     align-items: center;
     justify-content: center;
     color: var(--background-color);
@@ -19,79 +19,67 @@
   }
 
   .blogHeader {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
-    padding: 10px;
-    border-radius: 15px;
+    padding: var(--padding-sm);
+    border-radius: var(--padding-md);
     flex-direction: column;
     box-shadow: var(--shadow-background-color);
   }
 
   .blogContent {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
     align-items: center;
     flex-direction: column;
     color: var(--background-color);
   }
 
-  .blogContent h1 {
-    font-size: 2rem;
-    font-weight: 500;
-  }
-
   .blogContent p {
-    font-size: 1rem;
     text-align: center;
   }
 
   .searchBar {
     width: 100%;
     display: flex;
-    padding: 10px;
     margin: 0 auto;
-    border-radius: 25px;
     align-items: center;
+    padding: var(--padding-sm);
+    border-radius: var(--radius-lg);
     background-color: var(--background-color);
   }
 
   .searchInput {
     width: 100%;
     border: none;
-    font-size: 1rem;
     border-radius: inherit;
     transition: all 0.3s ease;
     color: var(--primary-color);
+    font-size: var(--font-size-3);
   }
 
   .searchIcon {
-    font-size: 24px;
+    font-size: var(--font-size-3);
     color: var(--primary-color);
   }
 
   .dropdownContainerWp {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
-    padding: 10px;
+    padding: var(--padding-sm);
     align-items: center;
     justify-content: space-between;
-  }
-
-  .dropdownContainerWp h2 {
-    font-size: 1.2rem;
-    font-weight: 500;
   }
 
   .dropdownContainerInner {
     min-width: 140px;
     width: fit-content;
-
   }
 
   .categoriesContainer {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
-    padding: 0 10px;
+    padding: 0 var(--padding-sm);
     overflow-x: auto;
     min-height: 50px;
     align-items: center;
@@ -103,11 +91,11 @@
 
   .categoryCard {
     height: 40px;
-    padding: 10px;
+    padding: var(--padding-sm);
     cursor: pointer;
-    font-size: 1rem;
     min-width: 100px;
-    border-radius: 10px;
+    font-size: var(--font-size-3);
+    border-radius: var(--padding-sm);
     scroll-snap-align: center;
     text-transform: capitalize;
     color: var(--primary-color);
@@ -126,9 +114,9 @@
   }
 
   .categoriesInnerContainer {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
-    padding: 10px;
+    padding: var(--padding-sm);
     flex-direction: column;
   }
 
@@ -140,9 +128,9 @@
 
   .featuredImageWrapper {
     flex: 50%;
-    height: 300px;
+    height: var(--font-weight-light);
     position: relative;
-    border-radius: 15px;
+    border-radius: var(--padding-md);
     box-shadow: var(--shadow-background-color);
   }
 
@@ -162,31 +150,26 @@
     flex: 50%;
     gap: 20px;
     display: flex;
-    padding: 10px;
+    padding: var(--padding-sm);
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
   }
 
-  .featuredContent h2 {
-    font-size: 2rem;
-    font-weight: 600;
-  }
 
   .featuredContent p {
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: var(--font-size-3);
     color: var(--primary-color);
   }
 
   .category {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
-    padding: 15px;
-    font-size: 0.8rem;
-    font-weight: 300px;
+    padding: var(--padding-md);
+    font-size:var(--font-size-4);
+    font-weight: var(--font-weight-light);
     width: fit-content;
-    border-radius: 15px;
+    border-radius: var(--padding-md);
     text-transform: uppercase;
     color: var(--background-color);
     background-color: var(--primary-color);
@@ -196,28 +179,28 @@
     gap: 20px;
     display: flex;
     flex-wrap: wrap;
-    font-size: 0.9rem;
+    font-size: var(--font-size-4);
     align-items: center;
     color: var(--light-primary-color);
   }
 
   .articleMeta span {
-    font-weight: 300;
+    font-weight: var(--font-weight-light);
   }
 
   .articleTags {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
     align-items: center;
   }
 
   .articleTags span {
-    font-size: 0.8rem;
+    font-size:var(--font-size-4);
     text-transform: capitalize;
   }
 
   .dateAndTime {
-    gap: 15px;
+    gap: var(--padding-md);
     display: flex;
     align-items: center;
   }
@@ -232,9 +215,9 @@
     border: none;
     display: flex;
     cursor: pointer;
-    padding: 10px 30px;
+    padding: var(--padding-sm) 30px;
     width: fit-content;
-    border-radius: 15px;
+    border-radius: var(--padding-md);
     transition: all 0.3s ease;
     color: var(--background-color);
     background-color: var(--secondary-color);
@@ -248,26 +231,23 @@
   .blogMainContent {
     gap: 30px;
     display: flex;
-    padding: 10px;
+    padding: var(--padding-sm);
     flex-direction: column;
   }
 
-  .blogMainContent h2 {
-    font-size: 1.4rem;
-    font-weight: 400;
-  }
-
   .articlesContent {
-    gap: 10px;
+    gap: var(--padding-sm);
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+    min-height: calc(100vh - var(--navbar-height));
   }
 
   .telegramContent {
-    height: 300px;
+    height: var(--font-weight-light);
     display: flex;
-    border-radius: 15px;
+    margin: var(--padding-sm);
+    border-radius: var(--padding-md);
     align-items: center;
     flex-direction: column;
     justify-content: center;
@@ -276,8 +256,19 @@
     box-shadow: var(--shadow-background-color);
   }
 
+  .blogBanner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: var(--linear-backround-image);
+  }
+
   .telegramCard {
-    gap: 15px;
+    gap: var(--padding-md);
     display: flex;
     padding: 20px;
     text-align: center;
@@ -285,21 +276,17 @@
     flex-direction: column;
   }
 
-  .telegramCard h2 {
-    font-size: 2rem;
-    font-weight: 500;
-  }
 
   .telegramCard p {
-    font-size: 1rem;
     color: var(--light-background-color);
+    font-size: var(--font-size-3);
   }
 
   .telegramButton {
     border: none;
-    font-size: 1rem;
     cursor: pointer;
-    padding: 10px 40px;
+    font-size: var(--font-size-3);
+    padding: var(--padding-sm) 40px;
     border-radius: 30px;
     color: var(--primary-color);
     background-color: var(--background-color);
@@ -313,20 +300,20 @@
   /* side slide content */
 
   .sideSlideContent {
-    gap: 15px;
+    gap: var(--padding-md);
     height: 100%;
     display: flex;
     flex-direction: column;
   }
 
   .sideSlideContentHeader {
-    display:flex;
+    display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
   .socialShareLinks {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
     align-items: center;
   }
@@ -334,7 +321,7 @@
   .socialIconBtn {
     width: 30px;
     height: 30px;
-    padding: 10px;
+    padding: var(--padding-sm);
     display: flex;
     cursor: pointer;
     border-radius: 50%;
@@ -358,10 +345,11 @@
     height: 400px;
     min-height: 400px;
     position: relative;
-    border-radius: 15px;
+    border-radius: var(--padding-md);
   }
 
   .sideSlideImage {
+    object-position: top center;
     border-radius: inherit;
   }
 
@@ -372,14 +360,13 @@
   }
 
   .sideSlideInnerContentDetails {
-    gap: 15px;
+    gap: var(--padding-md);
     height: 100%;
     display: flex;
     flex-direction: column;
-
   }
 
-   .authorContainer {
+  .authorContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -387,37 +374,41 @@
 
   .sideSlideInnerContent {
     height: 100%;
-    padding: 10px;
+    padding: var(--padding-sm);
     text-wrap: wrap;
     min-height: 100px;
-    border-radius: 15px;
-    background-color: var(--light-background-color);
+    border-radius: var(--padding-md);
+    background-color: var(--lighter-primary-color);
   }
 
- 
-
   .SideSlideFooter {
-    gap: 10px;
+    gap: var(--padding-sm);
     display: flex;
-    padding-top: 10px;
+    padding-top: var(--padding-sm);
     align-items: center;
     justify-content: space-between;
     border-top: 1px solid var(--light-background-color);
+  }
+
+  .nothingContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - var(--navbar-height));
   }
 }
 
 @media only screen and (min-width: 48em) {
   .blogContainer {
-    height: calc(100% - var(--navbar-height));
+    min-height: calc(100vh - var(--navbar-height));
   }
 
   .searchBar {
     width: 500px;
   }
 
- 
   .articlesContent {
-    padding: 10px;
+    padding: var(--padding-sm);
   }
 
   .categoriesInnerContainer {

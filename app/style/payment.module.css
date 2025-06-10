@@ -1,273 +1,412 @@
-@media screen {
-  .paymentContainer {
-    gap: 20px;
-    height: 100%;
-    padding: 10px;
-    display: flex;
-    overflow: hidden;
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex-direction: column;
-  }
+/* Add these styles to your existing payment.module.css file */
 
-  .paymentHeader {
-    gap: 10px;
-    display: flex;
-    padding: 10px;
-    width: fit-content;
-    border-radius: 15px;
-    flex-direction: column;
-  
-  }
-
-  .paymentHeader h1 {
-    font-size: 1rem;
-    text-align: center;
-    color: var(--light-color);
-    text-decoration: underline;
-    font-family: var(--font-outfit-thin);
-  }
-
-  .paymentHeader h1 span {
-    text-transform: uppercase;
-    color: var(--tertiary-color);
-    font-family: var(--font-outfit-extralight);
-  }
-
-  .searchDropdownWrapper {
-    gap: 10px;
-    display: flex;
-    padding: 10px;
-    border-radius: 15px;
-    flex-direction: column;
-  
-    background-color: var(--primary-light-color);
-
-  }
-
-  .dropdownContainer {
-    width: 100%;
-    height: 40px;
-    display: flex;
-    padding: 10px;
-    cursor: pointer;
-    position: relative;
-    align-items: center;
-    border-radius: 15px;
-    flex-direction: column;
-    justify-content: center;
-    background-image: var(--background-image);
-  
-
-  }
-
-  .dropdownContainer span {
-    font-size: 1rem;
-  }
-
-  .dropdownInput {
-    gap: 10px;
-    width: 100%;
-    display: flex;
-    border-radius: 15px;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .dropdownIcon {
-    font-size: 24px;
-  }
-
-  .dropdownArea {
-    top: 60px;
-    z-index: 99;
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    max-height: 350px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: absolute;
-    border-radius: 15px;
-    flex-direction: column;
-    color: var(--light-color);
-  
-    background-color: var(--primary-light-color);
-  }
-
-  .dropdownArea span {
-    padding: 10px;
-  }
-
-  .dropdownArea span:hover {
-    border-radius: 15px;
-    color: var(--primary-color);
-    background-color: var(--tertiary-color);
-  }
-
-  .searchContainer {
-    gap: 10px;
-    top: 100px;
-    width: 100%;
-    height: 40px;
-    display: flex;
-    padding: 0 10px;
-    align-items: center;
-    border-radius: 15px;
-    background: transparent;
-    background-image: var(--background-image);
-  
-  
-  }
-
-  .searchIcon {
-    font-size: 24px;
-    color: var(--light-color);
-  }
-
-  .searchInput {
-    width: 100%;
-    border: none;
-    height: 40px;
-    padding: 10px;
-    outline: none;
-    color: var(--light-color);
-    background-color: transparent;
-  }
-
-  .searchInput::placeholder {
-    color: var(--light-color);
-  }
-
-  .paymentSection {
-    gap: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    
-  }
-
-  .payCardInner{
-    gap: 10px;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    padding: 10px;
-    flex-direction: column;
-  }
-
-  .payCard {
-    flex-grow: 1;
-    height: 250px;
-    display: flex;
-    text-align: center;
-    border-radius: 15px;
-    flex-direction: column;
-    justify-content: space-between;
-    background-image: var(--background-image);
-  
-  }
-
-  .payCard h1 {
-    padding: 10px;
-    font-size: 1.4rem;
-    width: fit-content;
-    border-radius: 15px  0 15px 0 ;
-    font-family: var(--font-outfit-thin);
-    background-image: var(--background-image);
-
-  }
-
-  .paymentInfo {
-    gap: 4px;
-    height: 100%;
-    padding: 10px;
-    display: flex;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .paymentInfo h2 {
-    font-size: 2rem;
-    font-family: var(--font-outfit-regular);
-  }
-
-  .paymentInfo span:first-child {
-    bottom: 10px;
-    font-size: 1.2rem;
-    position: relative;
-    font-family: var(--font-outfit-thin);
-  }
-
-  .paymentInfo span:last-child {
-    top: 10px;
-    font-size: 1.2rem;
-    position: relative;
-    font-family: var(--font-outfit-thin);
-  }
-
-  .chooseButton {
-    height: 60px;
-    cursor: pointer;
-    border-radius: 15px;
-    background: transparent;
-    color: var(--tertiary-color);
-    border: 1px solid var(--tertiary-color);
-  }
-
-  .chooseButton:hover {
-    color: var(--primary-color);
-    background-color: var(--tertiary-color);
-  }
-
-  .Question {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .QuestionCon {
-    background-color: var(--background-image);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: var(--box-shadow);
-  }
-  
-  .QuestionCon h1 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
-  
-  .QuestionCon p {
-    font-size: 1rem;
-  }
-  
-  .QuestionCon p span {
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  
+/* Subscription Section Styles */
+.subscriptionSection {
+  margin-bottom: 2rem;
 }
 
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  text-align: left;
+}
 
-/* using it as global style for larger devices  */
-@media only screen and (min-width: 48em) {
-  .paymentHeader h1 {
-    font-size: 1rem;
-    text-align: start;
+.subscriptionPeriods {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.subscriptionCard {
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+  position: relative;
+}
+
+.subscriptionCard:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.selectedCard {
+  border-color: #2563eb !important;
+  background: #eff6ff;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.promoCard {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-color: #10b981;
+}
+
+.promoCard.selectedCard {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #065f46;
+  box-shadow: 0 0 0 2px #065f46;
+}
+
+.subscriptionCardContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.subscriptionInfo {
+  flex: 1;
+}
+
+.subscriptionType {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.promoLabel {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.promoText {
+  font-size: 0.875rem;
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.subscriptionPrice {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-weight: 600;
+}
+
+.currency {
+  font-size: 1rem;
+}
+
+.amount {
+  font-size: 1.5rem;
+}
+
+.checkIcon {
+  width: 24px;
+  height: 24px;
+  background: #2563eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-left: 1rem;
+  flex-shrink: 0;
+}
+
+.promoCard .checkIcon {
+  background: #065f46;
+}
+
+/* Payment Method Section Styles */
+.paymentMethodSection {
+  margin-top: 2rem;
+}
+
+.paymentMethods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.paymentMethodCard {
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+  text-align: center;
+}
+
+.paymentMethodCard:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.selectedPaymentCard {
+  border-color: #2563eb !important;
+  background: #eff6ff;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.paymentMethodContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.paymentMethodIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.paymentMethodImage {
+  object-fit: contain;
+}
+
+.paymentMethodTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.selectedPaymentCard .checkIcon {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}
+
+/* Phone Input Styles */
+.phoneInputContainer {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.phoneInputWrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: #fff;
+}
+
+.phoneIcon {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  margin-right: 0.5rem;
+}
+
+.phoneInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+}
+
+.phoneInput::placeholder {
+  color: #9ca3af;
+}
+
+.errorText {
+  color: #dc2626;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Terms Checkbox Styles */
+.termsContainer {
+  margin: 1.5rem 0;
+}
+
+.termsLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.termsCheckbox {
+  display: none;
+}
+
+.checkboxCustom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.termsCheckbox:checked + .checkboxCustom {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.termsText {
+  color: #374151;
+}
+
+.termsLink {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.termsLink:hover {
+  text-decoration: underline;
+}
+
+/* Manual Payment Details Styles */
+.manualDetailsContainer {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.manualDetailsTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+.manualMethodItem {
+  margin-bottom: 1.5rem;
+}
+
+.manualMethodItem:last-child {
+  margin-bottom: 0;
+}
+
+.manualMethodName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+}
+
+.manualInstructions {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.manualInstructions p {
+  margin: 0.25rem 0;
+}
+
+.manualInstructions strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Amount Container Styles */
+.amountContainer {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.amountText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Payment Button Styles */
+.paymentButtonContainer {
+  margin-top: 1.5rem;
+}
+
+.paymentButton {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.paymentButton:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.paymentButtonDisabled {
+  background: #9ca3af !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .subscriptionCardContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .subscriptionPrice {
+    align-self: flex-end;
+  }
+
+  .checkIcon {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+
+  .paymentMethods {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
   }
 }
 
-/* ipad pro screens & laptop */
-@media only screen and (min-width: 49em) and (max-width: 64em) {
-}
+@media (max-width: 480px) {
+  .subscriptionCard {
+    padding: 0.75rem;
+  }
 
-/* large screens : Desktop and 4k screens */
+  .paymentMethodCard {
+    padding: 0.75rem;
+  }
 
-@media only screen and (min-width: 64.063em) and (max-width: 90em) {
-}
+  .subscriptionType {
+    font-size: 1rem;
+  }
 
-/* 5k screens and above */
-@media only screen and (min-width: 91em) {
+  .amount {
+    font-size: 1.25rem;
+  }
 }

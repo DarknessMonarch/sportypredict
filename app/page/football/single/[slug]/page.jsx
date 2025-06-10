@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import Image from "next/image";
+import Footer from "@/app/components/Footer";
 import Loading from "@/app/components/LoadingLogo";
 import OfferCard from "@/app/components/OfferCard";
 import SingleCard from "@/app/components/SingleCard";
@@ -47,23 +48,20 @@ export default function SingleSport() {
 
   const { adverts, fetchAdverts, loading: advertLoading } = useAdvertStore();
 
-  // Filter ads for InnerBanner location
   const innerBannerAds = adverts.filter((ad) => ad.location === "InnerBanner");
   const currentAd = innerBannerAds[currentAdIndex];
 
   useEffect(() => {
-    // Fetch adverts when component mounts
     fetchAdverts();
   }, [fetchAdverts]);
 
   useEffect(() => {
-    // Auto-rotate ads if there are multiple InnerBanner ads
     if (innerBannerAds.length > 1) {
       const interval = setInterval(() => {
         setCurrentAdIndex(
           (prevIndex) => (prevIndex + 1) % innerBannerAds.length
         );
-      }, 5000); // Change ad every 5 seconds
+      }, 10000);
 
       return () => clearInterval(interval);
     }
@@ -490,8 +488,6 @@ export default function SingleSport() {
               activeTab === "formation" ? styles.activePanel : ""
             }`}
           >
-        
-
             <div className={styles.formationCard}>
               <div className={styles.formationTeam}>
                 <div className={styles.formationLogo}>
@@ -525,8 +521,6 @@ export default function SingleSport() {
                     </div>
                   ))}
                 </div>
-
-              
               </div>
 
               <div className={styles.formationDivider}>
@@ -565,8 +559,6 @@ export default function SingleSport() {
                     </div>
                   ))}
                 </div>
-
-              
               </div>
             </div>
 
@@ -597,8 +589,6 @@ export default function SingleSport() {
               activeTab === "preview" ? styles.activePanel : ""
             }`}
           >
-         
-
             <div className={styles.previewCard}>
               <div className={styles.matchAnalysis}>
                 {match?.description ? (
@@ -644,6 +634,9 @@ export default function SingleSport() {
           <OfferCard />
         </div>
         <InnerBannerAdsSection />
+      </div>
+      <div className={styles.footerMobile}>
+        <Footer />
       </div>
     </div>
   );

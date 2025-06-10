@@ -4,12 +4,13 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import MobileDropdown from "@/app/components/MobileDropdown";
 import styles from "@/app/style/mobileFilter.module.css";
 import date from "date-and-time";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { usePredictionStore } from "@/app/store/Prediction";
 
 import { BiWorld as CountryIcon } from "react-icons/bi";
 import { TbStars as ExtraIcon } from "react-icons/tb";
 import { IoFootball as SportIcon } from "react-icons/io5";
+import { BiCalendar as CalendarIcon } from "react-icons/bi";
 
 export default function MobileFilter({
   leagueKey,
@@ -20,6 +21,9 @@ export default function MobileFilter({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { predictions } = usePredictionStore();
+  
+  // Add ref for the date input
+  const dateInputRef = useRef(null);
 
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedSport, setSelectedSport] = useState(null);
@@ -96,6 +100,13 @@ export default function MobileFilter({
     const dateValue = e.target.value;
     setSelectedDate(dateValue);
     updateURLParams("date", dateValue);
+  };
+
+  // Add function to handle date container click
+  const handleDateContainerClick = () => {
+    if (dateInputRef.current) {
+      dateInputRef.current.showPicker?.() || dateInputRef.current.focus();
+    }
   };
 
   useEffect(() => {
@@ -190,8 +201,14 @@ export default function MobileFilter({
             )}
           </div>
 
-          <div className={styles.filterDate}>
+          <div 
+            className={styles.filterDate} 
+            onClick={handleDateContainerClick}
+            style={{cursor: 'pointer'}}
+          >
+            <CalendarIcon className={styles.filterIcon} alt="calendar icon" />
             <input
+              ref={dateInputRef}
               type="date"
               className={styles.dateInput}
               onChange={handleDateChange}

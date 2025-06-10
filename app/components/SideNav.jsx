@@ -27,8 +27,18 @@ import {
 import { PiCourtBasketball as BetOfTheDayIcon } from "react-icons/pi";
 import { TbStars as ExtraIcon } from "react-icons/tb";
 
+// Additional icons for the new mobile navigation links
+import { 
+  IoNewspaperOutline as NewsIcon,
+  IoInformationCircleOutline as AboutIcon 
+} from "react-icons/io5";
+import { 
+  RiArticleLine as BlogIcon,
+  RiGiftLine as OffersIcon 
+} from "react-icons/ri";
+
 export default function SideNavComponent() {
-  const { isOpen, toggleOpen } = useDrawerStore();
+  const { isOpen, toggleOpen, setClose } = useDrawerStore();
 
   const adverts = useAdvertStore((state) => state.adverts);
 
@@ -88,6 +98,13 @@ export default function SideNavComponent() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  // Handler to close nav on mobile when link is clicked
+  const handleLinkClick = useCallback(() => {
+    if (isMobile) {
+      setClose();
+    }
+  }, [isMobile, setClose]);
 
   const handleProfileImageClick = useCallback(() => {
     if (fileInputRef.current && !isUploadingImage) {
@@ -305,80 +322,13 @@ export default function SideNavComponent() {
 
             <div className={styles.sideNavContainerTop}>
               <Link
-                href="/page/day"
-                className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/day" || pathname.startsWith("/page/day")
-                    ? styles.activesideNav
-                    : ""
-                }`}
-              >
-                <BetOfTheDayIcon
-                  className={styles.sideNavIcon}
-                  alt="day icon"
-                />
-                <h1>Bet of the day</h1>
-              </Link>
-              <Link
-                href="/page/extra"
-                className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/extra" ||
-                  pathname.startsWith("/single/extra")
-                    ? styles.activesideNav
-                    : ""
-                }`}
-              >
-                <ExtraIcon className={styles.sideNavIcon} alt="extra icon" />
-                <h1>Extra prediction</h1>
-              </Link>
-              <Link
-                href="/page/basketball"
-                className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/basketball" ||
-                  pathname.startsWith("/page/basketball/")
-                    ? styles.activesideNav
-                    : ""
-                }`}
-              >
-                <BasketballIcon
-                  className={styles.sideNavIcon}
-                  alt="basketball icon"
-                />
-                <h1>Basketball</h1>
-              </Link>
-              <Link
-                href="/page/football"
-                className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/football" ||
-                  pathname.startsWith("/page/football/")
-                    ? styles.activesideNav
-                    : ""
-                }`}
-              >
-                <FootballIcon
-                  className={styles.sideNavIcon}
-                  alt="football icon"
-                />
-                <h1>Football</h1>
-              </Link>
-              <Link
-                href="/page/tennis"
-                className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/tennis" ||
-                  pathname.startsWith("/page/tennis/")
-                    ? styles.activesideNav
-                    : ""
-                }`}
-              >
-                <TennisIcon className={styles.sideNavIcon} alt="tennis icon" />
-                <h1>Tennis</h1>
-              </Link>
-              <Link
                 href="/page/vip"
                 className={`${styles.sideNavLinkContainer} ${
                   pathname === "/page/vip" || pathname.startsWith("/page/vip/")
                     ? styles.activesideNav
                     : ""
                 }`}
+                onClick={handleLinkClick}
               >
                 <VipIcon className={styles.sideNavIcon} alt="vip icon" />
                 <h1>Vip</h1>
@@ -391,12 +341,130 @@ export default function SideNavComponent() {
                     ? styles.activesideNav
                     : ""
                 }`}
+                onClick={handleLinkClick}
               >
                 <MoneyIcon className={styles.sideNavIcon} alt="Offer icon" />
                 <h1>How to pay </h1>
               </Link>
-            
-          
+              <Link
+                href="/page/football"
+                className={`${styles.sideNavLinkContainer} ${
+                  pathname === "/page/football" ||
+                  pathname.startsWith("/page/football/")
+                    ? styles.activesideNav
+                    : ""
+                }`}
+                onClick={handleLinkClick}
+              >
+                <FootballIcon
+                  className={styles.sideNavIcon}
+                  alt="football icon"
+                />
+                <h1>Football</h1>
+              </Link>
+              <Link
+                href="/page/day"
+                className={`${styles.sideNavLinkContainer} ${
+                  pathname === "/page/day" || pathname.startsWith("/page/day")
+                    ? styles.activesideNav
+                    : ""
+                }`}
+                onClick={handleLinkClick}
+              >
+                <BetOfTheDayIcon
+                  className={styles.sideNavIcon}
+                  alt="day icon"
+                />
+                <h1>Bet of the day</h1>
+              </Link>
+              <Link
+                href="/page/basketball"
+                className={`${styles.sideNavLinkContainer} ${
+                  pathname === "/page/basketball" ||
+                  pathname.startsWith("/page/basketball/")
+                    ? styles.activesideNav
+                    : ""
+                }`}
+                onClick={handleLinkClick}
+              >
+                <BasketballIcon
+                  className={styles.sideNavIcon}
+                  alt="basketball icon"
+                />
+                <h1>Basketball</h1>
+              </Link>
+              <Link
+                href="/page/tennis"
+                className={`${styles.sideNavLinkContainer} ${
+                  pathname === "/page/tennis" ||
+                  pathname.startsWith("/page/tennis/")
+                    ? styles.activesideNav
+                    : ""
+                }`}
+                onClick={handleLinkClick}
+              >
+                <TennisIcon className={styles.sideNavIcon} alt="tennis icon" />
+                <h1>Tennis</h1>
+              </Link>
+              <Link
+                href="/page/extra"
+                className={`${styles.sideNavLinkContainer} ${
+                  pathname === "/page/extra" ||
+                  pathname.startsWith("/single/extra")
+                    ? styles.activesideNav
+                    : ""
+                }`}
+                onClick={handleLinkClick}
+              >
+                <ExtraIcon className={styles.sideNavIcon} alt="extra icon" />
+                <h1>Extra prediction</h1>
+              </Link>
+
+              {/* Mobile-only navigation links */}
+              {isMobile && (
+                <>
+                  <Link
+                    href="/page/news"
+                    className={`${styles.sideNavLinkContainer} ${
+                      pathname === "/page/news" ? styles.activesideNav : ""
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <NewsIcon className={styles.sideNavIcon} alt="news icon" />
+                    <h1>Sport News</h1>
+                  </Link>
+                  <Link
+                    href="/page/blog"
+                    className={`${styles.sideNavLinkContainer} ${
+                      pathname === "/page/blog" ? styles.activesideNav : ""
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <BlogIcon className={styles.sideNavIcon} alt="blog icon" />
+                    <h1>Sport Blog</h1>
+                  </Link>
+                  <Link
+                    href="/page/offers"
+                    className={`${styles.sideNavLinkContainer} ${
+                      pathname === "/page/offers" ? styles.activesideNav : ""
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <OffersIcon className={styles.sideNavIcon} alt="offers icon" />
+                    <h1>Sport offers</h1>
+                  </Link>
+                  <Link
+                    href="/page/about"
+                    className={`${styles.sideNavLinkContainer} ${
+                      pathname === "/page/about" ? styles.activesideNav : ""
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <AboutIcon className={styles.sideNavIcon} alt="about icon" />
+                    <h1>About us</h1>
+                  </Link>
+                </>
+              )}
             </div>
 
             <SideNavAdvertComponent />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Footer from "@/app/components/Footer";
 import styles from "@/app/style/info.module.css";
 
 export default function Policy() {
@@ -32,7 +33,7 @@ export default function Policy() {
   return (
     <div className={styles.termsContainer}>
       <div className={styles.termsCard}>
-        <h1 className={styles.mainHeading}>Privacy policy</h1>
+        <h1>Privacy policy</h1>
 
         <div className={styles.section}>
           <p>
@@ -83,10 +84,11 @@ export default function Policy() {
         <div className={styles.section}>
           <p>
             Please note that this privacy policy may be updated periodically,
-            and the effective date is July 12, 2023. We encourage you to
-            regularly review this page for any changes or updates.
+            and We encourage you to regularly review this page for any changes
+            or updates.
           </p>
         </div>
+        <Footer />
       </div>
     </div>
   );

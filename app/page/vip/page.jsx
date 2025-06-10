@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Banner from "@/app/components/Banner";
+import Footer from "@/app/components/Footer";
 import SportCard from "@/app/components/Card";
 import Nothing from "@/app/components/Nothing";
 import { useAuthStore } from "@/app/store/Auth";
@@ -314,6 +315,9 @@ export default function Sport() {
           {isMobile && <VipResults />}
         </div>
       )}
+      <div className={styles.footerMobile}>
+        <Footer />
+      </div>
     </div>
   );
 }

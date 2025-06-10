@@ -39,6 +39,10 @@ export default function Login() {
     setTerms(event.target.checked);
   };
 
+  const readTerms = () => {
+    router.push("/page/terms", { scroll: false });
+  };
+
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -47,9 +51,6 @@ export default function Login() {
     router.push("resetcode", { scroll: false });
   };
 
-  const readTerms = () => {
-    router.push("/page/terms", { scroll: false });
-  };
 
   const SignUp = () => {
     router.push("signup", { scroll: false });
@@ -75,7 +76,6 @@ export default function Login() {
 
     try {
       const result = await login(formData.email, formData.password);
-
 
       if (result.success) {
         toast.success(result.message || "Welcome");
@@ -205,7 +205,9 @@ export default function Login() {
                 onChange={handleTermsChange}
                 required
               />
-              <label htmlFor="terms">Accept terms and conditions</label>
+              <label htmlFor="terms" onClick={readTerms}>
+                Accept terms and conditions
+              </label>
             </div>
             <span onClick={forgotPassword}>Forgot Password</span>
           </div>

@@ -1,543 +1,674 @@
-/* Footer Styles */
-.footer {
-  background: var(--linear-gradient-color);
-  color: var(--background-color);
-  padding: 4rem 0 0;
-  margin-top: auto;
-}
-
-.footerContainer {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-.footerGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3rem;
-  justify-content: space-between;
-  margin-bottom: 3rem;
-}
-
-.footerColumn {
-  flex: 1;
-  min-width: 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* Brand Section */
-.brandSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.brandTitle {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--background-color);
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.brandDescription {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0;
-}
-
-/* Contact Section */
-.contactSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.columnTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--background-color);
-  margin: 0 0 1rem 0;
-  border-bottom: 2px solid var(--secondary-color);
-  padding-bottom: 0.5rem;
-  display: inline-block;
-}
-
-.contactList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.contactItem {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
-}
-
-.contactIcon {
-  font-size: 1.1rem;
-  color: var(--secondary-color);
-  flex-shrink: 0;
-}
-
-.contactText {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.9);
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.contactText:hover {
-  color: var(--light-secondary-color);
-}
-
-/* Navigation Links */
-.linkSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.footerNav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.footerLink {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.95rem;
-  padding: 0.5rem 0;
-  transition: all 0.3s ease;
-  border-left: 2px solid transparent;
-  padding-left: 0.5rem;
-}
-
-.footerLink:hover {
-  color: var(--light-secondary-color);
-  border-left-color: var(--secondary-color);
-  padding-left: 1rem;
-}
-
-/* Newsletter Section */
-.newsletterSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.newsletterDesc {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.85);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.newsletterForm {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.newsletterInput {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  color: var(--background-color);
-  font-size: 0.95rem;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.newsletterInput::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.newsletterInput:focus {
-  border-color: var(--secondary-color);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 0 2px rgba(37, 199, 231, 0.3);
-}
-
-.newsletterButton {
-  background: var(--secondary-color);
-  color: var(--primary-color);
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.newsletterButton:hover {
-  background: var(--light-secondary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(37, 199, 231, 0.4);
-}
-
-/* WhatsApp Section */
-.whatsappSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.subTitle {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--background-color);
-  margin: 0;
-}
-
-.whatsappForm {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.inputWrapper {
-  display: flex;
-  gap: 0.5rem;
-  align-items: stretch;
-}
-
-.whatsappInput {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  color: var(--background-color);
-  font-size: 0.95rem;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.whatsappInput::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.whatsappInput:focus {
-  border-color: var(--secondary-color);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 0 2px rgba(37, 199, 231, 0.3);
-}
-
-.whatsappButton {
-  background: #25d366;
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 48px;
-}
-
-.whatsappButton:hover {
-  background: #20b858;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-}
-
-.whatsappIcon {
-  font-size: 1.2rem;
-  color: white;
-}
-
-.errorMessage {
-  color: #ff6b6b;
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-}
-
-.successMessage {
-  color: #51cf66;
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-}
-
-/* App Download Section */
-.appDownloadSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.downloadButtons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.downloadBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.downloadBtn:hover {
-  transform: translateY(-2px);
-}
-
-.downloadImage {
-  border-radius: 6px;
-  transition: opacity 0.3s ease;
-}
-
-.downloadBtn:hover .downloadImage {
-  opacity: 0.9;
-}
-
-/* Social Media Section */
-.socialSection {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 2rem 0;
-  margin-bottom: 2rem;
-}
-
-.socialContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.socialTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--background-color);
-  margin: 0;
-  text-align: center;
-}
-
-.socialLinks {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.socialButton {
-  width: 48px;
-  height: 48px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-  color: white;
-  backdrop-filter: blur(10px);
-}
-
-.socialButton:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-}
-
-.facebook {
-  background: linear-gradient(135deg, #1877f2, #42a5f5);
-}
-
-.twitter {
-  background: linear-gradient(135deg, #1da1f2, #42a5f5);
-}
-
-.instagram {
-  background: linear-gradient(135deg, #e4405f, #f77737, #fcaf45);
-}
-
-.youtube {
-  background: linear-gradient(135deg, #ff0000, #ff4444);
-}
-
-.telegram {
-  background: linear-gradient(135deg, #0088cc, #00aaff);
-}
-
-.tiktok {
-  background: linear-gradient(135deg, #000000, #ff0050);
-}
-
-/* Bottom Bar */
-.bottomBar {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 1.5rem 0;
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.bottomContent {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.copyright {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-}
-
-.copyright p {
-  margin: 0;
-}
-
-.bottomLinks {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.bottomLink {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
-  transition: color 0.3s ease;
-}
-
-.bottomLink:hover {
-  color: var(--light-secondary-color);
-}
-
-/* Mobile Responsive Design */
-@media screen and (max-width: 768px) {
+@media screen {
   .footer {
-    padding: 3rem 0 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--linear-gradient-color);
+    color: var(--background-color);
+    position: relative;
+    padding: var(--padding-xxxl) var(--padding-sm);
+    padding-bottom: 0;
+    margin-top: 40px;
+  }
+
+  .footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.3;
+    pointer-events: none;
+    background: var(--linear-backround-image);
   }
 
   .footerContainer {
-    padding: 0 1rem;
+    gap: var(--padding-lg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
   }
 
   .footerGrid {
+    display: flex;
     flex-direction: column;
-    gap: 2.5rem;
-    margin-bottom: 2rem;
+    gap: var(--padding-lg);
+    margin-bottom: var(--padding-lg);
   }
 
   .footerColumn {
-    min-width: unset;
-    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+    flex: 1;
+    min-width: 0;
   }
 
-  .brandTitle {
-    font-size: 1.75rem;
-    text-align: center;
+  .footerColumn p {
+    color: var(--background-color);
+    line-height: 1.6;
   }
 
-  .brandDescription {
-    text-align: center;
-    font-size: 0.9rem;
+  .brandSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+    margin-bottom: var(--padding-lg);
+  }
+
+  .logo {
+    object-fit: contain;
+    align-self: flex-start;
+  }
+
+  .contactSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+  }
+
+  .linkSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+    flex: 1;
   }
 
   .columnTitle {
-    font-size: 1.1rem;
-    text-align: center;
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-semibold);
+    color: var(--background-color);
+    position: relative;
+    padding-bottom: var(--padding-sm);
+    margin-bottom: var(--padding-sm);
+  }
+
+  .columnTitle::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--light-secondary-color);
+    border-radius: var(--radius-sm);
   }
 
   .contactList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-sm);
+  }
+
+  .contactItem {
+    display: flex;
     align-items: center;
+    gap: var(--padding-sm);
+    padding: var(--padding-sm) 0;
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+    word-break: break-word;
+  }
+
+  .contactItem:hover {
+    background: rgba(255, 255, 255, 0.05);
+    padding-left: var(--padding-sm);
+    transform: translateX(var(--padding-sx));
+  }
+
+  .contactIcon {
+    font-size: var(--font-size-3);
+    color: var(--secondary-color);
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
+
+  .contactText {
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-regular);
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    word-break: break-word;
+  }
+
+  .contactText:hover {
+    color: var(--light-secondary-color);
+    transform: scale(1.02);
   }
 
   .footerNav {
-    align-items: center;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-sx);
   }
 
   .footerLink {
-    text-align: center;
-    border-left: none;
-    border-bottom: 2px solid transparent;
-    padding-left: 0;
-    padding-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-regular);
+    padding: var(--padding-sm) 0;
+    transition: all 0.3s ease;
+    padding-left: var(--padding-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--padding-sm);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    text-decoration: none;
+    word-break: break-word;
   }
 
   .footerLink:hover {
-    border-left: none;
-    border-bottom-color: var(--secondary-color);
-    padding-left: 0;
+    color: var(--light-secondary-color);
+    padding-left: var(--padding-md);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(var(--padding-sx));
+    box-shadow: var(--shadow-box);
   }
 
-  .newsletterSection,
-  .whatsappSection,
-  .appDownloadSection {
+  .footerLinkIcon {
+    font-size: var(--font-size-3);
+    color: var(--secondary-color);
+    flex-shrink: 0;
+    width: 18px;
     text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .footerLink:hover .footerLinkIcon {
+    transform: scale(1.1);
+  }
+
+  .communicationGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-lg);
+    margin-bottom: var(--padding-lg);
+  }
+
+  .whatsappSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--padding-lg);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(var(--padding-sm));
+    flex: 1;
+  }
+
+  .subTitle {
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--background-color);
+    margin: 0;
+  }
+
+  .whatsappDesc {
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-light);
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .whatsappForm {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-sm);
+    flex: 1;
   }
 
   .inputWrapper {
+    display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--padding-sm);
+  }
+
+  .whatsappInput {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+    padding: var(--padding-md);
+    color: var(--background-color);
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-regular);
+    backdrop-filter: blur(var(--padding-sm));
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .whatsappInput::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .whatsappInput:focus {
+    border-color: #25d366;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.2);
+    transform: scale(1.02);
   }
 
   .whatsappButton {
-    align-self: center;
-    min-width: 120px;
+    background: linear-gradient(135deg, #25d366, #20b858);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: var(--padding-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--padding-sx);
+    min-width: 100px;
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-semibold);
+    color: var(--background-color);
+    align-self: stretch;
+  }
+
+  .whatsappButton:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+  }
+
+  .whatsappIcon {
+    font-size: var(--font-size-3);
+    color: var(--background-color);
+  }
+
+  .appDownloadSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--padding-lg);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(var(--padding-sm));
+    flex: 1;
+  }
+
+  .appDesc {
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-light);
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+    margin: 0;
   }
 
   .downloadButtons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-sm);
+  }
+
+  .downloadBtn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: var(--radius-sm);
+    padding: var(--padding-md);
+    backdrop-filter: blur(var(--padding-sm));
+    flex: 1;
+  }
+
+  .downloadBtn:hover {
+    transform: translateY(-2px) scale(1.02);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--secondary-color);
+    box-shadow: var(--shadow-box);
+  }
+
+  .downloadContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--padding-sx);
+  }
+
+  .downloadText {
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-light);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .downloadPlatform {
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--background-color);
+  }
+
+  .socialSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--padding-lg);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(var(--padding-sm));
+    margin-bottom: var(--padding-lg);
+  }
+
+  .socialContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+    align-items: center;
+    text-align: center;
+  }
+
+  .socialTitle {
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--background-color);
+    margin: 0;
+  }
+
+  .socialDescription {
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-light);
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 600px;
+  }
+
+  .socialLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-md);
+    justify-content: center;
     align-items: center;
   }
 
-  .socialLinks {
-    gap: 0.75rem;
+  .socialButton {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--background-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-box);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    flex-shrink: 0;
   }
 
-  .socialButton {
-    width: 44px;
-    height: 44px;
-    font-size: 1.1rem;
+  .socialButton::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+
+  .socialButton:hover::before {
+    left: 100%;
+  }
+
+  .socialButton:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-background-color);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .socialButton:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  .socialButton.facebook {
+    background: linear-gradient(135deg, #1877f2, #42a5f5);
+  }
+
+  .socialButton.twitter {
+    background: linear-gradient(135deg, #1da1f2, #64b5f6);
+  }
+
+  .socialButton.instagram {
+    background: linear-gradient(135deg, #e1306c, #fd1d1d, #fccc63);
+  }
+
+  .socialButton.youtube {
+    background: linear-gradient(135deg, #ff0000, #ff4444);
+  }
+
+  .socialButton.telegram {
+    background: linear-gradient(135deg, #0088cc, #33a3dc);
+  }
+
+  .socialButton.tiktok {
+    background: linear-gradient(135deg, #000000, #333333);
+  }
+
+  .socialButton.whatsapp {
+    background: linear-gradient(135deg, #25d366, #4fce5d);
+  }
+
+  .bottomBar {
+    width: 100%;
+    margin-top: 0;
+    position: relative;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: linear-gradient(
+      135deg,
+      var(--primary-color),
+      var(--secondary-color)
+    );
+    padding: 2rem 0;
+    overflow: hidden;
+    box-shadow: var(--nav-shadow-box);
+  }
+
+  .bottomBar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--linear-backround-image);
+    opacity: 0.1;
+    pointer-events: none;
   }
 
   .bottomContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     flex-direction: column;
-    text-align: center;
     gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--padding-lg);
+  }
+
+  .copyright {
+    flex: 1;
+    min-width: 300px;
+    text-align: center;
+  }
+
+  .copyright p {
+    color: var(--background-color);
+    text-align: center;
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    line-height: 1.5;
   }
 
   .bottomLinks {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem;
+  }
+
+  .bottomLink {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+    position: relative;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(var(--padding-sx));
+    white-space: nowrap;
+  }
+
+  .bottomLink::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .bottomLink:hover::before {
+    opacity: 1;
+  }
+
+  .bottomLink:hover {
+    color: var(--background-color);
+    transform: translateY(-2px) scale(1.05);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: var(--shadow-box);
+  }
+
+  .bottomLink:active {
+    transform: translateY(0) scale(1);
   }
 }
 
-/* Larger devices */
+/* Tablet and larger screens */
 @media only screen and (min-width: 48em) {
-  .footerGrid {
-    gap: 4rem;
+  .footer {
+    margin-top: 10px;
+    border-radius: var(--radius-md);
   }
 
-  .footerColumn {
+  .brandTitle {
+    font-size: 2.5rem;
+  }
+
+  .footerGrid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--padding-lg);
+  }
+
+  .footerColumn:first-child {
+    flex: 2;
     min-width: 300px;
   }
 
+  .footerColumn:not(:first-child) {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .communicationGrid {
+    display: flex;
+    flex-direction: row;
+    gap: var(--padding-lg);
+    align-items: stretch;
+  }
+
+  .whatsappSection,
+  .appDownloadSection {
+    flex: 1;
+    min-width: 0;
+  }
+
   .socialLinks {
-    gap: 1.5rem;
+    gap: var(--padding-lg);
   }
 
   .socialButton {
-    width: 52px;
-    height: 52px;
+    width: 55px;
+    height: 55px;
     font-size: 1.3rem;
   }
 
+  .downloadButtons {
+    flex-direction: row;
+    gap: var(--padding-md);
+  }
+
+  .downloadBtn {
+    flex: 1;
+  }
+
   .inputWrapper {
-    max-width: 400px;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .whatsappInput {
+    flex: 1;
+    margin-right: var(--padding-sm);
+  }
+
+  .copyright p {
+    text-align: start;
+  }
+
+  .whatsappButton {
+    align-self: stretch;
+    min-width: 120px;
+  }
+
+  .bottomContent {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .copyright {
+    text-align: left;
+  }
+
+  .bottomLinks {
+    justify-content: flex-end;
+    gap: 1.5rem;
+  }
+
+  .bottomLink {
+    padding: 0.6rem 1.2rem;
+    width: auto;
+    text-align: left;
   }
 }

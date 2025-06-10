@@ -34,12 +34,10 @@ export default function SingleCard({
   }, [time]);
 
   useEffect(() => {
-    // Fetch adverts when component mounts
     fetchAdverts();
   }, [fetchAdverts]);
 
   useEffect(() => {
-    // Auto-rotate ads if there are multiple CardBanner ads
     if (cardBannerAds.length > 1) {
       const interval = setInterval(() => {
         setCurrentAdIndex(

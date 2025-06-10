@@ -462,4 +462,8 @@
     overflow-y: auto;
     max-height: 250px;
   }
+
+  .footerMobile {
+    display: none;
+  }
 }

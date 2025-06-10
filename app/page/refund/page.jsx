@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Footer from "@/app/components/Footer";
 import styles from "@/app/style/info.module.css";
 
 export default function Policy() {
@@ -32,7 +33,7 @@ export default function Policy() {
   return (
     <div className={styles.termsContainer}>
       <div className={styles.termsCard}>
-        <h1 className={styles.mainHeading}>Refund Policy</h1>
+        <h1>Refund Policy</h1>
         <div className={styles.section}>
           <p>
             The information provided is intended solely for individuals or
@@ -67,6 +68,7 @@ export default function Policy() {
             </a>
           </p>
         </div>
+        <Footer />
       </div>
     </div>
   );

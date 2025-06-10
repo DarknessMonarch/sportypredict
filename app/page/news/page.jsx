@@ -3,19 +3,19 @@
 import { toast } from "sonner";
 import Image from "next/image";
 import DOMPurify from "dompurify";
-import { useEffect, useState, useRef, useCallback } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { FaXTwitter } from "react-icons/fa6";
+import Footer from "@/app/components/Footer";
 import Nothing from "@/app/components/Nothing";
 import { useNewsStore } from "@/app/store/News";
 import SideSlide from "@/app/components/SideSlide";
-import LoadingLogo from "@/app/components/LoadingLogo";
 import NewsCard from "@/app/components/NewsCard";
 import Dropdown from "@/app/components/Dropdown";
 import styles from "@/app/style/blog.module.css";
+import LoadingLogo from "@/app/components/LoadingLogo";
 import EmptyNewsImg from "@/public/assets/emptynews.png";
-
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { FaFacebookF, FaInstagram, FaRegClock } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
 import { IoSearchOutline as SearchIcon } from "react-icons/io5";
 
 export default function SportsNews() {
@@ -30,6 +30,7 @@ export default function SportsNews() {
     categories,
     fetchArticles,
     fetchNewsByCategory,
+    searchNews,
     clearError,
   } = useNewsStore();
 
@@ -42,7 +43,7 @@ export default function SportsNews() {
   const searchTimeoutRef = useRef(null);
   const initialLoadRef = useRef(true);
 
-  const createSlug = (title) => {
+  const createSlug = useCallback((title) => {
     if (!title) return "";
     return title
       .toLowerCase()
@@ -50,18 +51,64 @@ export default function SportsNews() {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "");
+  }, []);
+
+  // Helper functions
+  const getAuthorName = (post) => {
+    return post.authorName || post.author?.username || "Unknown Author";
   };
 
-  const findArticleBySlug = (slug) => {
+  const getFormattedDate = (post) => {
+    return post.formattedDate ||
+      new Date(post.publishDate || post.createdAt).toLocaleDateString();
+  };
+
+  const getReadTime = (post) => {
+    return post.readTime || "5 min read";
+  };
+
+  const formatCategory = (category) => {
+    return category.charAt(0).toUpperCase() + category.slice(1);
+  };
+
+  const createShareUrl = (post) => {
+    const slug = createSlug(post.title);
+    return `${window.location.origin}${pathname}?article=${slug}`;
+  };
+
+  const findArticleBySlug = useCallback((slug) => {
     if (!slug) return null;
     return articles.find((article) => createSlug(article.title) === slug);
-  };
+  }, [articles, createSlug]);
+
+  // Load data function
+  const loadData = useCallback(async (category = "", search = "") => {
+    setIsSearching(true);
+    try {
+      if (search && search.trim() !== "") {
+        // If there's a search query, use search endpoint
+        await searchNews(search.trim());
+      } else if (category && category !== "") {
+        // If there's a category filter, use category endpoint
+        await fetchNewsByCategory(category);
+      } else {
+        // Load all articles
+        await fetchArticles();
+      }
+    } catch (err) {
+      console.error("Load data error:", err);
+      toast.error("Failed to load articles");
+    } finally {
+      setIsSearching(false);
+    }
+  }, [fetchArticles, fetchNewsByCategory, searchNews]);
 
   const openModal = useCallback(
     async (post, updateUrl = true) => {
       try {
         setSelectedPost(post);
         setShowModal(true);
+        document.body.style.overflow = "hidden";
 
         if (updateUrl) {
           const slug = createSlug(post.title);
@@ -76,12 +123,14 @@ export default function SportsNews() {
         document.body.style.overflow = "hidden";
       }
     },
-    [router, pathname]
+    [router, pathname, createSlug]
   );
 
   const closeModal = useCallback(() => {
     setShowModal(false);
     setSelectedPost(null);
+    document.body.style.overflow = "auto";
+    
     const currentParams = searchParams.get("article");
     if (currentParams) {
       router.replace(pathname, undefined, { shallow: true });
@@ -94,24 +143,18 @@ export default function SportsNews() {
         clearTimeout(searchTimeoutRef.current);
       }
 
-      searchTimeoutRef.current = setTimeout(async () => {
-        setIsSearching(true);
-        try {
-          await fetchArticles(1, 1000, query, false, "", "-publishDate");
-        } catch (err) {
-          toast.error("Search failed. Please try again.");
-        } finally {
-          setIsSearching(false);
-        }
+      searchTimeoutRef.current = setTimeout(() => {
+        loadData("", query);
       }, 300);
     },
-    [fetchArticles]
+    [loadData]
   );
 
+  // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        await fetchArticles(1, 1000, "", false, "", "-publishDate");
+        await loadData(); // Load all articles initially
         initialLoadRef.current = false;
       } catch (err) {
         toast.error("Failed to load initial news data");
@@ -121,14 +164,13 @@ export default function SportsNews() {
     if (initialLoadRef.current) {
       loadInitialData();
     }
-  }, [fetchArticles]);
+  }, [loadData]);
 
+  // Handle shared article URL
   useEffect(() => {
     const sharedArticleSlug = searchParams.get("article");
     if (sharedArticleSlug && articles.length > 0 && !showModal) {
-      const sharedPost = articles.find(
-        (article) => createSlug(article.title) === sharedArticleSlug
-      );
+      const sharedPost = findArticleBySlug(sharedArticleSlug);
 
       if (sharedPost) {
         openModal(sharedPost, false);
@@ -137,8 +179,9 @@ export default function SportsNews() {
         router.replace(pathname, undefined, { shallow: true });
       }
     }
-  }, [articles, searchParams, showModal, openModal, router, pathname]);
+  }, [articles, searchParams, showModal, openModal, findArticleBySlug, router, pathname]);
 
+  // Handle errors
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -146,25 +189,31 @@ export default function SportsNews() {
     }
   }, [error, clearError]);
 
+  // Handle search query changes
   useEffect(() => {
     if (searchQuery.trim()) {
       debouncedSearch(searchQuery);
     } else if (searchQuery === "") {
-      setIsSearching(true);
-      fetchArticles(1, 1000, "", false, activeCategory, "-publishDate").finally(
-        () => setIsSearching(false)
-      );
+      // When search is cleared, reload based on current category
+      loadData(activeCategory, "");
     }
-  }, [searchQuery, debouncedSearch, fetchArticles, activeCategory]);
+  }, [searchQuery, debouncedSearch, loadData, activeCategory]);
 
+  // Cleanup
   useEffect(() => {
-    if (activeCategory && !searchQuery) {
-      setIsSearching(true);
-      fetchNewsByCategory(activeCategory, 1, 1000).finally(() =>
-        setIsSearching(false)
-      );
-    }
-  }, [activeCategory, fetchNewsByCategory, searchQuery]);
+    const handleEsc = (event) => {
+      if (event.keyCode === 27) closeModal();
+    };
+    
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+      document.body.style.overflow = "auto";
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [closeModal]);
 
   const handleSearchInput = (e) => {
     setSearchQuery(e.target.value);
@@ -172,18 +221,16 @@ export default function SportsNews() {
 
   const handleCategorySelect = (category) => {
     try {
-      if (activeCategory === category.name) {
-        setActiveCategory("");
-        setIsSearching(true);
-        fetchArticles(1, 1000, searchQuery, false, "", "-publishDate").finally(
-          () => setIsSearching(false)
-        );
-      } else {
-        setActiveCategory(category.name);
-        if (searchQuery) {
-          setSearchQuery("");
-        }
+      const newCategory = activeCategory === category.name ? "" : category.name;
+      setActiveCategory(newCategory);
+      
+      // Clear search when category changes
+      if (searchQuery) {
+        setSearchQuery("");
       }
+      
+      // Load data for the selected category
+      loadData(newCategory, "");
     } catch (err) {
       toast.error("Failed to filter by category");
     }
@@ -191,8 +238,7 @@ export default function SportsNews() {
 
   const handleShare = async (post) => {
     try {
-      const slug = createSlug(post.title);
-      const shareUrl = `${window.location.origin}${pathname}?article=${slug}`;
+      const shareUrl = createShareUrl(post);
 
       if (navigator.share) {
         await navigator.share({
@@ -211,29 +257,27 @@ export default function SportsNews() {
 
   const handleSocialShare = async (platform, post) => {
     try {
-      const slug = createSlug(post.title);
-      const shareUrl = `${window.location.origin}${pathname}?article=${slug}`;
+      const shareUrl = createShareUrl(post);
       const url = encodeURIComponent(shareUrl);
       const text = encodeURIComponent(
         `${post.title} - ${post.summary || "Sports News"}`
       );
 
-      let socialShareUrl = "";
-      switch (platform) {
-        case "facebook":
-          socialShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-          break;
-        case "twitter":
-          socialShareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
-          break;
-        case "instagram":
-          await navigator.clipboard.writeText(shareUrl);
-          toast.success(
-            "Article link copied! You can now paste it on Instagram"
-          );
-          return;
-        default:
-          throw new Error("Unsupported platform");
+      const socialUrls = {
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+        twitter: `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
+        instagram: null, // Special case
+      };
+
+      if (platform === "instagram") {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Article link copied! You can now paste it on Instagram");
+        return;
+      }
+
+      const socialShareUrl = socialUrls[platform];
+      if (!socialShareUrl) {
+        throw new Error("Unsupported platform");
       }
 
       window.open(socialShareUrl, "_blank", "width=600,height=400");
@@ -242,74 +286,85 @@ export default function SportsNews() {
     }
   };
 
-  useEffect(() => {
-    const handleEsc = (event) => {
-      if (event.keyCode === 27) closeModal();
+  // Render social share buttons
+  const renderSocialShareButtons = (post) => (
+    <div className={styles.socialShareLinks}>
+      {["facebook", "twitter", "instagram"].map((platform) => {
+        const icons = {
+          facebook: FaFacebookF,
+          twitter: FaXTwitter,
+          instagram: FaInstagram,
+        };
+        const Icon = icons[platform];
+        
+        return (
+          <button
+            key={platform}
+            onClick={() => handleSocialShare(platform, post)}
+            aria-label={`Share on ${platform}`}
+            className={styles.socialIconBtn}
+          >
+            <Icon
+              className={styles.socialIcon}
+              alt={platform}
+              aria-label={platform}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  // Render news header section
+  const renderNewsHeader = () => (
+    <div className={styles.blogBanner}>
+      <div className={styles.blogHeader}>
+        <div className={styles.blogContent}>
+          <h1>Sports News</h1>
+          <p>Your ultimate source for sports news and updates</p>
+        </div>
+
+        <div className={styles.searchBar}>
+          <input
+            type="text"
+            placeholder="Search news..."
+            value={searchQuery}
+            onChange={handleSearchInput}
+            aria-label="Search news"
+            className={styles.searchInput}
+          />
+          <SearchIcon
+            aria-label="search"
+            alt="search"
+            className={styles.searchIcon}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  // Render empty state
+  const renderEmptyState = () => {
+    const getEmptyMessage = () => {
+      if (searchQuery) return `No news found for "${searchQuery}"`;
+      if (activeCategory) return `No news found in "${activeCategory}" category`;
+      return "No news available";
     };
-    window.addEventListener("keydown", handleEsc);
-    return () => {
-      window.removeEventListener("keydown", handleEsc);
-      document.body.style.overflow = "auto";
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-    };
-  }, [closeModal]);
 
-  const categoryOptions = categories.map((category) => ({
-    name: category,
-    code: category,
-  }));
-
-  const formatCategory = (category) => {
-    return category.charAt(0).toUpperCase() + category.slice(1);
-  };
-
-  if (loading && articles.length === 0 && !isSearching) {
-    return <LoadingLogo />;
-  }
-
-  if (articles.length === 0 && !loading && !isSearching) {
     return (
       <div className={styles.blogContainer}>
-        <div className={styles.blogBanner}>
-          <div className={styles.blogHeader}>
-            <div className={styles.blogContent}>
-              <h1>Sports News</h1>
-              <p>Your ultimate source for sports news and updates</p>
-            </div>
-
-            <div className={styles.searchBar}>
-              <input
-                type="text"
-                placeholder="Search news..."
-                value={searchQuery}
-                onChange={handleSearchInput}
-                aria-label="Search news"
-                className={styles.searchInput}
-              />
-              <SearchIcon
-                aria-label="search"
-                alt="search"
-                className={styles.searchIcon}
-              />
-            </div>
-          </div>
+        {renderNewsHeader()}
+        <div className={styles.nothingContainer}>
+          <Nothing
+            Alt="No news available"
+            NothingImage={EmptyNewsImg}
+            Text={getEmptyMessage()}
+          />
         </div>
-        <Nothing
-          Alt="No news available"
-          NothingImage={EmptyNewsImg}
-          Text={
-            searchQuery
-              ? `No news found for "${searchQuery}"`
-              : activeCategory
-              ? `No news found in "${activeCategory}" category`
-              : "No news available"
-          }
-        />
+        <Footer />
       </div>
     );
-  }
+  };
 
   const renderModalContent = () => {
     if (!selectedPost) return null;
@@ -324,42 +379,9 @@ export default function SportsNews() {
               ))}
             </div>
           )}
-          <div className={styles.socialShareLinks}>
-            <button
-              onClick={() => handleSocialShare("facebook", selectedPost)}
-              aria-label="Share on Facebook"
-              className={styles.socialIconBtn}
-            >
-              <FaFacebookF
-                className={styles.socialIcon}
-                alt="facebook"
-                aria-label="facebook"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialShare("twitter", selectedPost)}
-              aria-label="Share on Twitter"
-              className={styles.socialIconBtn}
-            >
-              <FaXTwitter
-                className={styles.socialIcon}
-                alt="twitter"
-                aria-label="twitter"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialShare("instagram", selectedPost)}
-              aria-label="Share on Instagram"
-              className={styles.socialIconBtn}
-            >
-              <FaInstagram
-                className={styles.socialIcon}
-                alt="instagram"
-                aria-label="instagram"
-              />
-            </button>
-          </div>
+          {renderSocialShareButtons(selectedPost)}
         </div>
+        
         <div className={styles.sideSlideImageContainer}>
           <Image
             className={styles.sideSlideImage}
@@ -368,24 +390,17 @@ export default function SportsNews() {
             fill
             sizes="100%"
             quality={100}
-            style={{
-              objectFit: "cover",
-            }}
+            style={{ objectFit: "cover" }}
             priority={true}
           />
         </div>
+        
         <div className={styles.sideSlideInnerContentDetails}>
           <div className={styles.authorContainer}>
             <span className={styles.category}>
               {formatCategory(selectedPost.category)}
             </span>
-
-            <span>
-              By{" "}
-              {selectedPost.authorName ||
-                selectedPost.author?.username ||
-                "Unknown Author"}
-            </span>
+            <span>By {getAuthorName(selectedPost)}</span>
           </div>
           <h2>{selectedPost.title}</h2>
           <div
@@ -395,52 +410,43 @@ export default function SportsNews() {
                 selectedPost.content || selectedPost.summary
               ),
             }}
-          ></div>
+          />
         </div>
 
         <div className={styles.SideSlideFooter}>
           <div className={styles.dateAndTime}>
             <span>
-              <FaRegClock /> {selectedPost.readTime || "5 min read"}
+              <FaRegClock /> {getReadTime(selectedPost)}
             </span>
           </div>
-          <span>
-            {selectedPost.formattedDate ||
-              new Date(
-                selectedPost.publishDate || selectedPost.createdAt
-              ).toLocaleDateString()}
-          </span>
+          <span>{getFormattedDate(selectedPost)}</span>
         </div>
       </div>
     );
   };
 
+  const categoryOptions = categories.map((category) => ({
+    name: category,
+    code: category,
+  }));
+
+  // Loading state
+  if ((loading || isSearching) && articles.length === 0) {
+    return (
+      <div className={styles.nothingContainer}>
+        <LoadingLogo />
+      </div>
+    );
+  }
+
+  // Empty state
+  if (articles.length === 0 && !loading && !isSearching) {
+    return renderEmptyState();
+  }
+
   return (
     <div className={styles.blogContainer}>
-      <div className={styles.blogBanner}>
-        <div className={styles.blogHeader}>
-          <div className={styles.blogContent}>
-            <h1>Sports News</h1>
-            <p>Your ultimate source for sports news and updates</p>
-          </div>
-
-          <div className={styles.searchBar}>
-            <input
-              type="text"
-              placeholder="Search news..."
-              value={searchQuery}
-              onChange={handleSearchInput}
-              aria-label="Search news"
-              className={styles.searchInput}
-            />
-            <SearchIcon
-              aria-label="search"
-              alt="search"
-              className={styles.searchIcon}
-            />
-          </div>
-        </div>
-      </div>
+      {renderNewsHeader()}
 
       <div className={styles.dropdownContainerWp}>
         <h2>Latest Sports News</h2>
@@ -452,10 +458,12 @@ export default function SportsNews() {
           />
         </div>
       </div>
-      <div className={styles.blogMainContent}>
 
-        {isSearching ? (
-          <LoadingLogo />
+      <div className={styles.blogMainContent}>
+        {(loading || isSearching) ? (
+          <div className={styles.nothingContainer}>
+            <LoadingLogo />
+          </div>
         ) : (
           <div className={styles.articlesContent}>
             {articles.map((post) => (
@@ -478,7 +486,8 @@ export default function SportsNews() {
       >
         {renderModalContent()}
       </SideSlide>
-
+      
+      <Footer />
     </div>
   );
 }

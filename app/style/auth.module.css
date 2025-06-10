@@ -140,8 +140,13 @@
   }
 
   .termsContainer label {
-    font-size: .9rem;
     cursor: pointer;
+    font-size: .9rem;
+    text-decoration: underline;
+  }
+
+  .termsContainer label:hover {
+    color: var(--secondary-color);
   }
 
 

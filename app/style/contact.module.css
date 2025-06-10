@@ -1,15 +1,13 @@
 @media screen {
   .formContactContainer {
-    gap: 10px;
-    height: 100%;
+    gap: var(--padding-sm);
     display: flex;
-    overflow: hidden;
-    overflow-y: auto;
     flex-direction: column;
     justify-content: center;
-    background: linear-gradient(125deg, #000046, #1CB5E0);
-
-
+    align-items: center;
+    background: var(--linear-gradient-color);
+    position: relative;
+    padding: var(--padding-lg);
   }
 
   .formContactContainer::before {
@@ -19,22 +17,33 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background: var(--linear-backround-image);
+    opacity: 0.3;
     pointer-events: none;
   }
 
+  .contactWrap {
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    z-index: 1;
+  }
+
   .contactWrapinfo {
-    gap: 20px;
+    gap: var(--padding-lg);
     display: flex;
-    padding: 20px;
+    padding: var(--padding-xl);
     height: fit-content;
-    border-radius: 15px;
+    border-radius: var(--radius-md);
     flex-direction: column;
     background-color: var(--background-color);
+    box-shadow: var(--shadow-background-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(var(--padding-sm));
   }
 
   .contactInputContainer {
-    gap: 20px;
+    gap: var(--padding-sm);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -44,20 +53,48 @@
     text-transform: capitalize;
     color: var(--primary-color);
     text-wrap: nowrap;
-    font-size: 1rem;
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--padding-sx);
   }
 
   .contactInput {
-    gap: 20px;
+    gap: var(--padding-md);
     width: 100%;
     height: 60px;
     display: flex;
-    padding: 15px 20px;
-    border-radius: 15px;
+    padding: var(--padding-md) var(--padding-lg);
+    border-radius: var(--radius-sm);
     align-items: center;
     color: var(--light-primary-color);
     background: var(--light-background-color);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
 
+  .contactInput:focus-within {
+    border-color: var(--secondary-color);
+    background: var(--background-color);
+    box-shadow: 0 0 0 3px rgba(37, 199, 231, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .contactInput:hover {
+    background: var(--background-color);
+    border-color: var(--light-secondary-color);
+  }
+
+  .contactIcon {
+    font-size: var(--font-size-3);
+    color: var(--secondary-color);
+    flex-shrink: 0;
+    width: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .contactInput:focus-within .contactIcon {
+    color: var(--dark-secondary-color);
+    transform: scale(1.1);
   }
 
   .contactInput input {
@@ -67,6 +104,9 @@
     outline: none;
     border-radius: inherit;
     background: transparent;
+    color: var(--primary-color);
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-regular);
   }
 
   .contactInput input:-webkit-autofill,
@@ -74,7 +114,44 @@
   .contactInput input:-webkit-autofill:focus,
   .contactInput input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
-    -webkit-text-fill-color: var(--light-primary-color) !important;
+    -webkit-text-fill-color: var(--primary-color) !important;
+  }
+
+  .contactInputTextArea {
+    padding: var(--padding-md) var(--padding-lg);
+    border-radius: var(--radius-sm);
+    color: var(--light-primary-color);
+    background-color: var(--light-background-color);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    min-height: 120px;
+  }
+
+  .contactInputTextArea:focus-within {
+    border-color: var(--secondary-color);
+    background: var(--background-color);
+    box-shadow: 0 0 0 3px rgba(37, 199, 231, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .contactInputTextArea:hover {
+    background: var(--background-color);
+    border-color: var(--light-secondary-color);
+  }
+
+  .contactInputTextArea textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    background: transparent;
+    color: var(--primary-color);
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-regular);
+    font-family: inherit;
+    line-height: 1.5;
   }
 
   .contactInputTextArea textarea:-webkit-autofill,
@@ -82,126 +159,320 @@
   .contactInputTextArea textarea:-webkit-autofill:focus,
   .contactInputTextArea textarea:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
-    -webkit-text-fill-color: var(--light-primary-color) !important;
+    -webkit-text-fill-color: var(--primary-color) !important;
   }
 
   .contactInput input::placeholder,
   .contactInputTextArea textarea::placeholder {
-    font-size: 0.8rem;
+    font-size: var(--font-size-4);
     color: var(--light-primary-color);
+    opacity: 0.7;
   }
 
-  .contactInputTextArea {
-    padding: 15px 20px;
-    border-radius: 15px;
+  .errorText {
+    color: var(--loose-color);
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-medium);
+    margin-top: var(--padding-sx);
+    padding-left: var(--padding-sm);
+    display: flex;
     align-items: center;
-    color: var(--light-primary-color);
-    background-color: var(--light-background-color);
+    gap: var(--padding-sx);
   }
 
-  .contactInputTextArea textarea {
-    color: var(--light-primary-color);
+  .errorText::before {
+    content: "⚠";
+    font-size: var(--font-size-4);
   }
 
   .formcontactBtnWrapper {
-    gap: 10px;
+    gap: var(--padding-md);
     width: 100%;
     display: flex;
     flex-direction: column;
-  }
-
-  .formcontactBtnWrapper span {
-    font-size: .9rem;
-    text-align: center;
-    color: var(--light-primary-color);
+    margin-top: var(--padding-sm);
   }
 
   .formcontactButton {
-    gap: 15px;
+    gap: var(--padding-md);
     width: 100%;
-    max-height: 60px;
-    min-height: 60px;
+    height: 60px;
     cursor: pointer;
-    font-size: 1rem;
-    border-radius: 15px;
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-semibold);
+    border-radius: var(--radius-sm);
     color: var(--background-color);
-    background-color: var(--secondary-color);
+    background: linear-gradient(135deg, var(--secondary-color), var(--dark-secondary-color));
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-box);
+  }
+
+  .formcontactButton::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+
+  .formcontactButton:hover::before {
+    left: 100%;
   }
 
   .formcontactButton:hover {
-    background-color: var(--dark-secondary-color);
+    background: linear-gradient(135deg, var(--dark-secondary-color), var(--secondary-color));
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .formcontactButton:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .formcontactButton:disabled {
+    background: var(--light-primary-color);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .formcontactButton:disabled::before {
+    display: none;
+  }
+
+  /* Social Media Section - Updated to match footer */
+  .socialSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-md);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--padding-lg);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(var(--padding-sm));
+    margin-top: var(--padding-lg);
   }
 
   .socialContainer {
-    gap: 20px;
     display: flex;
-    padding: 10px 0;
+    flex-direction: column;
+    gap: var(--padding-md);
     align-items: center;
-    justify-content: space-evenly;
+    text-align: center;
+  }
+
+  .socialTitle {
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--background-color);
+    margin: 0;
+  }
+
+  .socialDescription {
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-light);
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
+  }
+
+  .socialLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-md);
+    justify-content: center;
+    align-items: center;
+    padding: var(--padding-sm) 0;
   }
 
   .socialIconWrap {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-box);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     cursor: pointer;
-    align-items: center;
-    border-radius: 360px;
-    justify-content: center;
-
+    flex-shrink: 0;
+    background: var(--light-primary-color);
   }
 
-
-
-  .socialIcon {
-    height: 18px;
-    width: 18px;
-  }
-}
-
-/* using it as global style for larger devices  */
-@media only screen and (min-width: 48em) {
-  .formContactContainer {
+  .socialIconWrap::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
     height: 100%;
-    align-items: center;
-    justify-content: center;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s ease;
   }
 
-  .contactWrap {
-    width: fit-content;
+  .socialIconWrap:hover::before {
+    left: 100%;
   }
 
-  .contactWrapinfo {
-    width: 80%;
-    height: auto;
+  .socialIconWrap:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-background-color);
+    border-color: rgba(255, 255, 255, 0.4);
   }
 
-  .socialContainer {
-    padding: 10px;
+  .socialIconWrap:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  /* Specific social media colors */
+  .socialIconWrap[data-social="facebook"] {
+    background: linear-gradient(135deg, #1877f2, #42a5f5);
+  }
+
+  .socialIconWrap[data-social="twitter"] {
+    background: linear-gradient(135deg, #1da1f2, #64b5f6);
+  }
+
+  .socialIconWrap[data-social="instagram"] {
+    background: linear-gradient(135deg, #e1306c, #fd1d1d, #fccc63);
+  }
+
+  .socialIconWrap[data-social="telegram"] {
+    background: linear-gradient(135deg, #0088cc, #33a3dc);
+  }
+
+  .socialIconWrap[data-social="whatsapp"] {
+    background: linear-gradient(135deg, #25d366, #4fce5d);
   }
 
   .socialIcon {
     height: 24px;
     width: 24px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  .socialIconWrap:hover .socialIcon {
+    transform: scale(1.1);
+  }
+
+  .contactNote {
+    font-size: var(--font-size-5);
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
+    padding: var(--padding-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: var(--padding-md);
   }
 }
 
-/* ipad pro screens & laptop */
+/* Tablet and larger screens */
+@media only screen and (min-width: 48em) {
+  .formContactContainer {
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding-xl);
+  }
+
+  .contactWrap {
+    width: fit-content;
+    max-width: 600px;
+  }
+
+  .contactWrapinfo {
+    width: 100%;
+    height: auto;
+    padding: var(--padding-xxl);
+  }
+
+  .socialLinks {
+    gap: var(--padding-lg);
+  }
+
+  .socialIconWrap {
+    width: 55px;
+    height: 55px;
+  }
+
+  .socialIcon {
+    height: 28px;
+    width: 28px;
+  }
+
+  .socialContainer {
+    padding: var(--padding-lg);
+  }
+
+  .socialTitle {
+    font-size: var(--font-size-2);
+  }
+
+  .socialDescription {
+    font-size: var(--font-size-4);
+  }
+}
+
+/* iPad pro screens & laptop */
 @media only screen and (min-width: 49em) and (max-width: 64em) {
   .contactWrapinfo {
-    width: calc(100% / 2);
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .formContactContainer {
+    padding: var(--padding-xxxl);
   }
 }
 
-/* large screens : Desktop and 4k screens */
-
+/* Large screens: Desktop and 4k screens */
 @media only screen and (min-width: 64.063em) and (max-width: 90em) {
   .contactWrapinfo {
-    width: calc(100% / 2);
+    width: 100%;
+    max-width: 550px;
+  }
+
+  .formContactContainer {
+    padding: var(--padding-xxxl);
   }
 }
 
 /* 5k screens and above */
 @media only screen and (min-width: 91em) {
   .contactWrapinfo {
-    width: calc(100% / 2);
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .formContactContainer {
+    padding: var(--padding-xxxl);
   }
 }

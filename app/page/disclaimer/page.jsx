@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Footer from "@/app/components/Footer";
 import styles from "@/app/style/info.module.css";
 
 export default function Policy() {
@@ -32,7 +33,7 @@ export default function Policy() {
   return (
     <div className={styles.termsContainer}>
       <div className={styles.termsCard}>
-        <h1 className={styles.mainHeading}>Disclaimer</h1>
+        <h1>Disclaimer</h1>
 
         <div className={styles.section}>
           <p>
@@ -54,16 +55,16 @@ export default function Policy() {
           </p>
         </div>
         <div className={styles.section}>
-
-        <p>
-          It is important to consider our predictions as recommendations and not
-          as encouragement to engage in betting activities. Gambling should be
-          viewed as a form of entertainment. The visitor and user of
-          sportypredict are solely responsible for their actions and decisions,
-          and the site and its employees cannot be held accountable for the
-          information provided on sportypredict.
-        </p>
-      </div>
+          <p>
+            It is important to consider our predictions as recommendations and
+            not as encouragement to engage in betting activities. Gambling
+            should be viewed as a form of entertainment. The visitor and user of
+            sportypredict are solely responsible for their actions and
+            decisions, and the site and its employees cannot be held accountable
+            for the information provided on sportypredict.
+          </p>
+        </div>
+        <Footer />
       </div>
     </div>
   );

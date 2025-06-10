@@ -3,7 +3,7 @@
     width: 100%;
     display: flex;
     padding: 10px;
-    height: 350px;
+    height: 300px;
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.3s ease;
@@ -71,7 +71,6 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    justify-content: space-between;
   }
 
   .teamInner h2 {
@@ -141,8 +140,8 @@
   }
 
   .teamImage {
-    height: 80px;
-    width: 80px;
+    height: 100px;
+    width: 100px;
   }
 
   .formation {

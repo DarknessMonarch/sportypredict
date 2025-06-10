@@ -4,6 +4,7 @@ import Image from "next/image";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
 import { useRouter } from "next/navigation";
+import Footer from "@/app/components/Footer";
 import Nothing from "@/app/components/Nothing";
 import { useBlogStore } from "@/app/store/Blog";
 import styles from "@/app/style/blog.module.css";
@@ -15,7 +16,6 @@ import { useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { FaFacebookF, FaInstagram, FaRegClock } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-
 import { IoSearchOutline as SearchIcon } from "react-icons/io5";
 
 export default function Blog() {
@@ -54,12 +54,51 @@ export default function Blog() {
       .replace(/^-+|-+$/g, "");
   }, []);
 
-  const findBlogBySlug = (slug) => {
-    if (!slug) return null;
-    return blogs.find((blog) => createSlug(blog.title) === slug);
+  // Helper function to get author name
+  const getAuthorName = (post) => {
+    return post.author || post.authorName || "Unknown Author";
   };
 
-  // Move openModal and closeModal before the useEffect that uses them
+  const getFormattedDate = (post) => {
+    return (
+      post.formattedDate ||
+      new Date(post.publishedAt || post.createdAt).toLocaleDateString()
+    );
+  };
+
+  const getReadTime = (post) => {
+    return post.readTime || "5 min read";
+  };
+
+  const createShareUrl = (post) => {
+    const slug = createSlug(post.title);
+    return `${window.location.origin}${pathname}?blog=${slug}`;
+  };
+
+  const findBlogBySlug = useCallback(
+    (slug) => {
+      if (!slug) return null;
+
+      const allBlogs = [...blogs, ...featuredBlogs];
+      return allBlogs.find((blog) => createSlug(blog.title) === slug);
+    },
+    [blogs, featuredBlogs, createSlug]
+  );
+
+  const performSearch = useCallback(
+    async (category = "", tag = "", query = "") => {
+      setIsSearching(true);
+      try {
+        await fetchBlogs(category, tag, query);
+      } catch (err) {
+        toast.error("Search failed. Please try again.");
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [fetchBlogs]
+  );
+
   const openModal = useCallback(
     async (post, updateUrl = true) => {
       try {
@@ -76,6 +115,7 @@ export default function Blog() {
 
         setSelectedPost(postToShow);
         setShowModal(true);
+        document.body.style.overflow = "hidden";
 
         if (updateUrl) {
           const slug = createSlug(post.title);
@@ -96,6 +136,8 @@ export default function Blog() {
   const closeModal = useCallback(() => {
     setShowModal(false);
     setSelectedPost(null);
+    document.body.style.overflow = "auto";
+
     const currentParams = searchParams.get("blog");
     if (currentParams) {
       router.replace(pathname, undefined, { shallow: true });
@@ -108,21 +150,14 @@ export default function Blog() {
         clearTimeout(searchTimeoutRef.current);
       }
 
-      searchTimeoutRef.current = setTimeout(async () => {
-        setIsSearching(true);
-        try {
-          await fetchBlogs("", "", query);
-        } catch (err) {
-          toast.error("Search failed. Please try again.");
-        } finally {
-          setIsSearching(false);
-        }
+      searchTimeoutRef.current = setTimeout(() => {
+        performSearch("", "", query);
       }, 300);
     },
-    [fetchBlogs]
+    [performSearch]
   );
 
-  // ✅ FIXED: Initial data loading - removed blogs and featuredBlogs from dependencies
+  // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
       try {
@@ -142,25 +177,14 @@ export default function Blog() {
     }
   }, [fetchBlogs, fetchCategories, fetchFeaturedBlogs]);
 
-  // ✅ NEW: Handle shared blog after data is loaded
   useEffect(() => {
     const sharedBlogSlug = searchParams.get("blog");
-    if (sharedBlogSlug && (blogs.length > 0 || featuredBlogs.length > 0) && !showModal) {
-      let sharedPost = null;
-
-      // Check in blogs first
-      if (blogs.length > 0) {
-        sharedPost = blogs.find(
-          (blog) => createSlug(blog.title) === sharedBlogSlug
-        );
-      }
-
-      // Check in featured blogs if not found
-      if (!sharedPost && featuredBlogs.length > 0) {
-        sharedPost = featuredBlogs.find(
-          (blog) => createSlug(blog.title) === sharedBlogSlug
-        );
-      }
+    if (
+      sharedBlogSlug &&
+      (blogs.length > 0 || featuredBlogs.length > 0) &&
+      !showModal
+    ) {
+      const sharedPost = findBlogBySlug(sharedBlogSlug);
 
       if (sharedPost) {
         openModal(sharedPost, false);
@@ -169,7 +193,16 @@ export default function Blog() {
         router.replace(pathname, undefined, { shallow: true });
       }
     }
-  }, [searchParams, blogs, featuredBlogs, showModal, openModal, createSlug, router, pathname]);
+  }, [
+    searchParams,
+    blogs,
+    featuredBlogs,
+    showModal,
+    openModal,
+    findBlogBySlug,
+    router,
+    pathname,
+  ]);
 
   useEffect(() => {
     if (error) {
@@ -181,17 +214,30 @@ export default function Blog() {
     if (searchQuery.trim()) {
       debouncedSearch(searchQuery);
     } else if (searchQuery === "") {
-      setIsSearching(true);
-      fetchBlogs(activeCategory, "", "").finally(() => setIsSearching(false));
+      performSearch(activeCategory, "", "");
     }
-  }, [searchQuery, debouncedSearch, fetchBlogs, activeCategory]);
+  }, [searchQuery, debouncedSearch, performSearch, activeCategory]);
 
   useEffect(() => {
     if (activeCategory && !searchQuery) {
-      setIsSearching(true);
-      fetchBlogs(activeCategory, "", "").finally(() => setIsSearching(false));
+      performSearch(activeCategory, "", "");
     }
-  }, [activeCategory, fetchBlogs, searchQuery]);
+  }, [activeCategory, performSearch, searchQuery]);
+
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.keyCode === 27) closeModal();
+    };
+
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+      document.body.style.overflow = "auto";
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [closeModal]);
 
   const handleSearchInput = (e) => {
     setSearchQuery(e.target.value);
@@ -201,11 +247,7 @@ export default function Blog() {
     try {
       if (activeCategory === category) {
         setActiveCategory("");
-        setIsSearching(true);
-        fetchBlogs("", "", searchQuery).finally(() =>
-          // category, tag, search
-          setIsSearching(false)
-        );
+        performSearch("", "", searchQuery);
       } else {
         setActiveCategory(category);
         if (searchQuery) {
@@ -219,8 +261,7 @@ export default function Blog() {
 
   const handleShare = async (post) => {
     try {
-      const slug = createSlug(post.title);
-      const shareUrl = `${window.location.origin}${pathname}?blog=${slug}`;
+      const shareUrl = createShareUrl(post);
 
       if (navigator.share) {
         await navigator.share({
@@ -239,25 +280,25 @@ export default function Blog() {
 
   const handleSocialShare = async (platform, post) => {
     try {
-      const slug = createSlug(post.title);
-      const shareUrl = `${window.location.origin}${pathname}?blog=${slug}`;
+      const shareUrl = createShareUrl(post);
       const url = encodeURIComponent(shareUrl);
       const text = encodeURIComponent(`${post.title} - ${post.excerpt}`);
 
-      let socialShareUrl = "";
-      switch (platform) {
-        case "facebook":
-          socialShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-          break;
-        case "twitter":
-          socialShareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
-          break;
-        case "instagram":
-          await navigator.clipboard.writeText(shareUrl);
-          toast.success("Blog link copied! You can now paste it on Instagram");
-          return;
-        default:
-          throw new Error("Unsupported platform");
+      const socialUrls = {
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+        twitter: `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
+        instagram: null, // Special case
+      };
+
+      if (platform === "instagram") {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Blog link copied! You can now paste it on Instagram");
+        return;
+      }
+
+      const socialShareUrl = socialUrls[platform];
+      if (!socialShareUrl) {
+        throw new Error("Unsupported platform");
       }
 
       window.open(socialShareUrl, "_blank", "width=600,height=400");
@@ -270,71 +311,111 @@ export default function Blog() {
     window.open("https://t.me/sportyPredictTG", "_blank");
   };
 
-  useEffect(() => {
-    const handleEsc = (event) => {
-      if (event.keyCode === 27) closeModal();
+  const renderPostMeta = (post) => (
+    <div className={styles.articleMeta}>
+      <span>By {getAuthorName(post)}</span>
+      <div className={styles.dateAndTime}>
+        <span>
+          <FaRegClock /> {getReadTime(post)}
+        </span>
+        <span>{getFormattedDate(post)}</span>
+      </div>
+    </div>
+  );
+
+  const renderSocialShareButtons = (post) => (
+    <div className={styles.socialShareLinks}>
+      {["facebook", "twitter", "instagram"].map((platform) => {
+        const icons = {
+          facebook: FaFacebookF,
+          twitter: FaXTwitter,
+          instagram: FaInstagram,
+        };
+        const Icon = icons[platform];
+
+        return (
+          <button
+            key={platform}
+            onClick={() => handleSocialShare(platform, post)}
+            aria-label={`Share on ${platform}`}
+            className={styles.socialIconBtn}
+          >
+            <Icon
+              className={styles.socialIcon}
+              alt={platform}
+              aria-label={platform}
+            />
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  const renderBlogHeader = () => (
+    <div className={styles.blogBanner}>
+      <div className={styles.blogHeader}>
+        <div className={styles.blogContent}>
+          <h1>Insights Blog</h1>
+          <p>Expert insights, analysis and thoughts to educate and inform.</p>
+        </div>
+
+        <div className={styles.searchBar}>
+          <input
+            type="text"
+            placeholder="Search blog posts..."
+            value={searchQuery}
+            onChange={handleSearchInput}
+            aria-label="Search blog posts"
+            className={styles.searchInput}
+          />
+          <SearchIcon
+            aria-label="search"
+            alt="search"
+            className={styles.searchIcon}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderTelegramSection = () => (
+    <div className={styles.telegramContent}>
+      <div className={styles.telegramCard}>
+        <h2>Join Our Telegram Community</h2>
+        <p>
+          Get exclusive access to expert insights, premium content, and connect
+          with fellow readers.
+        </p>
+        <button className={styles.telegramButton} onClick={openTelegram}>
+          Join us
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderEmptyState = () => {
+    const getEmptyMessage = () => {
+      if (searchQuery) return `No blog posts found for "${searchQuery}"`;
+      if (activeCategory)
+        return `No blog posts found in "${activeCategory}" category`;
+      return "No blog posts available";
     };
-    window.addEventListener("keydown", handleEsc);
-    return () => {
-      window.removeEventListener("keydown", handleEsc);
-      document.body.style.overflow = "auto";
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
-    };
-  }, [closeModal]);
 
-  const featuredPost = featuredBlogs.length > 0 ? featuredBlogs[0] : null;
-  const categories = storeCategories.map((cat) => cat.name || cat);
-
-  // ✅ FIXED: Only show full-page loading when NOT searching
-  if (loading && blogs.length === 0 && !featuredPost && !isSearching) {
-    return <LoadingLogo />;
-  }
-
-  if (blogs.length === 0 && !featuredPost && !loading && !isSearching) {
     return (
       <div className={styles.blogContainer}>
-        <div className={styles.blogBanner}>
-          <div className={styles.blogHeader}>
-            <div className={styles.blogContent}>
-              <h1>Insights Blog</h1>
-              <p>
-                Expert insights, analysis and thoughts to educate and inform.
-              </p>
-            </div>
-
-            <div className={styles.searchBar}>
-              <input
-                type="text"
-                placeholder="Search blog posts..."
-                value={searchQuery}
-                onChange={handleSearchInput}
-                aria-label="Search blog posts"
-                className={styles.searchInput}
-              />
-              <SearchIcon
-                aria-label="search"
-                alt="search"
-                className={styles.searchIcon}
-              />
-            </div>
-          </div>
+        {renderBlogHeader()}
+        <div className={styles.nothingContainer}>
+          <Nothing
+            Alt="No blog posts"
+            NothingImage={EmptyBlogImage}
+            Text={getEmptyMessage()}
+          />
         </div>
-        <Nothing
-          Alt="No blog posts"
-          NothingImage={EmptyBlogImage}
-          Text={
-            searchQuery
-              ? `No blog posts found for "${searchQuery}"`
-              : activeCategory
-              ? `No blog posts found in "${activeCategory}" category`
-              : "No blog posts available"
-          }
-        />
+        {renderTelegramSection()}
+        <Footer />
       </div>
     );
-  }
+  };
 
   const renderModalContent = () => {
     if (!selectedPost) return null;
@@ -349,41 +430,7 @@ export default function Blog() {
               ))}
             </div>
           )}
-          <div className={styles.socialShareLinks}>
-            <button
-              onClick={() => handleSocialShare("facebook", selectedPost)}
-              aria-label="Share on Facebook"
-              className={styles.socialIconBtn}
-            >
-              <FaFacebookF
-                className={styles.socialIcon}
-                alt="facebook"
-                aria-label="facebook"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialShare("twitter", selectedPost)}
-              aria-label="Share on Twitter"
-              className={styles.socialIconBtn}
-            >
-              <FaXTwitter
-                className={styles.socialIcon}
-                alt="twitter"
-                aria-label="twitter"
-              />
-            </button>
-            <button
-              onClick={() => handleSocialShare("instagram", selectedPost)}
-              aria-label="Share on Instagram"
-              className={styles.socialIconBtn}
-            >
-              <FaInstagram
-                className={styles.socialIcon}
-                alt="instagram"
-                aria-label="instagram"
-              />
-            </button>
-          </div>
+          {renderSocialShareButtons(selectedPost)}
         </div>
 
         <div className={styles.sideSlideImageContainer}>
@@ -394,22 +441,15 @@ export default function Blog() {
             fill
             sizes="100%"
             quality={100}
-            style={{
-              objectFit: "cover",
-            }}
+            style={{ objectFit: "cover" }}
             priority={true}
           />
         </div>
+
         <div className={styles.sideSlideInnerContentDetails}>
           <div className={styles.authorContainer}>
             <span className={styles.category}>{selectedPost.category}</span>
-
-            <span>
-              By{" "}
-              {selectedPost.author ||
-                selectedPost.authorName ||
-                "Unknown Author"}
-            </span>
+            <span>By {getAuthorName(selectedPost)}</span>
           </div>
           <h2>{selectedPost.title}</h2>
           <div
@@ -417,52 +457,35 @@ export default function Blog() {
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(selectedPost.content),
             }}
-          ></div>
+          />
         </div>
 
         <div className={styles.SideSlideFooter}>
           <div className={styles.dateAndTime}>
             <span>
-              <FaRegClock /> {selectedPost.readTime || "5 min read"}
+              <FaRegClock /> {getReadTime(selectedPost)}
             </span>
           </div>
-          <span>
-            {selectedPost.formattedDate ||
-              new Date(
-                selectedPost.publishedAt || selectedPost.createdAt
-              ).toLocaleDateString()}
-          </span>
+          <span>{getFormattedDate(selectedPost)}</span>
         </div>
       </div>
     );
   };
 
+  const featuredPost = featuredBlogs.length > 0 ? featuredBlogs[0] : null;
+  const categories = storeCategories.map((cat) => cat.name || cat);
+
+  if (loading && blogs.length === 0 && !featuredPost && !isSearching) {
+    return <LoadingLogo />;
+  }
+
+  if (blogs.length === 0 && !featuredPost && !loading && !isSearching) {
+    return renderEmptyState();
+  }
+
   return (
     <div className={styles.blogContainer}>
-      <div className={styles.blogBanner}>
-        <div className={styles.blogHeader}>
-          <div className={styles.blogContent}>
-            <h1>Insights Blog</h1>
-            <p>Expert insights, analysis and thoughts to educate and inform.</p>
-          </div>
-
-          <div className={styles.searchBar}>
-            <input
-              type="text"
-              placeholder="Search blog posts..."
-              value={searchQuery}
-              onChange={handleSearchInput}
-              aria-label="Search blog posts"
-              className={styles.searchInput}
-            />
-            <SearchIcon
-              aria-label="search"
-              alt="search"
-              className={styles.searchIcon}
-            />
-          </div>
-        </div>
-      </div>
+      {renderBlogHeader()}
 
       <div className={styles.categoriesContainer}>
         {categories.map((category, index) => (
@@ -477,6 +500,7 @@ export default function Blog() {
           </button>
         ))}
       </div>
+
       <div className={styles.categoriesInnerContainer}>
         {featuredPost && !searchQuery && !activeCategory && (
           <div className={styles.featuredArticle}>
@@ -488,9 +512,7 @@ export default function Blog() {
                 fill
                 sizes="100%"
                 quality={100}
-                style={{
-                  objectFit: "cover",
-                }}
+                style={{ objectFit: "cover" }}
                 priority={true}
               />
             </div>
@@ -498,25 +520,7 @@ export default function Blog() {
               <div className={styles.category}>{featuredPost.category}</div>
               <h2>{featuredPost.title}</h2>
               <p>{featuredPost.excerpt}</p>
-              <div className={styles.articleMeta}>
-                <span>
-                  By{" "}
-                  {featuredPost.author ||
-                    featuredPost.authorName ||
-                    "Unknown Author"}
-                </span>
-                <div className={styles.dateAndTime}>
-                  <span>
-                    <FaRegClock /> {featuredPost.readTime || "5 min read"}
-                  </span>
-                  <span>
-                    {featuredPost.formattedDate ||
-                      new Date(
-                        featuredPost.publishedAt || featuredPost.createdAt
-                      ).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
+              {renderPostMeta(featuredPost)}
               <button
                 onClick={() => openModal(featuredPost)}
                 className={styles.readMoreBtn}
@@ -531,7 +535,9 @@ export default function Blog() {
           <h2>Latest Blog Posts</h2>
 
           {isSearching ? (
-            <LoadingLogo />
+            <div className={styles.nothingContainer}>
+              <LoadingLogo />
+            </div>
           ) : (
             <div className={styles.articlesContent}>
               {blogs.map((post) => (
@@ -545,20 +551,8 @@ export default function Blog() {
             </div>
           )}
         </div>
-
-        <div className={styles.telegramContent}>
-          <div className={styles.telegramCard}>
-            <h2>Join Our Telegram Community</h2>
-            <p>
-              Get exclusive access to expert insights, premium content, and
-              connect with fellow readers.
-            </p>
-            <button className={styles.telegramButton} onClick={openTelegram}>
-             Join us
-            </button>
-          </div>
-        </div>
       </div>
+      {renderTelegramSection()}
 
       <SideSlide
         isOpen={showModal}
@@ -568,6 +562,8 @@ export default function Blog() {
       >
         {renderModalContent()}
       </SideSlide>
+
+      <Footer />
     </div>
   );
 }

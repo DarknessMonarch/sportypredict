@@ -69,7 +69,7 @@ export default function Bonus() {
                 sizes="100%"
                 quality={100}
                 style={{
-                  objectFit: "contain",
+                  objectFit: "cover",
                 }}
                 priority={true}
               />

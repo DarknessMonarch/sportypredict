@@ -1,27 +1,41 @@
 "use client";
-
-import { useState } from "react";
+import toast from "sonner";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import LogoImg from "@/public/assets/logoWhite.png";
 import styles from "@/app/style/footer.module.css";
 
 import {
   FaWhatsapp,
   FaEnvelope,
   FaFacebookF,
-  FaTwitter,
-  FaTelegram,
   FaPhone,
+  FaInstagram,
   FaMapMarkerAlt,
 } from "react-icons/fa";
-import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa6";
+import { FaTiktok, FaYoutube, FaXTwitter } from "react-icons/fa6";
+import { PiTelegramLogoDuotone as TelegramIcon } from "react-icons/pi";
+
+import { RiBasketballLine as BasketballIcon } from "react-icons/ri";
+import { GiTakeMyMoney as MoneyIcon } from "react-icons/gi";
+import { RiVipLine as VipIcon } from "react-icons/ri";
+import {
+  IoFootball as FootballIcon,
+  IoNewspaperOutline as NewsIcon,
+  IoInformationCircleOutline as AboutIcon,
+} from "react-icons/io5";
+import { MdOutlineSportsTennis as TennisIcon } from "react-icons/md";
+import { PiCourtBasketball as BetOfTheDayIcon } from "react-icons/pi";
+import { TbStars as ExtraIcon } from "react-icons/tb";
+import {
+  RiArticleLine as BlogIcon,
+  RiGiftLine as OffersIcon,
+} from "react-icons/ri";
 
 export default function Footer() {
   const [message, setMessage] = useState("");
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const router = useRouter();
   const phoneNumber = "+254703147237";
   const currentYear = new Date().getFullYear();
@@ -39,41 +53,30 @@ export default function Footer() {
         "_blank"
       );
       setMessage("");
-      setError("");
-      setSuccess("Redirecting to WhatsApp...");
-      setTimeout(() => setSuccess(""), 3000);
+      toast.success("Redirecting to WhatsApp...");
     } else {
-      setError("Please write a message");
-      setTimeout(() => setError(""), 3000);
-    }
-  };
-
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    if (email.trim() !== "") {
-      // Here you would typically handle newsletter subscription
-      setSuccess("Thank you for subscribing to our newsletter!");
-      setEmail("");
-      setError("");
-      setTimeout(() => setSuccess(""), 5000);
-    } else {
-      setError("Please enter a valid email address");
-      setTimeout(() => setError(""), 3000);
+      toast.error("Please write a message");
     }
   };
 
   return (
     <footer className={styles.footer} id="contact">
       <div className={styles.footerContainer}>
-        {/* Main Footer Content */}
         <div className={styles.footerGrid}>
-          {/* Company Info Section */}
           <div className={styles.footerColumn}>
             <div className={styles.brandSection}>
-              <h2 className={styles.brandTitle}>SportyPredict</h2>
-              <p className={styles.brandDescription}>
-                Your trusted partner for professional sports predictions and betting insights. 
-                We provide expert analysis and data-driven predictions to help you make informed decisions.
+              <Image
+                className={styles.logo}
+                src={LogoImg}
+                alt="logo"
+                height={80}
+                priority={true}
+              />
+              <p>
+                Your premier destination for professional sports predictions,
+                expert analysis, and winning betting strategies. We deliver
+                data-driven insights across football, basketball, tennis, and
+                more to help you make informed betting decisions.
               </p>
             </div>
 
@@ -82,7 +85,7 @@ export default function Footer() {
               <div className={styles.contactList}>
                 <div className={styles.contactItem}>
                   <FaPhone className={styles.contactIcon} />
-                  <span 
+                  <span
                     className={styles.contactText}
                     onClick={() =>
                       openSocialMedia(
@@ -101,51 +104,88 @@ export default function Footer() {
                 </div>
                 <div className={styles.contactItem}>
                   <FaMapMarkerAlt className={styles.contactIcon} />
-                  <span className={styles.contactText}>
-                    Nairobi, Kenya
-                  </span>
+                  <span className={styles.contactText}>Nairobi, Kenya</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Navigation Links */}
           <div className={styles.footerColumn}>
+          {/* Sports Predictions Column */}
+
             <div className={styles.linkSection}>
-              <h3 className={styles.columnTitle}>Quick Links</h3>
+              <h3 className={styles.columnTitle}>Sports Predictions</h3>
               <nav className={styles.footerNav}>
-                <Link href="/" className={styles.footerLink}>
-                  Home
+                <Link href="/page/day" className={styles.footerLink}>
+                  <BetOfTheDayIcon className={styles.footerLinkIcon} />
+                  Bet of the Day
                 </Link>
-                <Link href="/banker" className={styles.footerLink}>
-                  Bet of the day
+                <Link href="/page/football" className={styles.footerLink}>
+                  <FootballIcon className={styles.footerLinkIcon} />
+                  Football Predictions
                 </Link>
-                <Link href="/tennis" className={styles.footerLink}>
-                  Tennis Predictions
-                </Link>
-                <Link href="/basketball" className={styles.footerLink}>
+                <Link href="/page/basketball" className={styles.footerLink}>
+                  <BasketballIcon className={styles.footerLinkIcon} />
                   Basketball Tips
                 </Link>
-                <Link href="/page/news" className={styles.footerLink}>
-                  Sport News
+                <Link href="/page/tennis" className={styles.footerLink}>
+                  <TennisIcon className={styles.footerLinkIcon} />
+                  Tennis Predictions
                 </Link>
-                <Link href="/page/blog" className={styles.footerLink}>
-                  Sport Blog
+                <Link href="/page/extra" className={styles.footerLink}>
+                  <ExtraIcon className={styles.footerLinkIcon} />
+                  Extra Predictions
+                </Link>
+              </nav>
+            </div>
+          {/* Services Column */}
+
+              <div className={styles.linkSection}>
+              <h3 className={styles.columnTitle}>Services</h3>
+              <nav className={styles.footerNav}>
+                <Link href="/page/vip" className={styles.footerLink}>
+                  <VipIcon className={styles.footerLinkIcon} />
+                  VIP Membership
+                </Link>
+                <Link href="/page/payment" className={styles.footerLink}>
+                  <MoneyIcon className={styles.footerLinkIcon} />
+                  How to Pay
                 </Link>
                 <Link href="/page/offers" className={styles.footerLink}>
-                  Sport Offers
-                </Link>
-                <Link href="/page/about" className={styles.footerLink}>
-                  About Us
+                  <OffersIcon className={styles.footerLinkIcon} />
+                  Special Offers
                 </Link>
               </nav>
             </div>
           </div>
 
-          {/* Legal & Support */}
+
+          {/* Content & Information Column */}
           <div className={styles.footerColumn}>
             <div className={styles.linkSection}>
-              <h3 className={styles.columnTitle}>Legal & Support</h3>
+              <h3 className={styles.columnTitle}>Content & News</h3>
+              <nav className={styles.footerNav}>
+                <Link href="/page/news" className={styles.footerLink}>
+                  <NewsIcon className={styles.footerLinkIcon} />
+                  Sports News
+                </Link>
+                <Link href="/page/blog" className={styles.footerLink}>
+                  <BlogIcon className={styles.footerLinkIcon} />
+                  Sports Blog
+                </Link>
+                <Link href="/page/about" className={styles.footerLink}>
+                  <AboutIcon className={styles.footerLinkIcon} />
+                  About Us
+                </Link>
+                <Link href="/page/contact" className={styles.footerLink}>
+                  <FaEnvelope className={styles.footerLinkIcon} />
+                  Contact Us
+                </Link>
+              </nav>
+            </div>
+
+            <div className={styles.linkSection}>
+              <h3 className={styles.columnTitle}>Legal Information</h3>
               <nav className={styles.footerNav}>
                 <Link href="/page/terms" className={styles.footerLink}>
                   Terms & Conditions
@@ -159,101 +199,70 @@ export default function Footer() {
                 <Link href="/page/disclaimer" className={styles.footerLink}>
                   Disclaimer
                 </Link>
-                <Link href="/page/contact" className={styles.footerLink}>
-                  Contact Us
-                </Link>
-                <Link href="/support" className={styles.footerLink}>
-                  Customer Support
-                </Link>
-                <Link href="/faq" className={styles.footerLink}>
-                  FAQ
-                </Link>
               </nav>
             </div>
           </div>
+        </div>
 
-          {/* Communication & Apps */}
-          <div className={styles.footerColumn}>
-            {/* Newsletter Subscription */}
-            <div className={styles.newsletterSection}>
-              <h3 className={styles.columnTitle}>Stay Updated</h3>
-              <p className={styles.newsletterDesc}>
-                Subscribe to our newsletter for the latest predictions and exclusive offers.
-              </p>
-              <form onSubmit={handleNewsletterSubmit} className={styles.newsletterForm}>
-                <div className={styles.inputWrapper}>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    className={styles.newsletterInput}
-                  />
-                  <button type="submit" className={styles.newsletterButton}>
-                    Subscribe
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* WhatsApp Contact */}
-            <div className={styles.whatsappSection}>
-              <h4 className={styles.subTitle}>Quick Contact</h4>
-              <form onSubmit={handleWhatsAppSubmit} className={styles.whatsappForm}>
-                <div className={styles.inputWrapper}>
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Send us a WhatsApp message"
-                    className={styles.whatsappInput}
-                  />
-                  <button type="submit" className={styles.whatsappButton}>
-                    <FaWhatsapp className={styles.whatsappIcon} />
-                  </button>
-                </div>
-              </form>
-              {error && <span className={styles.errorMessage}>{error}</span>}
-              {success && <span className={styles.successMessage}>{success}</span>}
-            </div>
-
-            {/* Mobile App Download */}
-            <div className={styles.appDownloadSection}>
-              <h4 className={styles.subTitle}>Download Our App</h4>
-              <div className={styles.downloadButtons}>
-                <button
-                  className={styles.downloadBtn}
-                  onClick={() =>
-                    openSocialMedia(
-                      "https://itunes.apple.com/app/idYOUR_APP_ID"
-                    )
-                  }
-                >
-                  <Image
-                    src="/images/ios-download.png"
-                    alt="Download on iOS"
-                    width={120}
-                    height={36}
-                    className={styles.downloadImage}
-                  />
-                </button>
-                <button
-                  className={styles.downloadBtn}
-                  onClick={() =>
-                    openSocialMedia(
-                      "https://play.google.com/store/apps/details?id=YOUR_PACKAGE_NAME"
-                    )
-                  }
-                >
-                  <Image
-                    src="/images/android-download.png"
-                    alt="Download on Android"
-                    width={120}
-                    height={36}
-                    className={styles.downloadImage}
-                  />
+        {/* Communication & Apps Section */}
+        <div className={styles.communicationGrid}>
+          <div className={styles.whatsappSection}>
+            <h4 className={styles.subTitle}>Instant Support</h4>
+            <p className={styles.whatsappDesc}>
+              Need help? Send us a message on WhatsApp for instant support and
+              VIP subscriptions.
+            </p>
+            <form
+              onSubmit={handleWhatsAppSubmit}
+              className={styles.whatsappForm}
+            >
+              <div className={styles.inputWrapper}>
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Type your message here..."
+                  className={styles.whatsappInput}
+                />
+                <button type="submit" className={styles.whatsappButton}>
+                  <FaWhatsapp className={styles.whatsappIcon} />
+                  Send
                 </button>
               </div>
+            </form>
+          </div>
+
+          <div className={styles.appDownloadSection}>
+            <h4 className={styles.subTitle}>Download Our App</h4>
+            <p className={styles.appDesc}>
+              Get predictions on the go! Download our mobile app for iOS and
+              Android.
+            </p>
+            <div className={styles.downloadButtons}>
+              <button
+                className={styles.downloadBtn}
+                onClick={() =>
+                  openSocialMedia("https://apps.apple.com/app/sportypredict")
+                }
+              >
+                <div className={styles.downloadContent}>
+                  <span className={styles.downloadText}>Download for</span>
+                  <span className={styles.downloadPlatform}>iOS</span>
+                </div>
+              </button>
+              <button
+                className={styles.downloadBtn}
+                onClick={() =>
+                  openSocialMedia(
+                    "https://play.google.com/store/apps/details?id=com.sportypredict"
+                  )
+                }
+              >
+                <div className={styles.downloadContent}>
+                  <span className={styles.downloadText}>Download for</span>
+                  <span className={styles.downloadPlatform}>Android</span>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -261,7 +270,11 @@ export default function Footer() {
         {/* Social Media Section */}
         <div className={styles.socialSection}>
           <div className={styles.socialContainer}>
-            <h3 className={styles.socialTitle}>Follow Us</h3>
+            <h3 className={styles.socialTitle}>Follow SportyPredict</h3>
+            <p className={styles.socialDescription}>
+              Stay updated with the latest predictions, tips, and sports news
+              across all our social media platforms.
+            </p>
             <div className={styles.socialLinks}>
               <button
                 className={`${styles.socialButton} ${styles.facebook}`}
@@ -270,7 +283,7 @@ export default function Footer() {
                     "https://www.facebook.com/profile.php?id=100093225097104&mibextid=LQQJ4d"
                   )
                 }
-                aria-label="Facebook"
+                aria-label="Follow us on Facebook"
               >
                 <FaFacebookF />
               </button>
@@ -281,9 +294,9 @@ export default function Footer() {
                     "https://twitter.com/sportypredict?s=21&t=ordgrMn8HjrBLUy3PdpsBA"
                   )
                 }
-                aria-label="Twitter"
+                aria-label="Follow us on Twitter"
               >
-                <FaTwitter />
+                <FaXTwitter />
               </button>
               <button
                 className={`${styles.socialButton} ${styles.instagram}`}
@@ -292,7 +305,7 @@ export default function Footer() {
                     "https://instagram.com/sportypredict_?igshid=MTIzZWMxMTBkOA=="
                   )
                 }
-                aria-label="Instagram"
+                aria-label="Follow us on Instagram"
               >
                 <FaInstagram />
               </button>
@@ -301,16 +314,16 @@ export default function Footer() {
                 onClick={() =>
                   openSocialMedia("https://www.youtube.com/@Sportypredict")
                 }
-                aria-label="YouTube"
+                aria-label="Subscribe to our YouTube channel"
               >
                 <FaYoutube />
               </button>
               <button
                 className={`${styles.socialButton} ${styles.telegram}`}
                 onClick={() => openSocialMedia("https://t.me/sportyPredictTG")}
-                aria-label="Telegram"
+                aria-label="Join our Telegram channel"
               >
-                <FaTelegram />
+                <TelegramIcon />
               </button>
               <button
                 className={`${styles.socialButton} ${styles.tiktok}`}
@@ -319,9 +332,20 @@ export default function Footer() {
                     "https://www.tiktok.com/@sportypredict?_t=8dxjShAnRI5&_r=1"
                   )
                 }
-                aria-label="TikTok"
+                aria-label="Follow us on TikTok"
               >
                 <FaTiktok />
+              </button>
+              <button
+                className={`${styles.socialButton} ${styles.whatsapp}`}
+                onClick={() =>
+                  openSocialMedia(
+                    "https://wa.me/+254703147237?text=Hi SportyPredict, I want to join your WhatsApp group"
+                  )
+                }
+                aria-label="Join our WhatsApp group"
+              >
+                <FaWhatsapp />
               </button>
             </div>
           </div>
@@ -331,9 +355,12 @@ export default function Footer() {
         <div className={styles.bottomBar}>
           <div className={styles.bottomContent}>
             <div className={styles.copyright}>
-              <p>© {currentYear} SportyPredict. All rights reserved</p>
+              <p>© {currentYear} SportyPredict. All rights reserved.</p>
             </div>
             <div className={styles.bottomLinks}>
+              <Link href="/sitemap" className={styles.bottomLink}>
+                Sitemap
+              </Link>
               <Link href="/page/terms" className={styles.bottomLink}>
                 Terms
               </Link>
@@ -343,9 +370,7 @@ export default function Footer() {
               <Link href="/page/disclaimer" className={styles.bottomLink}>
                 Disclaimer
               </Link>
-              <Link href="/sitemap" className={styles.bottomLink}>
-                Sitemap
-              </Link>
+             
             </div>
           </div>
         </div>

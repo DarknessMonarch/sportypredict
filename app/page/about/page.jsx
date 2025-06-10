@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import Footer from "@/app/components/Footer";
 import styles from "@/app/style/info.module.css";
 
-export default function TermsConditions() {
+export default function About() {
   useEffect(() => {
     const sections = document.querySelectorAll(`.${styles.section}`);
 
@@ -32,9 +33,9 @@ export default function TermsConditions() {
   return (
     <div className={styles.termsContainer}>
       <div className={styles.termsCard}>
-        <h1 className={styles.mainHeading}>About Sportypredict</h1>
+        <h1>About Sportypredict</h1>
         <div className={styles.section}>
-          <h2 className={styles.subHeading}>
+          <h2>
             SportyPredict is One Of the leading provider of sports betting
             analysis and predictions.
           </h2>
@@ -52,7 +53,7 @@ export default function TermsConditions() {
           </p>
         </div>
         <div className={styles.section}>
-          <h2 className={styles.subHeading}>Why Choose SportyPredict?</h2>
+          <h2>Why Choose SportyPredict?</h2>
           <p>
             At SportyPredict, our sports predictions are meticulously crafted
             based on a comprehensive understanding of matches derived from an
@@ -64,9 +65,7 @@ export default function TermsConditions() {
           </p>
         </div>
         <div className={styles.section}>
-          <h2 className={styles.subHeading}>
-            The Significance of Following a Betting Prediction Website.
-          </h2>
+          <h2>The Significance of Following a Betting Prediction Website.</h2>
           <p>
             Sports, particularly football, basketball, and tennis, have garnered
             a massive fan base. The thrill and excitement of these sports have
@@ -86,7 +85,7 @@ export default function TermsConditions() {
           </p>
         </div>
         <div className={styles.section}>
-          <h2 className={styles.subHeading}>
+          <h2>
             The Importance of Relying on an Accurate Football Prediction
             Website.
           </h2>
@@ -147,17 +146,15 @@ export default function TermsConditions() {
           </ul>
           <p>
             As the gaming season commences, capitalizing on the passion for
-            sports to improve one&apos;s financial well-being becomes paramount. This
-            can only be accomplished through the utilization of the best
+            sports to improve one&apos;s financial well-being becomes paramount.
+            This can only be accomplished through the utilization of the best
             prediction site in the world. Those who aspire to transform their
             dreams into reality are encouraged to explore any of the
             aforementioned betting sites.
           </p>
         </div>
         <div className={styles.section}>
-          <h2 className={styles.subHeading}>
-            How to Stake Tips from Our Website.
-          </h2>
+          <h2>How to Stake Tips from Our Website.</h2>
           <p>
             We strongly advise against staking your money on all the games
             listed on our platform in a single betting slip. Instead, we
@@ -186,15 +183,14 @@ export default function TermsConditions() {
           </p>
           <ul className={styles.bulletList}>
             <li>Bet Of The Day tip</li>
-            <li>Over 1.5 Goals tips</li>
-            <li>Over 2.5 Goals tips</li>
-            <li>Both Teams To Score tips</li>
-            <li>Double Chance tips</li>
-            <li>Under 2.5 Goals tips</li>
+            <li>Basketball tips</li>
+            <li>Football tips</li>
+            <li>Tennis tips</li>
+            <li>Vip tips</li>
           </ul>
         </div>
         <div className={styles.section}>
-          <h2 className={styles.subHeading}></h2>
+          <h2></h2>
           <p>
             SportyPredict is the ultimate destination for accurate sports
             betting predictions, specializing in football, basketball, and
@@ -204,10 +200,7 @@ export default function TermsConditions() {
             maximum profitability
           </p>
         </div>
-        <div className={styles.section}>
-          <h2 className={styles.subHeading}>In Summary.</h2>
-          <p></p>
-        </div>
+      <Footer/>
       </div>
     </div>
   );
