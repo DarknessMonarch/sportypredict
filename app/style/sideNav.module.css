@@ -114,8 +114,8 @@
   }
 
   .sideNavContainerTop {
-    height: 100%;
     display: flex;
+    min-height: 100%;
     position: relative;
     flex-direction: column;
   }

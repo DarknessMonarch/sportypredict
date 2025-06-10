@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { toast } from 'sonner';
+import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import LogoImg from "@/public/assets/logoWhite.png";
@@ -27,9 +27,7 @@ import {
   IoNewspaperOutline as NewsIcon,
   IoInformationCircleOutline as AboutIcon,
 } from "react-icons/io5";
-import { MdOutlineSportsTennis as TennisIcon } from "react-icons/md";
-import { PiCourtBasketball as BetOfTheDayIcon } from "react-icons/pi";
-import { TbStars as ExtraIcon } from "react-icons/tb";
+
 import {
   RiArticleLine as BlogIcon,
   RiGiftLine as OffersIcon,
@@ -103,44 +101,13 @@ export default function Footer() {
                     contact@sportypredict.com
                   </span>
                 </div>
-                <div className={styles.contactItem}>
-                  <FaMapMarkerAlt className={styles.contactIcon} />
-                  <span className={styles.contactText}>Nairobi, Kenya</span>
-                </div>
+            
               </div>
             </div>
           </div>
 
           <div className={styles.footerColumn}>
-            {/* Sports Predictions Column */}
-
-            <div className={styles.linkSection}>
-              <h3 className={styles.columnTitle}>Sports Predictions</h3>
-              <nav className={styles.footerNav}>
-                <Link href="/page/day" className={styles.footerLink}>
-                  <BetOfTheDayIcon className={styles.footerLinkIcon} />
-                  Bet of the Day
-                </Link>
-                <Link href="/page/football" className={styles.footerLink}>
-                  <FootballIcon className={styles.footerLinkIcon} />
-                  Football Predictions
-                </Link>
-                <Link href="/page/basketball" className={styles.footerLink}>
-                  <BasketballIcon className={styles.footerLinkIcon} />
-                  Basketball Tips
-                </Link>
-                <Link href="/page/tennis" className={styles.footerLink}>
-                  <TennisIcon className={styles.footerLinkIcon} />
-                  Tennis Predictions
-                </Link>
-                <Link href="/page/extra" className={styles.footerLink}>
-                  <ExtraIcon className={styles.footerLinkIcon} />
-                  Extra Predictions
-                </Link>
-              </nav>
-            </div>
             {/* Services Column */}
-
             <div className={styles.linkSection}>
               <h3 className={styles.columnTitle}>Services</h3>
               <nav className={styles.footerNav}>
@@ -158,33 +125,8 @@ export default function Footer() {
                 </Link>
               </nav>
             </div>
-          </div>
-
-          {/* Content & Information Column */}
-          <div className={styles.footerColumn}>
-            <div className={styles.linkSection}>
-              <h3 className={styles.columnTitle}>Content & News</h3>
-              <nav className={styles.footerNav}>
-                <Link href="/page/news" className={styles.footerLink}>
-                  <NewsIcon className={styles.footerLinkIcon} />
-                  Sports News
-                </Link>
-                <Link href="/page/blog" className={styles.footerLink}>
-                  <BlogIcon className={styles.footerLinkIcon} />
-                  Sports Blog
-                </Link>
-                <Link href="/page/about" className={styles.footerLink}>
-                  <AboutIcon className={styles.footerLinkIcon} />
-                  About Us
-                </Link>
-                <Link href="/page/contact" className={styles.footerLink}>
-                  <FaEnvelope className={styles.footerLinkIcon} />
-                  Contact Us
-                </Link>
-              </nav>
-            </div>
-
-            <div className={styles.linkSection}>
+            {/* Information Column */}
+           <div className={styles.linkSection}>
               <h3 className={styles.columnTitle}>Legal Information</h3>
               <nav className={styles.footerNav}>
                 <Link href="/page/terms" className={styles.footerLink}>
@@ -202,6 +144,7 @@ export default function Footer() {
               </nav>
             </div>
           </div>
+=
         </div>
 
         {/* Communication & Apps Section */}

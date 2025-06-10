@@ -463,6 +463,16 @@ export default function SideNavComponent() {
                     <AboutIcon className={styles.sideNavIcon} alt="about icon" />
                     <h1>About us</h1>
                   </Link>
+                      <Link
+                    href="/page/contact"
+                    className={`${styles.sideNavLinkContainer} ${
+                      pathname === "/page/contact" ? styles.activesideNav : ""
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <AboutIcon className={styles.sideNavIcon} alt="about icon" />
+                    <h1>Contact us</h1>
+                  </Link>
                 </>
               )}
             </div>
