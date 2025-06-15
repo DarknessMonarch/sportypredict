@@ -26,7 +26,6 @@
       inset 0 2px 6px rgba(3, 30, 60, 0.04),
       inset 0 6px 12px rgba(3, 30, 60, 0.02);
 
-
     --radius-sm: 15px;
     --radius-md: 20px;
     --radius-lg: 25px;
@@ -56,12 +55,12 @@
     box-sizing: border-box;
 
     /* global-width */
-    --sidenav-width: 10vw;
-    --navbar-height: 9vh;
+    --sidenav-width: var(--real-10vw, 10vw);
+    --navbar-height: var(--real-9vh, 9vh);
     --sidenav-mobile-width: 80%;
-    --navbar-mobile-height: 10vh;
+    --navbar-mobile-height: var(--real-10vh, 10vh);
     --slidenav-header-width: 50%;
-    --slidenav-header-height: 10vh;
+    --slidenav-header-height: var(--real-10vh, 10vh);
   }
 
   /* ::-webkit-scrollbar {
@@ -78,10 +77,9 @@
     font-size: var(--font-size-3);
     text-align: justify;
     line-height: 1.8;
-
   }
 
-   p::first-letter {
+  p::first-letter {
     text-transform: capitalize;
   }
 
@@ -123,7 +121,6 @@
 
   ul {
     list-style: none;
-
   }
 
   li {
@@ -160,7 +157,6 @@
     border: none;
     outline: none;
     cursor: pointer;
-
   }
 
   input:focus,
@@ -226,7 +222,6 @@
 
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
-
 }
 
 /* ipad pro screens & laptop */

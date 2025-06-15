@@ -8,6 +8,7 @@ import Navbar from "@/app/components/Navbar";
 import { useState, useEffect, useRef } from "react";
 import { useDrawerStore } from "@/app/store/Drawer";
 import Popup from "@/app/components/Popup";
+import { initViewportFix } from "@/app/utility/viewportFix";
 
 export default function PageLayout({ children }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -18,6 +19,11 @@ export default function PageLayout({ children }) {
 
   const popupBannerAds = adverts.filter((ad) => ad.location === "PopupBanner");
   const hasPopupAds = popupBannerAds.length > 0;
+
+  useEffect(() => {
+    const cleanup = initViewportFix();
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,7 +39,7 @@ export default function PageLayout({ children }) {
     const handleClick = (event) => {
       if (!isMobile || !isOpen) return;
       if (sideNavRef.current && !sideNavRef.current.contains(event.target)) {
-        const menuButton = event.target.closest('[data-menu-button]');
+        const menuButton = event.target.closest("[data-menu-button]");
         if (!menuButton) {
           setClose();
         }
@@ -41,13 +47,13 @@ export default function PageLayout({ children }) {
     };
 
     if (isMobile && isOpen) {
-      document.addEventListener('mousedown', handleClick);
-      document.addEventListener('touchstart', handleClick);
+      document.addEventListener("mousedown", handleClick);
+      document.addEventListener("touchstart", handleClick);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('touchstart', handleClick);
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("touchstart", handleClick);
     };
   }, [isMobile, isOpen, setClose]);
 

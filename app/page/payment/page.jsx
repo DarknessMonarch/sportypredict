@@ -202,13 +202,10 @@ const PaymentMethodCard = ({
   );
 };
 
-// Separate Manual Payment Info Component
 const ManualPaymentInfo = ({
   countryCode,
   price,
   currency,
-  onConfirmPayment,
-  termsAccepted,
 }) => {
   const paymentDetails = getManualPaymentDetails(countryCode);
 
@@ -262,7 +259,6 @@ const ManualPaymentInfo = ({
   );
 };
 
-// Refactored ManualPaymentCard using PaymentMethodCard structure
 const ManualPaymentCard = ({
   countryCode,
   price,
@@ -282,7 +278,6 @@ const ManualPaymentCard = ({
         onClick={onClick}
       />
       
-      {/* Separate Manual Payment Info - only shown when selected */}
       {isSelected && (
         <ManualPaymentInfo
           countryCode={countryCode}
@@ -296,7 +291,6 @@ const ManualPaymentCard = ({
   );
 };
 
-// Terms Checkbox Component
 const TermsCheckbox = ({ isChecked, onChange }) => (
   <div className={styles.termsContainer}>
     <label className={styles.termsLabel}>

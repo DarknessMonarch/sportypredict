@@ -342,6 +342,7 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    flex: 1 1 100%;
     margin-top: 20px;
     padding: 32px;
     background: linear-gradient(
@@ -606,6 +607,9 @@
 /* Tablet (768px+) - 3 columns */
 @media only screen and (min-width: 48em) {
 
+  .manualDetailsContainer {
+    flex: none;
+  }
 
   .subscriptionPeriods {
     display: flex;
