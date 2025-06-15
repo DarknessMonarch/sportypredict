@@ -11,9 +11,6 @@
   .sportLayout {
     height: 100%;
     padding: 10px;
-    overflow: hidden;
-    overflow-y: auto;
-    overflow-x: hidden;
     justify-content: space-between;
   }
  

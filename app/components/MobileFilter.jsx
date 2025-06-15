@@ -6,8 +6,6 @@ import styles from "@/app/style/mobileFilter.module.css";
 import date from "date-and-time";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { usePredictionStore } from "@/app/store/Prediction";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 import { BiWorld as CountryIcon } from "react-icons/bi";
 import { TbStars as ExtraIcon } from "react-icons/tb";
@@ -23,15 +21,14 @@ export default function MobileFilter({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { predictions } = usePredictionStore();
+  
+  // Add ref for the date input
+  const dateInputRef = useRef(null);
 
-  const datePickerRef = useRef(null);
-
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
   const [selectedSport, setSelectedSport] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedPrediction, setSelectedPrediction] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false); // Add state to control open/close
 
   const lastParam = decodeURIComponent(pathname.split("/").pop());
 
@@ -60,7 +57,24 @@ export default function MobileFilter({
     };
   }, [predictions]);
 
+  // Format today's date for display and input value
   const currentDate = date.format(new Date(), "DD-MM-YYYY");
+  const currentDateForInput = date.format(new Date(), "YYYY-MM-DD");
+
+  // Function to format date for display (DD-MM-YYYY)
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return currentDate;
+    const dateObj = new Date(dateString);
+    return date.format(dateObj, "DD-MM-YYYY");
+  };
+
+  // Function to get display text for the date picker
+  const getDateDisplayText = () => {
+    if (selectedDate) {
+      return formatDateForDisplay(selectedDate);
+    }
+    return currentDate; // Show today's date as default
+  };
 
   const updateURLParams = (paramName, value) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -99,53 +113,24 @@ export default function MobileFilter({
     updateURLParams("prediction", newPrediction);
   };
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    const dateValue = date ? date.toISOString().split("T")[0] : null;
+  const handleDateChange = (e) => {
+    const dateValue = e.target.value;
+    setSelectedDate(dateValue);
     updateURLParams("date", dateValue);
-    
-    // Close the calendar after date selection
-    if (date) {
-      setIsDatePickerOpen(false);
+  };
+
+  // Add function to handle date container click
+  const handleDateContainerClick = () => {
+    if (dateInputRef.current) {
+      dateInputRef.current.showPicker?.() || dateInputRef.current.focus();
     }
   };
 
-  const handleDateContainerClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDatePickerOpen(true);
-  };
-
-  const CustomDateInput = ({ value, onClick }) => (
-    <div
-      className={styles.dateInputDisplay}
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onClick(e);
-      }}
-      style={{
-        cursor: "pointer",
-        width: "100%",
-        minWidth: "110px",
-        position: "static",
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      {value || "Select Date"}
-    </div>
-  );
-
+  // Initialize with today's date on component mount
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
+    if (!selectedDate && !searchParams.get("date")) {
+      setSelectedDate(currentDateForInput);
+    }
   }, []);
 
   useEffect(() => {
@@ -169,7 +154,10 @@ export default function MobileFilter({
       setSelectedPrediction(prediction);
     }
     if (dateParam) {
-      setSelectedDate(new Date(dateParam));
+      setSelectedDate(dateParam);
+    } else if (!selectedDate) {
+      // Set today's date if no date param and no selected date
+      setSelectedDate(currentDateForInput);
     }
   }, [searchParams, setCountryKey, setLeagueKey]);
 
@@ -177,56 +165,13 @@ export default function MobileFilter({
     <div className={styles.mobileFilterContainer}>
       <div className={styles.mobileFilterHead}>
         <h1>{lastParam} Betting tips and prediction</h1>
+        <h2>
+          ({getDateDisplayText()})
+        </h2>
       </div>
       <div className={styles.filterContainer}>
         <h1>Filter by:</h1>
         <div className={styles.filterInner}>
-          <div
-            className={styles.filterDate}
-            onClick={handleDateContainerClick}
-            style={{ cursor: "pointer" }}
-          >
-            <CalendarIcon className={styles.filterIcon} alt="calendar icon" />
-            <DatePicker
-              ref={datePickerRef}
-              selected={selectedDate}
-              onChange={handleDateChange}
-              customInput={<CustomDateInput />}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Select Date"
-              isClearable
-              className={styles.dateInput}
-              withPortal={isMobile}
-              open={isDatePickerOpen}
-              onClickOutside={() => setIsDatePickerOpen(false)}
-              onSelect={() => setIsDatePickerOpen(false)} // Alternative: close on select
-              popperPlacement={isMobile ? "auto" : "bottom-end"}
-              popperModifiers={
-                isMobile
-                  ? []
-                  : [
-                      {
-                        name: "preventOverflow",
-                        options: {
-                          rootBoundary: "viewport",
-                          tether: false,
-                          altAxis: true,
-                        },
-                      },
-                      {
-                        name: "flip",
-                        options: {
-                          fallbackPlacements: [
-                            "top-end",
-                            "bottom-start",
-                            "top-start",
-                          ],
-                        },
-                      },
-                    ]
-              }
-            />
-          </div>
           <div className={styles.filterWrapper}>
             {lastParam === "extra" && filterOptions.tips.length > 0 && (
               <MobileDropdown
@@ -277,6 +222,24 @@ export default function MobileFilter({
                 selectedValue={selectedSport}
               />
             )}
+          </div>
+
+          <div 
+            className={styles.filterDate} 
+            onClick={handleDateContainerClick}
+          >
+            <CalendarIcon className={styles.filterIcon} alt="calendar icon" />
+            <span className={styles.dateDisplay}>
+              {getDateDisplayText()}
+            </span>
+            <input
+              ref={dateInputRef}
+              type="date"
+              className={styles.dateInput}
+              onChange={handleDateChange}
+              value={selectedDate || currentDateForInput}
+              title="Filter by date"
+            />
           </div>
         </div>
       </div>

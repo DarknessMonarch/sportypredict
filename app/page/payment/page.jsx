@@ -152,8 +152,8 @@ const SubscriptionPeriodCard = ({
         </div>
 
         <div className={styles.subscriptionPrice}>
-          <p className={styles.currency}>{currency}</p>
-          <h2 className={styles.amount}>{price.toLocaleString()}</h2>
+          <p>{currency}</p>
+          <h1>{price.toLocaleString()}</h1>
         </div>
         {isSelected && (
           <div className={styles.checkIcon}>
@@ -181,7 +181,7 @@ const PaymentMethodCard = ({
       onClick={onClick}
     >
       <div className={styles.paymentMethodContent}>
-        <div className={styles.paymentMethodIcon}>
+        <div className={styles.paymentMethodImageWrapper}>
           <Image
             className={styles.paymentMethodImage}
             src={image}
@@ -196,14 +196,103 @@ const PaymentMethodCard = ({
           />
         </div>
         <span className={styles.paymentMethodTitle}>{title}</span>
-        {isSelected && (
-          <div className={styles.checkIcon}>
-            <CheckIcon />
-          </div>
-        )}
       </div>
       {children}
     </div>
+  );
+};
+
+// Separate Manual Payment Info Component
+const ManualPaymentInfo = ({
+  countryCode,
+  price,
+  currency,
+  onConfirmPayment,
+  termsAccepted,
+}) => {
+  const paymentDetails = getManualPaymentDetails(countryCode);
+
+  const formatPrice = () => {
+    const numericPrice = parseFloat(price);
+    if (isNaN(numericPrice)) return price;
+
+    const displayCurrency = currency || paymentDetails?.currency || "USD";
+    return `${displayCurrency} ${numericPrice.toLocaleString()}`;
+  };
+
+  return (
+    <div className={styles.manualDetailsContainer}>
+        <h4 className={styles.manualDetailsTitle}>Payment Instructions</h4>
+
+        {paymentDetails.methods ? (
+          <>
+            {paymentDetails.methods.map((method, index) => (
+              <div key={index} className={styles.manualMethodItem}>
+                <h5 className={styles.manualMethodName}>{method.name}</h5>
+                <div className={styles.manualInstructions}>
+                  <p>
+                    <strong>Name:</strong> {method.contactName}
+                  </p>
+                  <p>
+                    <strong>Email/Address:</strong> {method.contactInfo}
+                  </p>
+                  <p>
+                    <strong>Amount:</strong> {formatPrice()}
+                  </p>
+                  <p>{method.description}</p>
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <div className={styles.manualInstructions}>
+            <p>
+              <strong>Name:</strong> {paymentDetails.name}
+            </p>
+            <p>
+              <strong>Phone/Account:</strong> {paymentDetails.phone}
+            </p>
+            <p>
+              <strong>Amount:</strong> {formatPrice()}
+            </p>
+            <p>{paymentDetails.description}</p>
+          </div>
+        )}
+      </div>
+  );
+};
+
+// Refactored ManualPaymentCard using PaymentMethodCard structure
+const ManualPaymentCard = ({
+  countryCode,
+  price,
+  currency,
+  isSelected,
+  onClick,
+  onConfirmPayment,
+  termsAccepted,
+}) => {
+  return (
+    <>
+      <PaymentMethodCard
+        image={manualImage}
+        alt="Manual Payment"
+        title="Pay Manually"
+        isSelected={isSelected}
+        onClick={onClick}
+      />
+      
+      {/* Separate Manual Payment Info - only shown when selected */}
+      {isSelected && (
+        <ManualPaymentInfo
+          countryCode={countryCode}
+          price={price}
+          currency={currency}
+          onConfirmPayment={onConfirmPayment}
+          termsAccepted={termsAccepted}
+        />
+      )}
+    </>
   );
 };
 
@@ -229,66 +318,6 @@ const TermsCheckbox = ({ isChecked, onChange }) => (
     </label>
   </div>
 );
-
-// Manual Payment Details Component
-const ManualPaymentDetails = ({
-  countryCode,
-  price,
-  plan,
-  duration,
-  currency,
-}) => {
-  const paymentDetails = getManualPaymentDetails(countryCode);
-
-  const formatPrice = () => {
-    const numericPrice = parseFloat(price);
-    if (isNaN(numericPrice)) return price;
-
-    const displayCurrency = currency || paymentDetails?.currency || "USD";
-    return `${displayCurrency} ${numericPrice.toLocaleString()}`;
-  };
-
-  return (
-    <div className={styles.manualDetailsContainer}>
-      <h4 className={styles.manualDetailsTitle}>Payment Instructions</h4>
-
-      {paymentDetails.methods ? (
-        <>
-          {paymentDetails.methods.map((method, index) => (
-            <div key={index} className={styles.manualMethodItem}>
-              <h5 className={styles.manualMethodName}>{method.name}</h5>
-              <div className={styles.manualInstructions}>
-                <p>
-                  <strong>Name:</strong> {method.contactName}
-                </p>
-                <p>
-                  <strong>Email/Address:</strong> {method.contactInfo}
-                </p>
-                <p>
-                  <strong>Amount:</strong> {formatPrice()}
-                </p>
-                <p>{method.description}</p>
-              </div>
-            </div>
-          ))}
-        </>
-      ) : (
-        <div className={styles.manualInstructions}>
-          <p>
-            <strong>Name:</strong> {paymentDetails.name}
-          </p>
-          <p>
-            <strong>Phone/Account:</strong> {paymentDetails.phone}
-          </p>
-          <p>
-            <strong>Amount:</strong> {formatPrice()}
-          </p>
-          <p>{paymentDetails.description}</p>
-        </div>
-      )}
-    </div>
-  );
-};
 
 // Main Component
 export default function UnifiedPayment() {
@@ -487,17 +516,14 @@ export default function UnifiedPayment() {
       });
     }
 
-    // Manual Payment - for countries other than 'others'
-    if (!["others"].includes(selectedCountry) && selectedCountry !== "") {
-      methods.push({
-        id: "manual",
-        title: "Pay manually",
-        image: manualImage,
-        alt: "Manual Payment",
-      });
-    }
-
     return methods;
+  };
+
+  const shouldShowManualPayment = (countryName) => {
+    if (!countryName) return false;
+    
+    const selectedCountry = getCountryMapping(countryName);
+    return !["others"].includes(selectedCountry) && selectedCountry !== "";
   };
 
   const handlePaymentMethodSelect = (methodId) => {
@@ -604,7 +630,7 @@ export default function UnifiedPayment() {
   };
 
   const payManually = () => {
-    toast.success("Please follow the manual payment instructions below");
+    toast.success("Please follow the manual payment instructions above");
   };
 
   const addVIPAccess = async () => {
@@ -816,8 +842,9 @@ export default function UnifiedPayment() {
 
             {(() => {
               const availableMethods = getAvailablePaymentMethods(country);
+              const showManualPayment = shouldShowManualPayment(country);
 
-              if (availableMethods.length === 0) {
+              if (availableMethods.length === 0 && !showManualPayment) {
                 return (
                   <Nothing
                     NothingImage={Nopayment}
@@ -829,6 +856,7 @@ export default function UnifiedPayment() {
 
               return (
                 <div className={styles.paymentMethods}>
+                  {/* Regular Payment Methods */}
                   {availableMethods.map((method) => (
                     <PaymentMethodCard
                       key={method.id}
@@ -845,24 +873,28 @@ export default function UnifiedPayment() {
                             style={{ marginTop: "10px" }}
                           ></div>
                         )}
-
-                      {selectedPaymentMethod === method.id &&
-                        method.id === "manual" && (
-                          <ManualPaymentDetails
-                            countryCode={countryCode}
-                            price={selectedPlan.price}
-                            plan={selectedPlan.type}
-                            duration={selectedPlan.duration}
-                            currency={selectedPlan.currency}
-                          />
-                        )}
                     </PaymentMethodCard>
                   ))}
+
+                  {/* Manual Payment Card - Only for eligible countries */}
+                  {showManualPayment && (
+                    <ManualPaymentCard
+                      countryCode={countryCode}
+                      price={selectedPlan.price}
+                      currency={selectedPlan.currency}
+                      isSelected={selectedPaymentMethod === "manual"}
+                      onClick={() => handlePaymentMethodSelect("manual")}
+                      onConfirmPayment={payManually}
+                      termsAccepted={termsAccepted}
+                    />
+                  )}
                 </div>
               );
             })()}
 
-            {getAvailablePaymentMethods(country).length > 0 && (
+            {/* Manual Payment Info - rendered separately when manual is selected */}
+
+            {(getAvailablePaymentMethods(country).length > 0 || shouldShowManualPayment(country)) && (
               <TermsCheckbox
                 isChecked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}
@@ -895,21 +927,6 @@ export default function UnifiedPayment() {
                   </button>
                 </div>
               )}
-
-            {selectedPaymentMethod === "manual" &&
-              getAvailablePaymentMethods(country).length > 0 && (
-                <div className={styles.paymentButtonContainer}>
-                  <button
-                    className={`${styles.paymentButton} ${
-                      !termsAccepted ? styles.paymentButtonDisabled : ""
-                    }`}
-                    disabled={!termsAccepted}
-                    onClick={payManually}
-                  >
-                    Confirm Manual Payment
-                  </button>
-                </div>
-              )}
           </div>
         )}
       </div>
@@ -936,7 +953,7 @@ export default function UnifiedPayment() {
           <h1>How do I get these daily games sent to me?</h1>
           <p>
             <span>Answer:</span> We post games on our platform:
-            <span onClick={() => router.push("/vip")}>VIP</span>. You need to
+            <span onClick={() => router.push("vip")}>VIP</span>. You need to
             log in on the website using your email and password or through
             social accounts to view games.
           </p>
