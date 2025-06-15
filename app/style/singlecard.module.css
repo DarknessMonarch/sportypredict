@@ -15,7 +15,7 @@
     padding: 10px 0;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--light-primary-color);
+    border-bottom: 1px solid var(--light-background-color);
   }
 
   .leagueInfo {
@@ -26,7 +26,7 @@
 
   .leagueInfo h1 {
     font-size: 1rem;
-    font-weight: 800;
+    font-weight: var(--font-weight-medium);
   }
 
   .cardStatus {
@@ -46,7 +46,7 @@
     gap: 10px;
     height: 100%;
     display: flex;
-    padding: 20px 0;
+    padding: 10px 0;
     justify-content: space-between;
   }
 
@@ -61,7 +61,6 @@
   .teamContainer h1 {
     color: var(--secondary-color);
     font-size: 1.5rem;
-    font-weight: 600;
   }
 
   .teamInner {
@@ -135,14 +134,6 @@
 }
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
-  .cardContainer {
-    border-radius: 15px 15px 0 0;
-  }
-
-  .teamImage {
-    height: 100px;
-    width: 100px;
-  }
 
   .formation {
     gap: 10px;

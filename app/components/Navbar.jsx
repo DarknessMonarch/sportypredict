@@ -219,14 +219,13 @@ export default function NavbarComponent() {
             </>
           ) : (
             <div className={styles.navlinksContainer}>
-        
               <Link
                 href="/page/news"
                 className={`${styles.navlinks} ${
                   pathname === "/page/news" ? styles.activeNavLinks : ""
                 }`}
               >
-                Sport News
+                News
               </Link>
               <Link
                 href="/page/blog"
@@ -234,7 +233,7 @@ export default function NavbarComponent() {
                   pathname === "/page/blog" ? styles.activeNavLinks : ""
                 }`}
               >
-                Sport Blog
+                Blogs
               </Link>
               <Link
                 href="/page/offers"
@@ -242,7 +241,7 @@ export default function NavbarComponent() {
                   pathname === "/page/offers" ? styles.activeNavLinks : ""
                 }`}
               >
-                Sport offers
+                Offers
               </Link>
               <Link
                 href="/page/about"

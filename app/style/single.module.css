@@ -83,6 +83,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
   }
 
   .standingTable {
@@ -199,14 +200,14 @@
     height: 100%;
     border-radius: 5px 0 0 5px;
     transition: width 0.5s ease;
-    background-color: var(--secondary-color);
+    background-color: var(--light-secondary-color);
   }
 
   .statBarRight {
     height: 100%;
     border-radius: 0 5px 5px 0;
     transition: width 0.5s ease;
-    background-color: var(--primary-color);
+    background-color: var(--light-primary-color);
   }
 
   .formationCard {
@@ -440,8 +441,6 @@
   .singleSportWrapper {
     flex: 60%;
     height: 100%;
-    border-radius: 15px;
-    border: 1px solid var(--primary-color);
   }
 
   .tabContent {

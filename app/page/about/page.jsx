@@ -32,8 +32,10 @@ export default function About() {
 
   return (
     <div className={styles.termsContainer}>
-      <div className={styles.termsCard}>
-        <h1>About Sportypredict</h1>
+      <div className={styles.termsContainerInner}>
+        <div className={styles.termHeader}>
+          <h1>About Sportypredict</h1>
+        </div>
         <div className={styles.section}>
           <h2>
             SportyPredict is One Of the leading provider of sports betting
@@ -190,7 +192,6 @@ export default function About() {
           </ul>
         </div>
         <div className={styles.section}>
-          <h2></h2>
           <p>
             SportyPredict is the ultimate destination for accurate sports
             betting predictions, specializing in football, basketball, and
@@ -200,8 +201,9 @@ export default function About() {
             maximum profitability
           </p>
         </div>
-      <Footer/>
       </div>
+
+      <Footer />
     </div>
   );
 }

@@ -32,8 +32,10 @@ export default function Policy() {
 
   return (
     <div className={styles.termsContainer}>
-      <div className={styles.termsCard}>
-        <h1>Disclaimer</h1>
+      <div className={styles.termsContainerInner}>
+        <div className={styles.termHeader}>
+          <h1>Disclaimer</h1>
+        </div>
 
         <div className={styles.section}>
           <p>
@@ -64,8 +66,9 @@ export default function Policy() {
             for the information provided on sportypredict.
           </p>
         </div>
-        <Footer />
       </div>
+
+      <Footer />
     </div>
   );
 }

@@ -1,10 +1,10 @@
 @media screen {
   .filterContainer {
-    gap: 20px;
+    gap: 10px;
     height: 100%;
     display: none;
-    max-width: 330px;
-    min-width: 330px;
+    max-width: 300px;
+    min-width: 300px;
     overflow: hidden;
     flex-direction: column;
   }
@@ -113,16 +113,18 @@
     gap: 5px;
     display: flex;
     flex-direction: column;
+
   }
 
   .leagueCardText h2 {
     font-size: 1rem;
     font-weight: 400;
+    text-transform: capitalize;
+
   }
 
-  .leagueCardText h3 {
-    font-size: 0.9rem;
-    font-weight: 200;
+  .leagueCardText h2:hover {
+    color: var(--secondary-color);
   }
 }
 

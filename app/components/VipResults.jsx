@@ -69,10 +69,9 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
       const hours = matchTime.hours || 0;
       const minutes = matchTime.minutes || 0;
       const seconds = matchTime.seconds || 0;
-      
-      // Only set time and start countdown if there's actually time remaining
+
       const totalTime = hours + minutes + seconds;
-      
+
       if (totalTime > 0) {
         setTimeRemaining({
           hours,
@@ -85,7 +84,6 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
           startCountdown();
         }
       } else {
-        // If no time from server, keep it at 0
         setTimeRemaining({
           hours: 0,
           minutes: 0,
@@ -124,7 +122,9 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
         <h2>Vip results</h2>
 
         {loading ? (
-          <Loader />
+          <div className={styles.resultsLoading}>
+            <Loader />
+          </div>
         ) : (
           <div className={styles.resultsGrid}>
             {formattedResults.length > 0 ? (
@@ -148,10 +148,9 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
                 </div>
               ))
             ) : (
-              <Nothing
-                Alt="No results"
-                NothingImage={ResultImage}
-              />
+              <div className={styles.resultsLoading}>
+                <Nothing Alt="No results" NothingImage={ResultImage} />
+              </div>
             )}
           </div>
         )}

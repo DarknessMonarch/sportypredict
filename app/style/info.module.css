@@ -1,51 +1,50 @@
 @media screen {
   .termsContainer {
-    display: flex;
-    margin: 0 auto;
-    min-height: 100%;
-    padding: 10px;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    background: var(--linear-gradient-color);
-  }
-
-  .termsContainer::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
+    display: flex;
     height: 100%;
-    pointer-events: none;
-    background-image: var(--linear-backround-image);
-  }
-
-  .termsCard {
-    width: 100%;
-    display: flex;
     flex-direction: column;
     gap: var(--padding-sm);
-    margin: var(--padding-sm);
-    padding: var(--padding-sm);
+    justify-content: space-between;
     border-radius: var(--radius-sm);
     background-color: var(--background-color);
   }
 
-  .termsCard h1 {
+  .termsContainerInner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-sm);
+  }
+
+
+  .termHeader {
+    height: 100px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding-sm);
+    color: var(--background-color);
     background: var(--linear-gradient-color);
-    -webkit-background-clip: text;
-    text-transform: uppercase;
-    background-clip: text;
-    color: transparent;
-    text-align: center;
-    padding: 20px;
+  }
+
+  .termHeader h1 {
+    font-size: var(--font-size-2);
+  }
+
+  .termHeader::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: var(--linear-backround-image);
   }
 
   .section {
     display: flex;
     gap: var(--padding-sm);
     flex-direction: column;
+    padding: var(--padding-sm);
   }
 
   .section a {
@@ -60,16 +59,14 @@
     display: flex;
     text-align: center;
     align-items: center;
+    font-size: var(--font-size-2);
     text-transform: capitalize;
-    text-decoration: underline;
     color: var(--primary-color);
   }
 
   .section p {
-    padding: var(--padding-sm);
     border-radius: var(--radius-sm);
     color: var(--light-primary-color);
-    background-color: var(--lighter-primary-color);
   }
 
   .bulletList {
@@ -80,43 +77,20 @@
   }
 
   .bulletList li {
-    line-height: 1.8;
-    position: relative;
-    transition: all 0.3s ease;
     padding: var(--padding-sm);
+    transition: all 0.3s ease;
+    border-radius:var(--radius-sm) ;
     font-size: var(--font-size-4);
-    border-radius: var(--radius-sm);
     color: var(--light-primary-color);
-    background-color: var(--lighter-primary-color);
+    border-left: 1px solid var(--light-secondary-color);
   }
-
   .bulletList li:hover {
     transform: translateX(5px);
-    color: var(--primary-color);
-    background-color: var(--secondary-color);
   }
 
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(28, 181, 224, 0.4);
-    }
-    70% {
-      box-shadow: 0 0 0 var(--padding-sm) rgba(28, 181, 224, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(28, 181, 224, 0);
-    }
-  }
+
 }
 
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
-  .termsContainer {
-    padding: 0;
-  }
-
-  .termsCard {
-    width: 50%;
-    margin: 20px;
-  }
 }

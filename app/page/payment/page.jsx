@@ -1,45 +1,35 @@
 "use client";
 
 import Image from "next/image";
-import Script from "next/script";
-import axios from "axios";
 import { toast } from "sonner";
-
+import axios from "axios";
+import Link from "next/link";
 import Nothing from "@/app/components/Nothing";
 import LoadingLogo from "@/app/components/LoadingLogo";
+import Dropdown from "@/app/components/SearchableDropdown";
 import styles from "@/app/style/payment.module.css";
 import { usePaymentStore } from "@/app/store/Payment";
 import { useAuthStore } from "@/app/store/Auth";
 import Nopayment from "@/public/assets/nopayment.png";
 import CardImage from "@/public/assets/card.png";
-import AirtelImage from "@/public/assets/airtel.png";
 import MpesaImage from "@/public/assets/mpesa.png";
 import manualImage from "@/public/assets/manual.png";
 import CoinbaseImage from "@/public/assets/crypto.png";
 import PaypalImage from "@/public/assets/paypal.png";
 import countryData from "@/app/utility/Countries";
-import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import {
-  RiArrowDropDownLine as DropdownIcon,
-  RiSearch2Line as SearchIcon,
-  RiPhoneLine as PhoneIcon,
-  RiCheckLine as CheckIcon,
-} from "react-icons/ri";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { RiCheckLine as CheckIcon } from "react-icons/ri";
+import { MdOutlineLanguage as GlobeIcon } from "react-icons/md";
 
-// Payment Configuration
 const PAYMENT_CONFIG = {
-  AIRTEL_AUTH: process.env.NEXT_PUBLIC_AIRTEL_AUTH,
-  AIRTEL_PIN: process.env.NEXT_PUBLIC_AIRTEL_PIN,
-  AIRTEL_CLIENT_SECRET: process.env.NEXT_PUBLIC_AIRTEL_CLIENT_SECRET,
-  AIRTEL_URL: process.env.NEXT_PUBLIC_AIRTEL_URL,
   CLIENT_ID: process.env.NEXT_PUBLIC_CLIENT_ID_PAYPAL,
   COINBASE_KEY: process.env.NEXT_PUBLIC_COINBASE_KEY,
   PAYSTACK_KEY: process.env.NEXT_PUBLIC_PAYSTACK_KEY,
   SERVER_HOST: process.env.NEXT_PUBLIC_SERVER_HOST,
+  STRIPE_KEY: process.env.NEXT_PUBLIC_STRIPE_KEY,
 };
 
-// Manual Payment Data
 const getManualPaymentDetails = (countryCode) => {
   const africanPayments = {
     ke: {
@@ -86,26 +76,24 @@ const getManualPaymentDetails = (countryCode) => {
     },
     za: {
       currency: "ZAR",
-      method: "Bitcoin / Skrill / PayPal",
+      method: "Bitcoin / PayPal",
       name: "Multiple Methods",
       phone: "",
-      description:
-        "Use Bitcoin address, Skrill (contact@sportypredict.com) or PayPal (murithicollo24@gmail.com)",
+      description: "Use Bitcoin address or PayPal (murithicollo24@gmail.com)",
     },
     zm: {
       currency: "ZMW",
-      method: "Airtel Money",
+      method: "Manual Transfer",
       name: "John",
       phone: "(+254) 783 719 791",
-      description: "Dial *778# or use Airtel Money mobile app, select Kenya",
+      description: "Contact for manual payment instructions",
     },
     mw: {
       currency: "MWK",
-      method: "Airtel Money",
+      method: "Manual Transfer",
       name: "John",
       phone: "(+254) 783 719 791",
-      description:
-        "Use Airtel Money app, select international transfer and choose Kenya",
+      description: "Contact for manual payment instructions",
     },
     rw: {
       currency: "RWF",
@@ -119,12 +107,6 @@ const getManualPaymentDetails = (countryCode) => {
   const defaultPayment = {
     currency: "USD",
     methods: [
-      {
-        name: "SKRILL",
-        contactName: "SportyPredict",
-        contactInfo: "contact@sportypredict.com",
-        description: "Send payment via Skrill",
-      },
       {
         name: "PAYPAL",
         contactName: "Murithi Collo",
@@ -143,21 +125,6 @@ const getManualPaymentDetails = (countryCode) => {
   return africanPayments[countryCode] || defaultPayment;
 };
 
-// Components
-const SearchBar = ({ value, onChange }) => (
-  <div className={styles.searchContainer}>
-    <SearchIcon className={styles.searchIcon} aria-label="Search" />
-    <input
-      type="text"
-      value={value}
-      onChange={onChange}
-      placeholder="Search country..."
-      className={styles.searchInput}
-    />
-  </div>
-);
-
-// Subscription Period Card Component
 const SubscriptionPeriodCard = ({
   type,
   price,
@@ -167,7 +134,6 @@ const SubscriptionPeriodCard = ({
   onClick,
   isPromo = false,
   promoText = "",
-  originalPrice = null,
 }) => {
   return (
     <div
@@ -178,15 +144,16 @@ const SubscriptionPeriodCard = ({
     >
       <div className={styles.subscriptionCardContent}>
         <div className={styles.subscriptionInfo}>
-          <h3 className={styles.subscriptionType}>
-            {type}
-            {isPromo && <span className={styles.promoLabel}>Promo</span>}
-          </h3>
-          {promoText && <p className={styles.promoText}>{promoText}</p>}
+          <div className={styles.subscriptionInfoInner}>
+            <h2>{type}</h2>
+            {isPromo && <span className={styles.promoLabel}>Recommended</span>}
+          </div>
+          {promoText && <p>{promoText}</p>}
         </div>
+
         <div className={styles.subscriptionPrice}>
-          <span className={styles.currency}>{currency}</span>
-          <span className={styles.amount}>{price.toLocaleString()}</span>
+          <p className={styles.currency}>{currency}</p>
+          <h2 className={styles.amount}>{price.toLocaleString()}</h2>
         </div>
         {isSelected && (
           <div className={styles.checkIcon}>
@@ -216,11 +183,16 @@ const PaymentMethodCard = ({
       <div className={styles.paymentMethodContent}>
         <div className={styles.paymentMethodIcon}>
           <Image
+            className={styles.paymentMethodImage}
             src={image}
             alt={alt}
-            width={40}
-            height={40}
-            className={styles.paymentMethodImage}
+            fill
+            sizes="100%"
+            quality={100}
+            style={{
+              objectFit: "contain",
+            }}
+            priority={true}
           />
         </div>
         <span className={styles.paymentMethodTitle}>{title}</span>
@@ -250,9 +222,9 @@ const TermsCheckbox = ({ isChecked, onChange }) => (
       </span>
       <span className={styles.termsText}>
         I accept the{" "}
-        <a href="#" className={styles.termsLink}>
-          Billing Terms
-        </a>
+        <Link href="/terms" className={styles.termsLink}>
+          Terms and Conditions
+        </Link>
       </span>
     </label>
   </div>
@@ -318,49 +290,20 @@ const ManualPaymentDetails = ({
   );
 };
 
-// Phone Input Component for Airtel
-const PhoneInputForm = ({ formData, errors, onChange, onSubmit }) => (
-  <div className={styles.phoneInputContainer}>
-    <div className={styles.phoneInputWrapper}>
-      <PhoneIcon className={styles.phoneIcon} />
-      <input
-        type="tel"
-        name="phoneNumber"
-        value={formData.phoneNumber}
-        onChange={onChange}
-        placeholder="2547xxxxxxxx"
-        maxLength={12}
-        className={styles.phoneInput}
-      />
-    </div>
-    {errors.phoneNumber && (
-      <p className={styles.errorText}>{errors.phoneNumber}</p>
-    )}
-  </div>
-);
-
-// Main Combined Component
-export default function CombinedPayment() {
-  const [currentStep, setCurrentStep] = useState("search");
+// Main Component
+export default function UnifiedPayment() {
+  const router = useRouter();
   const [country, setCountry] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState("");
   const [paymentPlans, setPaymentPlans] = useState([]);
   const [fetchError, setFetchError] = useState(null);
 
-  // New state for the redesigned flow
+  // Flow state
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [showManualDetails, setShowManualDetails] = useState(false);
-  const [formData, setFormData] = useState({ phoneNumber: "" });
-  const [errors, setErrors] = useState({});
-
-  const dropdownRef = useRef(null);
 
   const { country: userCountry, isAuth } = useAuthStore();
-  const { getPaymentPlanByCountry, loading, validatePayment } =
-    usePaymentStore();
+  const { getPaymentPlanByCountry, loading } = usePaymentStore();
 
   const countryOptions = useMemo(
     () => [
@@ -398,7 +341,6 @@ export default function CombinedPayment() {
         if (result.success) {
           setPaymentPlans([result.data]);
           setFetchError(null);
-          setCurrentStep("payment");
           toast.success(`Payment plans loaded for ${selectedCountry}`);
         } else {
           setPaymentPlans([]);
@@ -421,96 +363,135 @@ export default function CombinedPayment() {
     }
   }, [isAuth, userCountry, fetchPaymentPlans]);
 
-  const handleSelect = async (option) => {
-    setCountry(option.name);
-    setSearch("");
-    setIsOpen(false);
-    await fetchPaymentPlans(option.name);
+  const handleCountrySelect = async (selectedCountry) => {
+    setCountry(selectedCountry.name);
+    setSelectedPlan(null);
+    setSelectedPaymentMethod(null);
+    await fetchPaymentPlans(selectedCountry.name);
   };
-
-  const handleInputChange = (e) => {
-    setSearch(e.target.value);
-    setIsOpen(true);
-  };
-
-  const filteredCountries = countryData.filter((country) =>
-    country.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const getCountryCode = (countryName) => {
     if (!countryName) return null;
-
     const country = countryData.find(
       (c) => c.name.toLowerCase() === countryName.toLowerCase()
     );
     return country ? country.code.toLowerCase() : null;
   };
+
   const countryCode = getCountryCode(country);
 
-  const getAvailablePaymentMethods = (countryCode) => {
-    if (!countryCode) return [];
+  const getCountryMapping = (countryName) => {
+    if (!countryName) return null;
 
+    const mappings = {
+      kenya: "kenya",
+      nigeria: "nigeria",
+      cameroon: "cameroon",
+      ghana: "ghana",
+      "south africa": "southA",
+      tanzania: "tanzania",
+      uganda: "uganda",
+      zambia: "zambia",
+      rwanda: "rwanda",
+      malawi: "malawi",
+    };
+
+    return mappings[countryName.toLowerCase()] || "others";
+  };
+
+  const getAvailablePaymentMethods = (countryName) => {
+    if (!countryName) return [];
+
+    const selectedCountry = getCountryMapping(countryName);
     const methods = [];
 
-    // Bank Card (Stripe) - available for all countries
-    methods.push({
-      id: "stripe",
-      title: "Bank Card",
-      image: CardImage,
-      alt: "Bank Card",
-    });
+    // Stripe - available for most countries
+    if (
+      [
+        "kenya",
+        "others",
+        "nigeria",
+        "cameroon",
+        "ghana",
+        "southA",
+        "tanzania",
+        "uganda",
+        "zambia",
+        "rwanda",
+        "malawi",
+      ].includes(selectedCountry)
+    ) {
+      methods.push({
+        id: "stripe",
+        title: "Pay with card",
+        image: CardImage,
+        alt: "Stripe Card",
+      });
+    }
 
-    // Wallet Pay (PayPal) - available for all countries
-    methods.push({
-      id: "paypal",
-      title: "Wallet Pay",
-      image: PaypalImage,
-      alt: "PayPal",
-    });
+    // PayPal - available for most countries
+    if (
+      [
+        "others",
+        "kenya",
+        "nigeria",
+        "cameroon",
+        "ghana",
+        "southA",
+        "tanzania",
+        "uganda",
+        "zambia",
+        "rwanda",
+        "malawi",
+      ].includes(selectedCountry)
+    ) {
+      methods.push({
+        id: "paypal",
+        title: "PayPal",
+        image: PaypalImage,
+        alt: "PayPal",
+      });
+    }
 
-    // MPESA - for Kenya, Uganda, Tanzania
-    if (["ke", "ug", "tz"].includes(countryCode)) {
+    // MPESA - for Kenya only
+    if (["kenya"].includes(selectedCountry)) {
       methods.push({
         id: "mpesa",
-        title: "MPESA",
+        title: "Pay with MPESA",
         image: MpesaImage,
         alt: "MPESA",
       });
     }
 
-    // Airtel Money - for Kenya, Malawi, Zambia
-    if (["ke", "mw", "zm"].includes(countryCode)) {
+    // Coinbase - for most countries
+    if (
+      [
+        "kenya",
+        "others",
+        "nigeria",
+        "cameroon",
+        "ghana",
+        "southA",
+        "tanzania",
+        "uganda",
+        "zambia",
+        "rwanda",
+        "malawi",
+      ].includes(selectedCountry)
+    ) {
       methods.push({
-        id: "airtel",
-        title: "Airtel Money",
-        image: AirtelImage,
-        alt: "Airtel Money",
+        id: "coinbase",
+        title: "Pay with crypto",
+        image: CoinbaseImage,
+        alt: "Cryptocurrency",
       });
     }
 
-    // Crypto - for all countries
-    methods.push({
-      id: "coinbase",
-      title: "Crypto",
-      image: CoinbaseImage,
-      alt: "Cryptocurrency",
-    });
-
-    // Manual Payment - for all except 'other'
-    if (countryCode !== "other") {
+    // Manual Payment - for countries other than 'others'
+    if (!["others"].includes(selectedCountry) && selectedCountry !== "") {
       methods.push({
         id: "manual",
-        title: "Manual Payment",
+        title: "Pay manually",
         image: manualImage,
         alt: "Manual Payment",
       });
@@ -519,40 +500,8 @@ export default function CombinedPayment() {
     return methods;
   };
 
-  const formatPhoneNumber = (value) => {
-    if (!value) return value;
-    const phoneNumber = value.replace(/[^\d]/g, "");
-    if (phoneNumber.startsWith("254")) {
-      return phoneNumber.slice(0, 12);
-    } else if (phoneNumber.startsWith("0")) {
-      return `254${phoneNumber.slice(1)}`.slice(0, 12);
-    } else if (phoneNumber.startsWith("7")) {
-      return `254${phoneNumber}`.slice(0, 12);
-    }
-    return `254${phoneNumber}`.slice(0, 12);
-  };
-
-  const handlePhoneNumberChange = (e) => {
-    const formattedPhoneNumber = formatPhoneNumber(e.target.value);
-    setFormData((prev) => ({ ...prev, phoneNumber: formattedPhoneNumber }));
-    setErrors((prev) => ({ ...prev, phoneNumber: "" }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = "Phone number is required";
-    } else if (!/^2547\d{8}$/.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be in the format 2547xxxxxxxx";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handlePaymentMethodSelect = (methodId) => {
     setSelectedPaymentMethod(methodId);
-    setShowManualDetails(methodId === "manual");
   };
 
   const handlePlanSelect = (plan, type, duration) => {
@@ -563,59 +512,411 @@ export default function CombinedPayment() {
       price: plan[type.toLowerCase()],
       currency: plan.currency,
     });
-  };
-
-  const handleBackToSearch = () => {
-    setCurrentStep("search");
-    setCountry(null);
-    setPaymentPlans([]);
-    setFetchError(null);
-    setSelectedPlan(null);
     setSelectedPaymentMethod(null);
-    setTermsAccepted(false);
-    setShowManualDetails(false);
   };
 
-  const renderSearchStep = () => (
+  const handleCheckout = () => {
+    const checkoutUrl =
+      selectedPlan?.type === "Weekly"
+        ? "https://buy.stripe.com/6oE4jh3oEh1R4jCeV2"
+        : "https://buy.stripe.com/7sI3fd3oE26X4jCaEN";
+    window.open(checkoutUrl, "_blank");
+    addVIPAccess();
+  };
+
+  const payMpesa = () => {
+    const email = localStorage.getItem("email") || null;
+
+    if (email !== null) {
+      const PaystackPop = require("@paystack/inline-js");
+      const paystack = new PaystackPop();
+      paystack.newTransaction({
+        key: PAYMENT_CONFIG.PAYSTACK_KEY,
+        email: email,
+        amount: selectedPlan?.price * 100,
+        currency: "KES",
+        ref: `ref_${Math.floor(Math.random() * 1000000000 + 1)}`,
+        callback: (response) => {
+          if (response.status === "success") {
+            addVIPAccess();
+          } else {
+            toast.error("Payment failed");
+          }
+        },
+        onClose: () => {
+          toast.error("Payment failed");
+        },
+      });
+    } else {
+      toast.error("Login or create an account to pay");
+    }
+  };
+
+  const coinbasePay = async () => {
+    const countryMapping = getCountryMapping(country);
+    let amount = selectedPlan?.price;
+
+    if (
+      [
+        "kenya",
+        "nigeria",
+        "cameroon",
+        "ghana",
+        "southA",
+        "tanzania",
+        "uganda",
+        "zambia",
+        "rwanda",
+        "malawi",
+      ].includes(countryMapping)
+    ) {
+      amount = selectedPlan?.type === "Weekly" ? 25 : 45;
+    }
+
+    try {
+      const response = await axios.post(
+        "https://api.commerce.coinbase.com/charges/",
+        {
+          name: "Vip subscription",
+          description: "Subscribe for vip",
+          pricing_type: "fixed_price",
+          local_price: {
+            amount: amount,
+            currency: "USD",
+          },
+          cancel_url: "",
+          success_url: "https://sportypredict.com/vip",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CC-Api-Key": PAYMENT_CONFIG.COINBASE_KEY,
+          },
+        }
+      );
+
+      const hostedUrl = response.data.data.hosted_url;
+      router.push(hostedUrl);
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred");
+    }
+  };
+
+  const payManually = () => {
+    toast.success("Please follow the manual payment instructions below");
+  };
+
+  const addVIPAccess = async () => {
+    const customerID = localStorage.getItem("id") || null;
+
+    if (customerID !== null) {
+      try {
+        const token = JSON.parse(localStorage.getItem("token"));
+        const currentDate = new Date();
+        const formattedDate = `${
+          currentDate.getMonth() + 1
+        }-${currentDate.getDate()}-${currentDate.getFullYear()}`;
+
+        const account = JSON.parse(localStorage.getItem("account"));
+
+        const response = await axios.put(
+          `${PAYMENT_CONFIG.SERVER_HOST}/auth/update/${customerID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            paid: true,
+            plan: selectedPlan?.type,
+            activationDate: formattedDate,
+            days: selectedPlan?.type === "Weekly" ? 7 : 30,
+          }
+        );
+
+        account.status = true;
+        localStorage.setItem("account", JSON.stringify(account));
+        localStorage.setItem("paid", "true");
+
+        toast.success("Payment successful!");
+        router.push("vip");
+      } catch (err) {
+        toast.error("An error occurred while updating your account.");
+      }
+    } else {
+      toast.error("Login or create an account to pay");
+    }
+  };
+
+  // PayPal script loading
+  useEffect(() => {
+    if (selectedPaymentMethod === "paypal" && selectedPlan) {
+      const countryMapping = getCountryMapping(country);
+      let amount = selectedPlan.price;
+
+      if (
+        [
+          "kenya",
+          "nigeria",
+          "cameroon",
+          "ghana",
+          "southA",
+          "tanzania",
+          "uganda",
+          "zambia",
+          "rwanda",
+          "malawi",
+        ].includes(countryMapping)
+      ) {
+        amount = selectedPlan.type === "Weekly" ? 25 : 45;
+      }
+
+      const loadScript = (src) =>
+        new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = src;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+
+      const initPayPal = async () => {
+        try {
+          await loadScript(
+            `https://www.paypal.com/sdk/js?client-id=${PAYMENT_CONFIG.CLIENT_ID}&currency=USD`
+          );
+
+          if (window.paypal) {
+            window.paypal
+              .Buttons({
+                createOrder: (data, actions) => {
+                  return actions.order.create({
+                    purchase_units: [
+                      {
+                        amount: {
+                          value: amount,
+                        },
+                      },
+                    ],
+                  });
+                },
+                onApprove: (data, actions) => {
+                  return actions.order.capture().then((details) => {
+                    addVIPAccess();
+                  });
+                },
+                onError: (err) => {
+                  toast.error("Payment failed");
+                  console.error("PayPal error:", err);
+                },
+                onCancel: () => {
+                  toast.error("Payment cancelled");
+                },
+              })
+              .render("#paypal-button-container");
+          }
+        } catch (error) {
+          console.error("Error loading PayPal SDK:", error);
+          toast.error("An error occurred while loading PayPal SDK");
+        }
+      };
+
+      initPayPal();
+    }
+  }, [selectedPaymentMethod, selectedPlan, country]);
+
+  if (loading) {
+    return <LoadingLogo />;
+  }
+
+  return (
     <div className={styles.paymentContainer}>
       <div className={styles.paymentHeader}>
-        <h1>Payment method is determined by your country</h1>
-        <h1>
-          Your <span>VIP account</span> will be activated once your payment is
-          received
-        </h1>
-      </div>
+        <div className={styles.paymentHeaderInner}>
+          <h1>Choose your country</h1>
+          <p>
+            Your <span>VIP account</span> will be activated after payment
+          </p>
 
-      <div className={styles.searchDropdownWrapper}>
-        <SearchBar value={search} onChange={handleInputChange} />
-        <div className={styles.dropdownContainer} ref={dropdownRef}>
-          <div
-            className={styles.dropdownInput}
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <span>{country || "Select Country"}</span>
-            <DropdownIcon className={styles.dropdownIcon} />
+          <div className={styles.countryDropdownWrapper}>
+            <Dropdown
+              options={countryData}
+              onSelect={handleCountrySelect}
+              Icon={<GlobeIcon className={styles.globeIcon} />}
+              dropPlaceHolder={country || "Select Country"}
+            />
           </div>
-
-          {(isOpen || search) && (
-            <div className={styles.dropdownArea}>
-              {filteredCountries.map((country) => (
-                <span
-                  key={country.code}
-                  className={styles.dropdownOption}
-                  onClick={() => handleSelect(country)}
-                >
-                  {country.name}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
+      </div>
+      <div className={styles.paymentPlans}>
+        {fetchError ||
+          (paymentPlans.length === 0 && (
+            <Nothing
+              NothingImage={Nopayment}
+              Text={fetchError}
+              Alt="No payment plans available"
+            />
+          ))}
+
+        {country && paymentPlans.length > 0 && !fetchError && (
+          <div className={styles.subscriptionSection}>
+            <div className={styles.subscriptionPeriods}>
+              {paymentPlans[0].yearly > 0 && (
+                <SubscriptionPeriodCard
+                  type="Yearly"
+                  price={paymentPlans[0].yearly}
+                  currency={paymentPlans[0].currency}
+                  duration={365}
+                  isSelected={selectedPlan?.type === "Yearly"}
+                  onClick={() =>
+                    handlePlanSelect(paymentPlans[0], "Yearly", 365)
+                  }
+                />
+              )}
+
+              {paymentPlans[0].monthly > 0 && (
+                <SubscriptionPeriodCard
+                  type="Monthly"
+                  price={paymentPlans[0].monthly}
+                  currency={paymentPlans[0].currency}
+                  duration={30}
+                  isSelected={selectedPlan?.type === "Monthly"}
+                  onClick={() =>
+                    handlePlanSelect(paymentPlans[0], "Monthly", 30)
+                  }
+                  isPromo={true}
+                  promoText={`Everyone's favorite plan!`}
+                />
+              )}
+
+              {paymentPlans[0].weekly > 0 && (
+                <SubscriptionPeriodCard
+                  type="Weekly"
+                  price={paymentPlans[0].weekly}
+                  currency={paymentPlans[0].currency}
+                  duration={7}
+                  isSelected={selectedPlan?.type === "Weekly"}
+                  onClick={() => handlePlanSelect(paymentPlans[0], "Weekly", 7)}
+                />
+              )}
+            </div>
+          </div>
+        )}
+
+        {country && paymentPlans.length === 0 && !loading && !fetchError && (
+          <Nothing
+            NothingImage={Nopayment}
+            Text="No payment plans available for this country"
+            Alt="No payment plans"
+          />
+        )}
+
+        {selectedPlan && (
+          <div className={styles.paymentMethodSection}>
+            <h2>Payment Method</h2>
+
+            {(() => {
+              const availableMethods = getAvailablePaymentMethods(country);
+
+              if (availableMethods.length === 0) {
+                return (
+                  <Nothing
+                    NothingImage={Nopayment}
+                    Text="No payment methods available for this country"
+                    Alt="No payment methods"
+                  />
+                );
+              }
+
+              return (
+                <div className={styles.paymentMethods}>
+                  {availableMethods.map((method) => (
+                    <PaymentMethodCard
+                      key={method.id}
+                      image={method.image}
+                      alt={method.alt}
+                      title={method.title}
+                      isSelected={selectedPaymentMethod === method.id}
+                      onClick={() => handlePaymentMethodSelect(method.id)}
+                    >
+                      {selectedPaymentMethod === method.id &&
+                        method.id === "paypal" && (
+                          <div
+                            id="paypal-button-container"
+                            style={{ marginTop: "10px" }}
+                          ></div>
+                        )}
+
+                      {selectedPaymentMethod === method.id &&
+                        method.id === "manual" && (
+                          <ManualPaymentDetails
+                            countryCode={countryCode}
+                            price={selectedPlan.price}
+                            plan={selectedPlan.type}
+                            duration={selectedPlan.duration}
+                            currency={selectedPlan.currency}
+                          />
+                        )}
+                    </PaymentMethodCard>
+                  ))}
+                </div>
+              );
+            })()}
+
+            {getAvailablePaymentMethods(country).length > 0 && (
+              <TermsCheckbox
+                isChecked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+              />
+            )}
+
+            {selectedPaymentMethod &&
+              selectedPaymentMethod !== "paypal" &&
+              selectedPaymentMethod !== "manual" &&
+              getAvailablePaymentMethods(country).length > 0 && (
+                <div className={styles.paymentButtonContainer}>
+                  <button
+                    className={`${styles.paymentButton} ${
+                      !termsAccepted ? styles.paymentButtonDisabled : ""
+                    }`}
+                    disabled={!termsAccepted}
+                    onClick={() => {
+                      if (selectedPaymentMethod === "stripe") {
+                        handleCheckout();
+                      } else if (selectedPaymentMethod === "mpesa") {
+                        payMpesa();
+                      } else if (selectedPaymentMethod === "coinbase") {
+                        coinbasePay();
+                      }
+                    }}
+                  >
+                    {selectedPaymentMethod === "stripe" && "Pay with card"}
+                    {selectedPaymentMethod === "mpesa" && "Pay with MPESA"}
+                    {selectedPaymentMethod === "coinbase" && "Pay with crypto"}
+                  </button>
+                </div>
+              )}
+
+            {selectedPaymentMethod === "manual" &&
+              getAvailablePaymentMethods(country).length > 0 && (
+                <div className={styles.paymentButtonContainer}>
+                  <button
+                    className={`${styles.paymentButton} ${
+                      !termsAccepted ? styles.paymentButtonDisabled : ""
+                    }`}
+                    disabled={!termsAccepted}
+                    onClick={payManually}
+                  >
+                    Confirm Manual Payment
+                  </button>
+                </div>
+              )}
+          </div>
+        )}
       </div>
 
       <div className={styles.Question}>
         <div className={styles.QuestionCon}>
-          <h1>Q: How guaranteed are your games?</h1>
+          <h1>How guaranteed are your games?</h1>
           <p>
             <span>Answer:</span> We have a team of top-notch,
             well-researched/informed experts that score up to 96% in their
@@ -623,7 +924,7 @@ export default function CombinedPayment() {
           </p>
         </div>
         <div className={styles.QuestionCon}>
-          <h1>Q: What happens for failed predictions?</h1>
+          <h1>What happens for failed predictions?</h1>
           <p>
             <span>Answer:</span> Keep in mind that in case of any loss, we will
             add an extra one day FREE as a replacement on your subscription. We
@@ -632,16 +933,16 @@ export default function CombinedPayment() {
           </p>
         </div>
         <div className={styles.QuestionCon}>
-          <h1>Q: How do I get these daily games sent to me?</h1>
+          <h1>How do I get these daily games sent to me?</h1>
           <p>
             <span>Answer:</span> We post games on our platform:
-            <span onClick={() => (window.location.href = "/vip")}>VIP</span>.
-            You need to log in on the website using your email and password or
-            through social accounts to view games.
+            <span onClick={() => router.push("/vip")}>VIP</span>. You need to
+            log in on the website using your email and password or through
+            social accounts to view games.
           </p>
         </div>
         <div className={styles.QuestionCon}>
-          <h1>Q: Why don&apos;t we post results?</h1>
+          <h1>Why don&apos;t we post results?</h1>
           <p>
             <span>Answer:</span>We don&apos;t disclose results because
             fraudsters take screenshots and swindle unsuspecting victims.
@@ -650,201 +951,4 @@ export default function CombinedPayment() {
       </div>
     </div>
   );
-
-  const renderPaymentStep = () => {
-    if (loading) {
-      return (
-        <div className={styles.paymentContainer}>
-          <LoadingLogo />
-        </div>
-      );
-    }
-
-    if (fetchError || paymentPlans.length === 0) {
-      return (
-        <div className={styles.paymentContainer}>
-          <div className={styles.backButton}>
-            <button onClick={handleBackToSearch} className={styles.btnBack}>
-              ← Back to Country Selection
-            </button>
-          </div>
-          <Nothing
-            Alt="No payment plans"
-            NothingImage={Nopayment}
-            Text={fetchError || "No payment plans available"}
-          />
-        </div>
-      );
-    }
-
-    const planData = paymentPlans[0];
-    const availablePaymentMethods = getAvailablePaymentMethods();
-
-    return (
-      <div className={styles.paymentContainer}>
-        <div className={styles.backButton}>
-          <button onClick={handleBackToSearch} className={styles.btnBack}>
-            ← Back to Country Selection
-          </button>
-        </div>
-
-        {/* Subscription Periods Section */}
-        <div className={styles.subscriptionSection}>
-          <h2 className={styles.sectionTitle}>Subscription Periods</h2>
-          <div className={styles.subscriptionPeriods}>
-            {/* Yearly Plan */}
-            {planData.yearly > 0 && (
-              <SubscriptionPeriodCard
-                type="Year"
-                price={planData.yearly}
-                currency={planData.currency}
-                duration={365}
-                isSelected={selectedPlan?.type === "Yearly"}
-                onClick={() => handlePlanSelect(planData, "Yearly", 365)}
-              />
-            )}
-
-            {/* Monthly Plan with Promo */}
-            {planData.monthly > 0 && (
-              <SubscriptionPeriodCard
-                type="1 Month"
-                price={planData.monthly}
-                currency={planData.currency}
-                duration={30}
-                isSelected={selectedPlan?.type === "Monthly"}
-                onClick={() => handlePlanSelect(planData, "Monthly", 30)}
-                isPromo={true}
-                promoText={`First month for only ${planData.currency}${(
-                  planData.monthly * 0.8
-                ).toFixed(2)} and then ${planData.currency}${
-                  planData.monthly
-                } per month thereafter`}
-              />
-            )}
-
-            {/* Weekly Plan */}
-            {planData.weekly > 0 && (
-              <SubscriptionPeriodCard
-                type="1 Week"
-                price={planData.weekly}
-                currency={planData.currency}
-                duration={7}
-                isSelected={selectedPlan?.type === "Weekly"}
-                onClick={() => handlePlanSelect(planData, "Weekly", 7)}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Payment Method Section - Only show if a plan is selected */}
-        {selectedPlan && (
-          <div className={styles.paymentMethodSection}>
-            <h2 className={styles.sectionTitle}>Payment Method</h2>
-            <div className={styles.paymentMethods}>
-              {availablePaymentMethods.map((method) => (
-                <PaymentMethodCard
-                  key={method.id}
-                  image={method.image}
-                  alt={method.alt}
-                  title={method.title}
-                  isSelected={selectedPaymentMethod === method.id}
-                  onClick={() => handlePaymentMethodSelect(method.id)}
-                >
-                  {/* Show phone input for Airtel */}
-                  {selectedPaymentMethod === method.id &&
-                    method.id === "airtel" && (
-                      <PhoneInputForm
-                        formData={formData}
-                        errors={errors}
-                        onChange={handlePhoneNumberChange}
-                      />
-                    )}
-                </PaymentMethodCard>
-              ))}
-            </div>
-
-            {/* Manual Payment Details */}
-            {showManualDetails && (
-              <ManualPaymentDetails
-                countryCode={countryCode}
-                price={selectedPlan.price}
-                plan={selectedPlan.type}
-                duration={selectedPlan.duration}
-                currency={selectedPlan.currency}
-              />
-            )}
-
-            {/* Terms and Conditions */}
-            <TermsCheckbox
-              isChecked={termsAccepted}
-              onChange={(e) => setTermsAccepted(e.target.checked)}
-            />
-
-            {/* Amount to be charged */}
-            {selectedPlan && (
-              <div className={styles.amountContainer}>
-                <p className={styles.amountText}>
-                  Amount to be charged: {selectedPlan.currency}
-                  {selectedPlan.price.toLocaleString()} or the equivalent in
-                  local currency
-                </p>
-              </div>
-            )}
-
-            {/* Payment Button */}
-            {selectedPaymentMethod && selectedPlan && (
-              <div className={styles.paymentButtonContainer}>
-                <button
-                  className={`${styles.paymentButton} ${
-                    !termsAccepted ||
-                    (selectedPaymentMethod === "airtel" &&
-                      !formData.phoneNumber)
-                      ? styles.paymentButtonDisabled
-                      : ""
-                  }`}
-                  disabled={
-                    !termsAccepted ||
-                    (selectedPaymentMethod === "airtel" &&
-                      !formData.phoneNumber)
-                  }
-                  onClick={() => {
-                    // Handle payment processing based on selected method
-                    if (selectedPaymentMethod === "manual") {
-                      toast.success(
-                        "Please follow the manual payment instructions above"
-                      );
-                    } else {
-                      // Implement other payment methods
-                      toast.info(
-                        `Processing ${selectedPaymentMethod} payment...`
-                      );
-                    }
-                  }}
-                >
-                  {selectedPaymentMethod === "stripe" && "Add Bank Card"}
-                  {selectedPaymentMethod === "paypal" && "Continue with PayPal"}
-                  {selectedPaymentMethod === "mpesa" && "Pay with MPESA"}
-                  {selectedPaymentMethod === "airtel" &&
-                    "Pay with Airtel Money"}
-                  {selectedPaymentMethod === "coinbase" && "Pay with Crypto"}
-                  {selectedPaymentMethod === "manual" &&
-                    "Confirm Manual Payment"}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // Render based on current step
-  switch (currentStep) {
-    case "search":
-      return renderSearchStep();
-    case "payment":
-      return renderPaymentStep();
-    default:
-      return renderSearchStep();
-  }
 }

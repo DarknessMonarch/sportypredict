@@ -28,28 +28,29 @@
   }
 
   .bonusHeader h1 {
+    font-size: var(--font-size-2);
     text-decoration: underline;
   }
 
   .bonus {
     display: flex;
     gap: var(--padding-sm);
-    padding: var(--padding-sm);
     align-items: center;
-    border-radius: var(--padding-md);
     flex-direction: column;
+    padding: var(--padding-sm);
     box-shadow: var(--shadow-box);
     justify-content: space-between;
-    border: 0.5px solid var(--light-primary-color);
+    border-radius: var(--padding-md);
+    background-color: var(--primary-color);
   }
 
   .bonusTitle {
     width: 100%;
-    padding: var(--padding-sm);
     text-align: center;
     padding: var(--padding-sm);
-    color: var(--background-color);
-    background-color: var(--primary-color);
+    color: var(--primary-color);
+    border-radius: var(--radius-sm);
+    background-color: var(--background-color);
   }
 
   .bonusImgContainer {
@@ -61,6 +62,7 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-sm);
+    background-color: var(--primary-color);
   }
 
   .bonusImage {
@@ -76,6 +78,7 @@
   }
 
   .bonusFormContainer span {
+    color: var(--background-color);
     font-size: var(--font-size-4);
   }
 
@@ -98,8 +101,9 @@
     gap: var(--padding-sm);
     flex-direction: column;
     justify-content: center;
+    color: var(--background-color);
     border-radius: var(--padding-sm) 0 0 var(--padding-sm);
-    border: 2px dotted var(--primary-color);
+    border: 2px dotted var(--background-color);
     border-right: none;
   }
 
@@ -110,8 +114,8 @@
     align-items: center;
     gap: var(--padding-lg);
     justify-content: center;
-    color: var(--background-color);
-    background-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: var(--background-color);
     border-radius: 0 var(--padding-sm) var(--padding-sm) 0;
   }
 
@@ -126,13 +130,16 @@
     flex-direction: column;
     gap: var(--padding-sm);
     padding: var(--padding-sm);
-    background-color: var(--lighter-primary-color);
+    box-shadow: var(--shadow-box);
+    border-radius: var(--radius-sm);
+
   }
 
   .bonusInfo h2 {
+    font-size: var(--font-size-2);
     text-transform: capitalize;
     text-decoration: underline;
-    color: var(--tertiary-color);
+    color: var(--background-color);
   }
 
   .bonusInfo p span {
@@ -152,7 +159,7 @@
 
   .bonusImgContainer {
     height: 100%;
-    width: 100px;
+    width: 200px;
   }
 
   .bonusTitle {
@@ -163,7 +170,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
+    color: var(--background-color);
     background-color: transparent;
   }
 }

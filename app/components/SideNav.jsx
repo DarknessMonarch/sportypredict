@@ -27,7 +27,6 @@ import {
 import { PiCourtBasketball as BetOfTheDayIcon } from "react-icons/pi";
 import { TbStars as ExtraIcon } from "react-icons/tb";
 
-// Additional icons for the new mobile navigation links
 import { 
   IoNewspaperOutline as NewsIcon,
   IoInformationCircleOutline as AboutIcon 

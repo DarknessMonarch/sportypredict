@@ -58,7 +58,7 @@ export default function Bonus() {
       {bonuses.map((bonus, index) => (
         <div key={index} className={styles.bonus}>
           <div
-            className={`${styles.bonusImgContainer} skeleton`}
+            className={`${styles.bonusImgContainer}`}
           >
             {bonus.bonusImg && (
               <Image

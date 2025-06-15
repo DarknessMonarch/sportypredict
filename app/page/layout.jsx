@@ -68,7 +68,9 @@ export default function PageLayout({ children }) {
       </div>
       <div className={styles.pageContent}>
         <Navbar />
-        {children}
+        <div className={styles.contentArea}>
+          {children}
+        </div>
       </div>
       {hasPopupAds && (
         <Popup

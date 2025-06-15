@@ -49,8 +49,8 @@ export default function SportCard({
           <Image
             src={leagueImage}
             alt={`${league} image`}
-            width={35}
-            height={35}
+            width={30}
+            height={30}
             priority={true}
             className={styles.leagueImage}
           />

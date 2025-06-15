@@ -2,7 +2,7 @@
   .cardContainer {
     width: 100%;
     display: flex;
-    padding: 10px;
+    padding: 0 10px;
     height: fit-content;
     border-radius: 15px;
     flex-direction: column;
@@ -34,7 +34,7 @@
 
   .leagueInfo h1 {
     font-size: 0.9rem;
-    font-weight: 800;
+    text-transform: capitalize;
   }
 
   .cardStatus {
@@ -69,7 +69,6 @@
   .teamContainer h1 {
     color: var(--secondary-color);
     font-size: 1.5rem;
-    font-weight: 600;
   }
 
   .teamInner {
@@ -116,7 +115,7 @@
     gap: 10px;
     width: 100%;
     display: flex;
-    padding: 10px 0;
+    padding: 5px 0;
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -161,7 +160,6 @@
     width: 24px;
     height: 24px;
     display: flex;
-    font-size: 0.5rem;
     border-radius: 360%;
     align-items: center;
     justify-content: center;
@@ -185,7 +183,7 @@
   }
 
   .formationCircle span {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
 
 }

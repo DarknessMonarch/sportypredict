@@ -32,8 +32,10 @@ export default function TermsConditions() {
 
   return (
     <div className={styles.termsContainer}>
-      <div className={styles.termsCard}>
-        <h1>Terms & Conditions</h1>
+      <div className={styles.termsContainerInner}>
+        <div className={styles.termHeader}>
+          <h1>Terms & Conditions</h1>
+        </div>
 
         <div className={styles.section}>
           <p>
@@ -195,7 +197,6 @@ export default function TermsConditions() {
             provided otherwise in these Terms and Conditions.
           </p>
         </div>
-
         <div className={styles.section}>
           <p>
             Sportypredict shall not be in breach of these Terms and Conditions
@@ -211,8 +212,8 @@ export default function TermsConditions() {
             failure.
           </p>
         </div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }

@@ -286,6 +286,14 @@ export default function SingleSport() {
         <div className={styles.tabsNavigation}>
           <button
             className={`${styles.tabButton} ${
+              activeTab === "preview" ? styles.activeTab : ""
+            }`}
+            onClick={() => handleTabChange("preview")}
+          >
+            Preview
+          </button>
+          <button
+            className={`${styles.tabButton} ${
               activeTab === "standing" ? styles.activeTab : ""
             }`}
             onClick={() => handleTabChange("standing")}
@@ -299,14 +307,6 @@ export default function SingleSport() {
             onClick={() => handleTabChange("formation")}
           >
             Formation
-          </button>
-          <button
-            className={`${styles.tabButton} ${
-              activeTab === "preview" ? styles.activeTab : ""
-            }`}
-            onClick={() => handleTabChange("preview")}
-          >
-            Preview
           </button>
         </div>
 

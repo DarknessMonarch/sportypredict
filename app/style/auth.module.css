@@ -27,7 +27,7 @@
   }
 
   .formContainer {
-    gap: 30px;
+    gap: 20px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -70,6 +70,7 @@
     width: 100%;
     display: flex;
     padding: 0 20px;
+    height: 60px;
     align-items: center;
     border-radius: 15px;
     background: var(--light-background-color);
@@ -80,7 +81,7 @@
     width: 100%;
     border: none;
     outline: none;
-    height: 65px;
+    height: 50px;
     background: transparent;
   }
 
@@ -89,6 +90,7 @@
     
   }
   .authIcon {
+    font-size: 20px;
     color: var(--light-primary-color);
 
   }
@@ -153,15 +155,15 @@
   .formAuthButton {
     gap: 10px;
     width: 100%;
-    height: 60px;
+    height: 50px;
     cursor: pointer;
     border-radius: 15px;
     color: var(--background-color);
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
   }
 
   .formAuthButton:hover {
-    background-color: var(--dark-secondary-color);
+    background-color: var(--secondary-color);
   }
 
   .formChange {

@@ -32,8 +32,10 @@ export default function Policy() {
 
   return (
     <div className={styles.termsContainer}>
-      <div className={styles.termsCard}>
-        <h1>Privacy policy</h1>
+      <div className={styles.termsContainerInner}>
+        <div className={styles.termHeader}>
+          <h1>Privacy policy</h1>
+        </div>
 
         <div className={styles.section}>
           <p>
@@ -88,8 +90,8 @@ export default function Policy() {
             or updates.
           </p>
         </div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }

@@ -16,7 +16,6 @@ export default function FilterComponent() {
   const [selectedLeague, setSelectedLeague] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
 
-  // Generate filter options from predictions data
   const filterOptions = useMemo(() => {
     if (!predictions || predictions.length === 0) {
       return {
@@ -31,7 +30,6 @@ export default function FilterComponent() {
     ].sort();
     const leagues = [...new Set(predictions.map((pred) => pred.league))].sort();
 
-    // Create a mapping of league names to their images
     const leagueImages = {};
     predictions.forEach((pred) => {
       if (pred.league && pred.leagueImage && !leagueImages[pred.league]) {
@@ -46,7 +44,6 @@ export default function FilterComponent() {
     };
   }, [predictions]);
 
-  // Initialize state from URL params on component mount
   useEffect(() => {
     const country = searchParams.get("country");
     const league = searchParams.get("league");

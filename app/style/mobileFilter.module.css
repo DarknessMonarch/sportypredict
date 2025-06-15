@@ -7,7 +7,7 @@
     align-items: center;
     justify-content: center;
   }
- 
+
   .mobileFilterHead {
     gap: 10px;
     display: flex;
@@ -15,38 +15,39 @@
     justify-content: center;
     flex-direction: column;
   }
- 
+
   .mobileFilterContainer h1 {
-    text-transform: capitalize;
-    font-weight: 600;
     text-align: center;
-    font-size: 1rem;
+    text-transform: capitalize;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-2);
   }
- 
+
   .mobileFilterHead h2 {
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: var(--font-size-3);
+    font-weight: var(--font-weight-regular);
   }
- 
+
   .filterContainer h1 {
     display: none;
   }
- 
+
   .filterContainer {
     gap: 20px;
     display: flex;
     padding: 10px 0;
     align-items: center;
   }
- 
-  .filterInner, .filterWrapper {
+
+  .filterInner,
+  .filterWrapper {
     gap: 20px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-evenly;
   }
- 
+
   .filterDate {
     gap: 10px;
     height: 50px;
@@ -59,7 +60,8 @@
     position: relative;
     cursor: pointer;
   }
- 
+
+  /* DatePicker specific styles */
   .dateInput {
     width: 100%;
     height: 100%;
@@ -70,28 +72,18 @@
     color: inherit;
     min-width: 110px;
     cursor: pointer;
-    
-    /* Remove these lines that were blocking the date picker */
-    /* -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none; */
   }
- 
-  /* Instead of hiding completely, make it transparent but clickable */
-  .dateInput::-webkit-calendar-picker-indicator {
-    opacity: 0;
-    position: absolute;
-    right: 0;
-    width: 100%;
+
+  .dateInputDisplay {
+    font-size: 14px;
+    color: inherit;
+    display: flex;
+    align-items: center;
     height: 100%;
-    cursor: pointer;
+    width: 100%;
+    outline: none;
   }
- 
-  .dateInput::-moz-focus-inner {
-    border: 0;
-    padding: 0;
-  }
- 
+
   .filterIcon {
     flex-shrink: 0;
     width: 20px;
@@ -99,28 +91,370 @@
     opacity: 0.7;
     pointer-events: none;
   }
+
+  /* Custom DatePicker styles - using filterDate as the local class */
+  .filterDate :global(.react-datepicker-wrapper) {
+    width: 100%;
+    height: 100%;
+    position: static;
+    z-index: 1;
+  }
+
+  .filterDate :global(.react-datepicker__input-container) {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    position: static;
+  }
+
+  /* Mobile-specific positioning - center the calendar */
+  .filterDate :global(.react-datepicker-popper) {
+    z-index: 999999 !important;
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    max-height: 80vh !important;
+    overflow: hidden !important;
+  }
+
+  .filterDate :global(.react-datepicker__portal) {
+    z-index: 999999 !important;
+    position: fixed !important;
+  }
+
+  .filterDate :global(.react-datepicker-popper[data-placement]) {
+    z-index: 999999 !important;
+    position: fixed !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .filterDate :global(.react-datepicker) {
+    font-family: inherit;
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-background-color);
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    font-size: var(--font-size-4);
+    z-index: 999999 !important;
+    position: relative;
+    max-width: min(320px, 90vw) !important;
+    min-width: 280px !important;
+    width: min(320px, 90vw) !important;
+    overflow: hidden !important;
+  }
+
+  .filterDate :global(.react-datepicker__header) {
+    background: var(--linear-gradient-color);
+    color: var(--background-color);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-bottom: none;
+    padding: var(--padding-md);
+    overflow: hidden;
+  }
+
+  .filterDate :global(.react-datepicker__current-month) {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-3);
+    color: var(--background-color);
+    margin-bottom: var(--padding-sx);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .filterDate :global(.react-datepicker__day-names) {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--padding-sx);
+    overflow: hidden;
+  }
+
+  .filterDate :global(.react-datepicker__day-name) {
+    color: var(--background-color);
+    font-weight: var(--font-weight-medium);
+    font-size: 0.7rem;
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+    max-width: calc(100% / 7);
+  }
+
+  .filterDate :global(.react-datepicker__week) {
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .filterDate :global(.react-datepicker__day) {
+    color: var(--primary-color);
+    border-radius: var(--radius-sm);
+    height: 1.8rem;
+    line-height: 1.8rem;
+    margin: 0;
+    transition: all 0.2s ease;
+    font-weight: var(--font-weight-regular);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    min-width: 0;
+    max-width: calc(100% / 7);
+    cursor: pointer;
+  }
+
+  .filterDate :global(.react-datepicker__day:hover) {
+    background-color: var(--secondary-color);
+    color: var(--background-color);
+    transform: scale(1.05);
+  }
+
+  .filterDate :global(.react-datepicker__day--selected) {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .filterDate :global(.react-datepicker__day--today) {
+    background-color: var(--lighter-primary-color);
+    color: var(--secondary-color);
+    font-weight: var(--font-weight-semibold);
+    border: 2px solid var(--secondary-color);
+  }
+
+  .filterDate :global(.react-datepicker__day--outside-month) {
+    color: var(--light-primary-color);
+    opacity: 0.5;
+  }
+
+  .filterDate :global(.react-datepicker__day--disabled) {
+    color: var(--light-primary-color);
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .filterDate :global(.react-datepicker__navigation) {
+    top: var(--padding-md);
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-sm);
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .filterDate :global(.react-datepicker__navigation:hover) {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+
+  .filterDate :global(.react-datepicker__navigation--previous) {
+    left: var(--padding-md);
+  }
+
+  .filterDate :global(.react-datepicker__navigation--next) {
+    right: var(--padding-md);
+  }
+
+  .filterDate :global(.react-datepicker__navigation-icon) {
+    color: var(--background-color);
+  }
+
+  .filterDate :global(.react-datepicker__clear-icon) {
+    position: absolute;
+    right: var(--padding-sx);
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.7;
+    color: var(--primary-color);
+    font-size: var(--font-size-3);
+    transition: all 0.2s ease;
+  }
+
+  .filterDate :global(.react-datepicker__clear-icon:hover) {
+    opacity: 1;
+    color: var(--secondary-color);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .filterDate :global(.react-datepicker__month-container) {
+    float: none !important;
+    width: 100% !important;
+  }
+
+  .filterDate :global(.react-datepicker__month) {
+    margin: var(--padding-md);
+    width: calc(100% - 2 * var(--padding-md)) !important;
+  }
+
+  /* Triangle pointer */
+  .filterDate :global(.react-datepicker__triangle) {
+    border-bottom-color: var(--primary-color);
+  }
+
+  /* Portal mode styles for mobile - scoped to filterDate */
+  .filterDate :global(.react-datepicker__portal) {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 999999 !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .filterDate :global(.react-datepicker__portal .react-datepicker) {
+    position: relative !important;
+    margin: 0 !important;
+    max-width: min(320px, 90vw) !important;
+    min-width: 280px !important;
+    width: min(320px, 90vw) !important;
+    max-height: calc(100vh - 40px) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Proper sizing for portal mode days */
+  .filterDate :global(.react-datepicker__portal .react-datepicker__day) {
+    height: 1.8rem !important;
+    line-height: 1.8rem !important;
+    font-size: 0.75rem !important;
+    min-width: 0 !important;
+    max-width: calc(100% / 7) !important;
+    flex: 1 !important;
+    margin: 0 !important;
+  }
+
+  .filterDate :global(.react-datepicker__portal .react-datepicker__day-name) {
+    font-size: 0.7rem !important;
+    min-width: 0 !important;
+    max-width: calc(100% / 7) !important;
+    flex: 1 !important;
+  }
+
+  .filterDate :global(.react-datepicker__portal .react-datepicker__week) {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  /* Hide scrollbars while maintaining functionality */
+  .filterDate :global(.react-datepicker__portal) {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+
+  .filterDate :global(.react-datepicker__portal)::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
+
+  .filterDate :global(.react-datepicker) {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+  }
+
+  .filterDate :global(.react-datepicker)::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
 }
 
-/* using it as global style for larger devices */
+/* Styles for larger devices */
 @media only screen and (min-width: 48em) {
   .mobileFilterContainer {
     width: 100%;
     justify-content: space-between;
   }
- 
+
   .filterContainer {
     width: fit-content;
   }
- 
+
   .filterContainer h1 {
     display: flex;
   }
- 
+
+  .mobileFilterContainer h1 {
+    font-size: var(--font-size-3);
+  }
+
   .filterWrapper {
     display: none;
   }
-    
+
   .dateInput {
     font-size: 16px;
+  }
+
+  .dateInputDisplay {
+    font-size: 16px;
+  }
+
+  /* Desktop-specific positioning - align calendar to the right edge of the button */
+  .filterDate :global(.react-datepicker-popper) {
+    position: absolute !important;
+    left: auto !important;
+    right: 0 !important;
+    transform: none !important;
+    top: calc(100% + 5px) !important;
+    z-index: 999999 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .filterDate :global(.react-datepicker-popper[data-placement]) {
+    position: absolute !important;
+    left: auto !important;
+    right: 0 !important;
+    transform: none !important;
+    top: calc(100% + 5px) !important;
+  }
+
+  .filterDate :global(.react-datepicker) {
+    max-width: none !important;
+    width: auto !important;
+    overflow: visible !important;
+  }
+
+  .filterDate :global(.react-datepicker__day) {
+    height: 2rem !important;
+    line-height: 2rem !important;
+    font-size: 0.875rem !important;
+    min-width: 2rem !important;
+    max-width: none !important;
+  }
+
+  .filterDate :global(.react-datepicker__day-name) {
+    font-size: 0.8rem !important;
+    min-width: 2rem !important;
+    max-width: none !important;
+  }
+
+  /* Ensure the filterDate container has relative positioning for absolute child */
+  .filterDate {
+    position: relative;
+  }
+
+  /* Reset scrollbar hiding on desktop */
+  .filterDate :global(.react-datepicker__portal),
+  .filterDate :global(.react-datepicker) {
+    scrollbar-width: auto;
+    -ms-overflow-style: auto;
+  }
+
+  .filterDate :global(.react-datepicker__portal)::-webkit-scrollbar,
+  .filterDate :global(.react-datepicker)::-webkit-scrollbar {
+    display: block;
   }
 }

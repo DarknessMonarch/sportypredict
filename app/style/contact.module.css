@@ -1,41 +1,22 @@
 @media screen {
   .formContactContainer {
-    gap: var(--padding-sm);
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    background: var(--linear-gradient-color);
-    position: relative;
-    padding: var(--padding-lg);
-  }
-
-  .formContactContainer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--linear-backround-image);
-    opacity: 0.3;
-    pointer-events: none;
+    gap: var(--padding-sm);
+    flex-direction: column;
   }
 
   .contactWrap {
     width: 100%;
-    max-width: 500px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .contactWrapinfo {
-    gap: var(--padding-lg);
     display: flex;
-    padding: var(--padding-xl);
     height: fit-content;
-    border-radius: var(--radius-md);
+    gap: var(--padding-lg);
     flex-direction: column;
+
+    padding: var(--padding-xl);
+    margin-top: var(--padding-xxl);
+    padding-top: var(--padding-sm);
+    border-radius: var(--radius-md);
     background-color: var(--background-color);
     box-shadow: var(--shadow-background-color);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -54,47 +35,34 @@
     color: var(--primary-color);
     text-wrap: nowrap;
     font-size: var(--font-size-3);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-regular);
     margin-bottom: var(--padding-sx);
   }
 
   .contactInput {
-    gap: var(--padding-md);
     width: 100%;
     height: 60px;
     display: flex;
+    align-items: center;
+    gap: var(--padding-md);
     padding: var(--padding-md) var(--padding-lg);
     border-radius: var(--radius-sm);
-    align-items: center;
     color: var(--light-primary-color);
     background: var(--light-background-color);
-    border: 2px solid transparent;
     transition: all 0.3s ease;
   }
 
-  .contactInput:focus-within {
-    border-color: var(--secondary-color);
-    background: var(--background-color);
-    box-shadow: 0 0 0 3px rgba(37, 199, 231, 0.1);
-    transform: translateY(-2px);
-  }
-
   .contactInput:hover {
-    background: var(--background-color);
     border-color: var(--light-secondary-color);
   }
 
   .contactIcon {
-    font-size: var(--font-size-3);
-    color: var(--secondary-color);
     flex-shrink: 0;
-    width: 20px;
-    transition: all 0.3s ease;
+    font-size: var(--font-size-3);
   }
 
-  .contactInput:focus-within .contactIcon {
-    color: var(--dark-secondary-color);
-    transform: scale(1.1);
+  .contactInput:hover .contactIcon {
+    color: var(--secondary-color);
   }
 
   .contactInput input {
@@ -127,15 +95,7 @@
     min-height: 120px;
   }
 
-  .contactInputTextArea:focus-within {
-    border-color: var(--secondary-color);
-    background: var(--background-color);
-    box-shadow: 0 0 0 3px rgba(37, 199, 231, 0.1);
-    transform: translateY(-2px);
-  }
-
   .contactInputTextArea:hover {
-    background: var(--background-color);
     border-color: var(--light-secondary-color);
   }
 
@@ -169,228 +129,26 @@
     opacity: 0.7;
   }
 
-  .errorText {
-    color: var(--loose-color);
-    font-size: var(--font-size-5);
-    font-weight: var(--font-weight-medium);
-    margin-top: var(--padding-sx);
-    padding-left: var(--padding-sm);
-    display: flex;
-    align-items: center;
-    gap: var(--padding-sx);
-  }
-
-  .errorText::before {
-    content: "⚠";
-    font-size: var(--font-size-4);
-  }
-
-  .formcontactBtnWrapper {
-    gap: var(--padding-md);
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    margin-top: var(--padding-sm);
-  }
-
   .formcontactButton {
     gap: var(--padding-md);
     width: 100%;
     height: 60px;
-    cursor: pointer;
-    font-size: var(--font-size-3);
-    font-weight: var(--font-weight-semibold);
-    border-radius: var(--radius-sm);
-    color: var(--background-color);
-    background: linear-gradient(135deg, var(--secondary-color), var(--dark-secondary-color));
-    border: none;
-    outline: none;
     display: flex;
+    cursor: pointer;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--shadow-box);
-  }
-
-  .formcontactButton::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
-    transition: left 0.5s ease;
-  }
-
-  .formcontactButton:hover::before {
-    left: 100%;
+    font-size: var(--font-size-3);
+    color: var(--background-color);
+    border-radius: var(--radius-sm);
+    background-color: var(--primary-color);
   }
 
   .formcontactButton:hover {
-    background: linear-gradient(135deg, var(--dark-secondary-color), var(--secondary-color));
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: var(--shadow-background-color);
+    background-color: var(--secondary-color);
   }
 
   .formcontactButton:active {
-    transform: translateY(0) scale(0.98);
-  }
-
-  .formcontactButton:disabled {
-    background: var(--light-primary-color);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-
-  .formcontactButton:disabled::before {
-    display: none;
-  }
-
-  /* Social Media Section - Updated to match footer */
-  .socialSection {
-    display: flex;
-    flex-direction: column;
-    gap: var(--padding-md);
-    background: rgba(255, 255, 255, 0.05);
-    padding: var(--padding-lg);
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(var(--padding-sm));
-    margin-top: var(--padding-lg);
-  }
-
-  .socialContainer {
-    display: flex;
-    flex-direction: column;
-    gap: var(--padding-md);
-    align-items: center;
-    text-align: center;
-  }
-
-  .socialTitle {
-    font-size: var(--font-size-3);
-    font-weight: var(--font-weight-semibold);
-    color: var(--background-color);
-    margin: 0;
-  }
-
-  .socialDescription {
-    font-size: var(--font-size-5);
-    font-weight: var(--font-weight-light);
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.5;
-    margin: 0;
-    text-align: center;
-  }
-
-  .socialLinks {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--padding-md);
-    justify-content: center;
-    align-items: center;
-    padding: var(--padding-sm) 0;
-  }
-
-  .socialIconWrap {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--shadow-box);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    cursor: pointer;
-    flex-shrink: 0;
-    background: var(--light-primary-color);
-  }
-
-  .socialIconWrap::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
-    transition: left 0.5s ease;
-  }
-
-  .socialIconWrap:hover::before {
-    left: 100%;
-  }
-
-  .socialIconWrap:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: var(--shadow-background-color);
-    border-color: rgba(255, 255, 255, 0.4);
-  }
-
-  .socialIconWrap:active {
-    transform: translateY(0) scale(0.95);
-  }
-
-  /* Specific social media colors */
-  .socialIconWrap[data-social="facebook"] {
-    background: linear-gradient(135deg, #1877f2, #42a5f5);
-  }
-
-  .socialIconWrap[data-social="twitter"] {
-    background: linear-gradient(135deg, #1da1f2, #64b5f6);
-  }
-
-  .socialIconWrap[data-social="instagram"] {
-    background: linear-gradient(135deg, #e1306c, #fd1d1d, #fccc63);
-  }
-
-  .socialIconWrap[data-social="telegram"] {
-    background: linear-gradient(135deg, #0088cc, #33a3dc);
-  }
-
-  .socialIconWrap[data-social="whatsapp"] {
-    background: linear-gradient(135deg, #25d366, #4fce5d);
-  }
-
-  .socialIcon {
-    height: 24px;
-    width: 24px;
-    object-fit: contain;
-    transition: transform 0.3s ease;
-  }
-
-  .socialIconWrap:hover .socialIcon {
-    transform: scale(1.1);
-  }
-
-  .contactNote {
-    font-size: var(--font-size-5);
-    text-align: center;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.5;
-    padding: var(--padding-md);
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: var(--padding-md);
+    background-color: var(--secondary-color);
   }
 }
 
@@ -399,80 +157,24 @@
   .formContactContainer {
     height: 100%;
     align-items: center;
-    justify-content: center;
-    padding: var(--padding-xl);
+    justify-content: space-between;
   }
 
   .contactWrap {
-    width: fit-content;
-    max-width: 600px;
-  }
-
-  .contactWrapinfo {
-    width: 100%;
     height: auto;
+    width: calc(100% / 2);
     padding: var(--padding-xxl);
-  }
-
-  .socialLinks {
-    gap: var(--padding-lg);
-  }
-
-  .socialIconWrap {
-    width: 55px;
-    height: 55px;
-  }
-
-  .socialIcon {
-    height: 28px;
-    width: 28px;
-  }
-
-  .socialContainer {
-    padding: var(--padding-lg);
-  }
-
-  .socialTitle {
-    font-size: var(--font-size-2);
-  }
-
-  .socialDescription {
-    font-size: var(--font-size-4);
   }
 }
 
 /* iPad pro screens & laptop */
 @media only screen and (min-width: 49em) and (max-width: 64em) {
-  .contactWrapinfo {
-    width: 100%;
-    max-width: 500px;
-  }
-
-  .formContactContainer {
-    padding: var(--padding-xxxl);
-  }
 }
 
 /* Large screens: Desktop and 4k screens */
 @media only screen and (min-width: 64.063em) and (max-width: 90em) {
-  .contactWrapinfo {
-    width: 100%;
-    max-width: 550px;
-  }
-
-  .formContactContainer {
-    padding: var(--padding-xxxl);
-  }
 }
 
 /* 5k screens and above */
 @media only screen and (min-width: 91em) {
-  .contactWrapinfo {
-    width: 100%;
-    max-width: 600px;
-  }
-
-  .formContactContainer {
-    padding: var(--padding-xxxl);
-  }
 }
