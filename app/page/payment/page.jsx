@@ -29,6 +29,36 @@ const PAYMENT_CONFIG = {
   STRIPE_KEY: process.env.NEXT_PUBLIC_STRIPE_KEY,
 };
 
+// Helper function to safely access window
+const getWindowObject = () => {
+  if (typeof window !== 'undefined') {
+    return window;
+  }
+  return null;
+};
+
+// Helper function to safely access sessionStorage
+const getSessionStorage = () => {
+  if (typeof window !== 'undefined' && window.sessionStorage) {
+    return window.sessionStorage;
+  }
+  return {
+    getItem: () => null,
+    setItem: () => {},
+    removeItem: () => {}
+  };
+};
+
+// Helper function to safely access URLSearchParams
+const getURLSearchParams = () => {
+  if (typeof window !== 'undefined' && window.location) {
+    return new URLSearchParams(window.location.search);
+  }
+  return {
+    get: () => null
+  };
+};
+
 const getManualPaymentDetails = (countryCode) => {
   const africanPayments = {
     ke: {
@@ -279,6 +309,7 @@ export default function Payment() {
   const [country, setCountry] = useState(null);
   const [paymentPlans, setPaymentPlans] = useState([]);
   const [fetchError, setFetchError] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
@@ -293,6 +324,11 @@ export default function Payment() {
   } = useAuthStore();
   
   const { getPaymentPlanByCountry, loading } = usePaymentStore();
+
+  // Set mounted state to true after component mounts
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const countryOptions = useMemo(
     () => [
@@ -342,14 +378,80 @@ export default function Payment() {
     [getPaymentPlanByCountry, countryOptions]
   );
 
+  const addVIPAccess = useCallback(async (paymentReference = null) => {
+    if (isAuth && userId && accessToken) {
+      try {
+        const currentDate = new Date();
+        const formattedDate = `${
+          currentDate.getMonth() + 1
+        }-${currentDate.getDate()}-${currentDate.getFullYear()}`;
+
+        const durationDays = selectedPlan?.type === "Weekly" ? 7 : selectedPlan?.type === "Monthly" ? 30 : 365;
+        const expirationDate = new Date(currentDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
+
+        const requestBody = {
+          plan: selectedPlan?.type,
+          duration: durationDays,
+          amount: selectedPlan?.price,
+          currency: selectedPlan?.currency,
+          activationDate: formattedDate,
+        };
+
+        if (paymentReference) {
+          requestBody.paymentReference = paymentReference;
+        }
+
+        const response = await fetch(
+          `${PAYMENT_CONFIG.SERVER_HOST}/auth/process-payment`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(requestBody),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
+          updateUser({
+            isVip: true,
+            vipPlan: selectedPlan?.type?.toLowerCase(),
+            vipPlanDisplayName: selectedPlan?.type,
+            duration: durationDays,
+            activation: formattedDate,
+            expires: expirationDate.toISOString(),
+            payment: selectedPlan?.price,
+          });
+
+          toast.success("Payment successful! VIP access activated!");
+          router.push("vip");
+        } else {
+          toast.error(data.message || "Payment validation failed");
+        }
+      } catch (err) {
+        console.error("Update error:", err);
+        toast.error("An error occurred while processing payment. Please contact support if payment was deducted.");
+      }
+    } else {
+      toast.error("Please log in to complete payment");
+    }
+  }, [isAuth, userId, accessToken, selectedPlan, updateUser, router]);
+
   useEffect(() => {
+    // Only run this effect after component is mounted (client-side)
+    if (!isMounted) return;
+
     // Handle payment success returns from external providers
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = getURLSearchParams();
     const paymentStatus = urlParams.get('payment');
     const paymentMethod = urlParams.get('method');
     
     if (paymentStatus === 'success') {
       if (paymentMethod === 'coinbase') {
+        const sessionStorage = getSessionStorage();
         const pendingPayment = sessionStorage.getItem('pendingPayment');
         if (pendingPayment) {
           const paymentData = JSON.parse(pendingPayment);
@@ -363,11 +465,14 @@ export default function Payment() {
           
           sessionStorage.removeItem('pendingPayment');
           
-          window.history.replaceState({}, document.title, window.location.pathname);
+          const windowObj = getWindowObject();
+          if (windowObj && windowObj.history) {
+            windowObj.history.replaceState({}, document.title, windowObj.location.pathname);
+          }
         }
       }
     }
-  }, []);
+  }, [isMounted, addVIPAccess]);
 
   useEffect(() => {
     if (isAuth && userCountry) {
@@ -543,15 +648,18 @@ export default function Payment() {
     
     toast.info("Redirecting to Stripe checkout...");
     
-    const stripeWindow = window.open(checkoutUrl, "_blank");
-    
-    if (!stripeWindow) {
-      toast.error("Please allow popups for this site");
-      return;
-    }
+    const windowObj = getWindowObject();
+    if (windowObj) {
+      const stripeWindow = windowObj.open(checkoutUrl, "_blank");
+      
+      if (!stripeWindow) {
+        toast.error("Please allow popups for this site");
+        return;
+      }
 
-    toast.success("Payment initiated! Processing your VIP access...");
-    // addVIPAccess(`stripe_${Date.now()}`);
+      toast.success("Payment initiated! Processing your VIP access...");
+      // addVIPAccess(`stripe_${Date.now()}`);
+    }
   };
 
   const payMpesa = () => {
@@ -621,8 +729,8 @@ export default function Payment() {
             amount: amount,
             currency: "USD",
           },
-          cancel_url: window.location.href,
-          success_url: `${window.location.origin}/vip?payment=success&method=coinbase`,
+          cancel_url: isMounted ? window.location.href : "",
+          success_url: isMounted ? `${window.location.origin}/vip?payment=success&method=coinbase` : "",
         }),
       });
 
@@ -630,13 +738,17 @@ export default function Payment() {
       if (response.ok && data.data?.hosted_url) {
         toast.info("Redirecting to Coinbase Commerce...");
         
+        const sessionStorage = getSessionStorage();
         sessionStorage.setItem('pendingPayment', JSON.stringify({
           method: 'coinbase',
           plan: selectedPlan,
           chargeId: data.data.id
         }));
         
-        window.location.href = data.data.hosted_url;
+        const windowObj = getWindowObject();
+        if (windowObj) {
+          windowObj.location.href = data.data.hosted_url;
+        }
       } else {
         toast.error("Failed to initialize cryptocurrency payment");
       }
@@ -650,69 +762,9 @@ export default function Payment() {
     toast.success("Please follow the manual payment instructions above");
   };
 
-  const addVIPAccess = async (paymentReference = null) => {
-    if (isAuth && userId && accessToken) {
-      try {
-        const currentDate = new Date();
-        const formattedDate = `${
-          currentDate.getMonth() + 1
-        }-${currentDate.getDate()}-${currentDate.getFullYear()}`;
-
-        const durationDays = selectedPlan?.type === "Weekly" ? 7 : selectedPlan?.type === "Monthly" ? 30 : 365;
-        const expirationDate = new Date(currentDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
-
-        const requestBody = {
-          plan: selectedPlan?.type,
-          duration: durationDays,
-          amount: selectedPlan?.price,
-          currency: selectedPlan?.currency,
-          activationDate: formattedDate,
-        };
-
-        if (paymentReference) {
-          requestBody.paymentReference = paymentReference;
-        }
-
-        const response = await fetch(
-          `${PAYMENT_CONFIG.SERVER_HOST}/auth/process-payment`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify(requestBody),
-          }
-        );
-
-        const data = await response.json();
-
-        if (response.ok && data.status === 'success') {
-          updateUser({
-            isVip: true,
-            vipPlan: selectedPlan?.type?.toLowerCase(),
-            vipPlanDisplayName: selectedPlan?.type,
-            duration: durationDays,
-            activation: formattedDate,
-            expires: expirationDate.toISOString(),
-            payment: selectedPlan?.price,
-          });
-
-          toast.success("Payment successful! VIP access activated!");
-          router.push("vip");
-        } else {
-          toast.error(data.message || "Payment validation failed");
-        }
-      } catch (err) {
-        console.error("Update error:", err);
-        toast.error("An error occurred while processing payment. Please contact support if payment was deducted.");
-      }
-    } else {
-      toast.error("Please log in to complete payment");
-    }
-  };
-
   useEffect(() => {
+    if (!isMounted) return;
+    
     if (selectedPaymentMethod === "paypal" && selectedPlan) {
       const countryMapping = getCountryMapping(country);
       let amount = selectedPlan.price;
@@ -749,8 +801,9 @@ export default function Payment() {
             `https://www.paypal.com/sdk/js?client-id=${PAYMENT_CONFIG.CLIENT_ID}&currency=USD`
           );
 
-          if (window.paypal) {
-            window.paypal
+          const windowObj = getWindowObject();
+          if (windowObj && windowObj.paypal) {
+            windowObj.paypal
               .Buttons({
                 createOrder: (data, actions) => {
                   return actions.order.create({
@@ -787,7 +840,11 @@ export default function Payment() {
 
       initPayPal();
     }
-  }, [selectedPaymentMethod, selectedPlan, country]);
+  }, [isMounted, selectedPaymentMethod, selectedPlan, country, addVIPAccess]);
+
+  if (!isMounted) {
+    return <LoadingLogo />;
+  }
 
   return (
     <div className={styles.paymentContainer}>

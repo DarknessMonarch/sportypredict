@@ -1,18 +1,18 @@
 "use client";
 
-import Head from 'next/head';
-import Script from 'next/script';
+import Head from "next/head";
+import Script from "next/script";
 import { useEffect } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import LoadingLogo from "@/app/components/LoadingLogo";
 
 export default function App() {
   const router = useRouter();
-  
+
   useEffect(() => {
-    router.replace('/page/day');
+    router.replace("/page/day");
   }, [router]);
-  
+
   return (
     <>
       <Head>
@@ -20,7 +20,7 @@ export default function App() {
         <meta name="robots" content="noindex, follow" />
         <link rel="canonical" href="https://sportypredict.com/page/day" />
       </Head>
-      
+
       <Script id="http-redirect" strategy="beforeInteractive">
         {`
           // This helps search engines understand the redirect better
@@ -31,8 +31,9 @@ export default function App() {
           }
         `}
       </Script>
-      
-      <LoadingLogo />
+      <div className="loadingAppMain">
+        <LoadingLogo />
+      </div>
     </>
   );
 }
