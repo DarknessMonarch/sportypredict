@@ -2,7 +2,6 @@
 
 import { toast } from "sonner";
 import { useState } from "react";
-import Footer from "@/app/components/Footer";
 import Loader from "@/app/components/Loader";
 import { useAuthStore } from "@/app/store/Auth";
 import styles from "@/app/style/contact.module.css";
@@ -27,7 +26,7 @@ export default function Contact() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.username.trim()) {
       newErrors.username = "Username is required";
     } else if (formData.username.trim().length < 2) {
@@ -60,7 +59,7 @@ export default function Contact() {
 
   async function onSubmit(event) {
     event.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -81,10 +80,14 @@ export default function Contact() {
     } catch (error) {
       console.error("Contact form error:", error);
 
-      if (error.name === 'NetworkError' || error.message.includes('fetch')) {
-        toast.error("Network error. Please check your connection and try again.");
+      if (error.name === "NetworkError" || error.message.includes("fetch")) {
+        toast.error(
+          "Network error. Please check your connection and try again."
+        );
       } else if (error.status === 429) {
-        toast.error("Too many requests. Please wait a moment before trying again.");
+        toast.error(
+          "Too many requests. Please wait a moment before trying again."
+        );
       } else if (error.status >= 500) {
         toast.error("Server error. Please try again later.");
       } else {
@@ -96,8 +99,8 @@ export default function Contact() {
   }
 
   return (
-    <div onSubmit={onSubmit} className={styles.formContactContainer}>
-      <div className={styles.contactWrap}>
+    <div className={styles.formContactContainer}>
+      <form className={styles.contactWrap} onSubmit={onSubmit}>
         {/* Username */}
         <div className={styles.contactInputContainer}>
           <label htmlFor="username" className={styles.contactLabel}>
@@ -155,15 +158,14 @@ export default function Contact() {
           </div>
         </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={styles.formcontactButton}
-          >
-            {isLoading ? <Loader /> : "Send Message"}
-          </button>
-      </div>
-      <Footer />
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={styles.formcontactButton}
+        >
+          {isLoading ? <Loader /> : "Send Message"}
+        </button>
+      </form>
     </div>
   );
 }

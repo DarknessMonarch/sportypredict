@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Banner from "@/app/components/Banner";
-import Footer from "@/app/components/Footer";
 import SportCard from "@/app/components/Card";
 import Nothing from "@/app/components/Nothing";
 import styles from "@/app/style/sport.module.css";
@@ -253,9 +252,6 @@ export default function Sport() {
           {isMobile && <VipResults />}
         </div>
       )}
-      <div className={styles.footerMobile}>
-        <Footer />
-      </div>
     </div>
   );
 }

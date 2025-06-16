@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import Nothing from "@/app/components/Nothing";
 import { useBonusStore } from "@/app/store/Bonus";
-import styles from "@/app/style/offers.module.css";
+import styles from "@/app/style/offers.module.css"; 
 import NoOffersImg from "@/public/assets/noOffers.png";
 
 import { MdContentCopy as CopyIcon } from "react-icons/md";
@@ -15,7 +15,7 @@ export default function Bonus() {
   const { bonuses, loading, error, fetchBonuses } = useBonusStore();
 
   useEffect(() => {
-    fetchBonuses();
+    fetchBonuses("");
   }, [fetchBonuses]);
 
   const copyCode = (code) => {
@@ -57,9 +57,7 @@ export default function Bonus() {
     <div className={styles.bonusContainer}>
       {bonuses.map((bonus, index) => (
         <div key={index} className={styles.bonus}>
-          <div
-            className={`${styles.bonusImgContainer}`}
-          >
+          <div className={styles.bonusImgContainer}>
             {bonus.bonusImg && (
               <Image
                 className={styles.bonusImage}
@@ -75,9 +73,11 @@ export default function Bonus() {
               />
             )}
           </div>
+          
           <div className={styles.bonusTitle}>
             <span>{bonus.title}</span>
           </div>
+          
           <div className={styles.bonusFormContainer}>
             {!bonus.bonusCode || bonus.bonusCode === "" ? (
               <div className={styles.bonusForm}>
@@ -89,7 +89,7 @@ export default function Bonus() {
                   <span>Promo code</span>
                   <h2 className={styles.inputCode}>{bonus.bonusCode}</h2>
                 </div>
-                <button type="submit" className={styles.bonusBtn}>
+                <button type="button" className={styles.bonusBtn}>
                   <CopyIcon
                     onClick={() => copyCode(bonus.bonusCode)}
                     className={styles.iconBonus}

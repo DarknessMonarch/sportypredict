@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import Image from "next/image";
-import Footer from "@/app/components/Footer";
+import DOMPurify from "dompurify";
 import Loading from "@/app/components/LoadingLogo";
 import OfferCard from "@/app/components/OfferCard";
 import SingleCard from "@/app/components/SingleCard";
@@ -15,7 +15,7 @@ import { usePredictionStore } from "@/app/store/Prediction";
 import { useAdvertStore } from "@/app/store/Advert";
 
 export default function SingleSport() {
-  const [activeTab, setActiveTab] = useState("standing");
+  const [activeTab, setActiveTab] = useState("preview");
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
 
   const pathname = usePathname();
@@ -592,7 +592,12 @@ export default function SingleSport() {
             <div className={styles.previewCard}>
               <div className={styles.matchAnalysis}>
                 {match?.description ? (
-                  <p>{match.description}</p>
+                  <div
+                    className={styles.htmlContent}
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(match.description),
+                    }}
+                  />
                 ) : (
                   <p>No match preview available.</p>
                 )}
@@ -634,9 +639,6 @@ export default function SingleSport() {
           <OfferCard />
         </div>
         <InnerBannerAdsSection />
-      </div>
-      <div className={styles.footerMobile}>
-        <Footer />
       </div>
     </div>
   );

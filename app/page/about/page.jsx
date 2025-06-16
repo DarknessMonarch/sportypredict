@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Footer from "@/app/components/Footer";
 import styles from "@/app/style/info.module.css";
 
 export default function About() {
@@ -31,8 +30,7 @@ export default function About() {
   }, []);
 
   return (
-    <div className={styles.termsContainer}>
-      <div className={styles.termsContainerInner}>
+  <div className={styles.termsContainer}>
         <div className={styles.termHeader}>
           <h1>About Sportypredict</h1>
         </div>
@@ -202,8 +200,5 @@ export default function About() {
           </p>
         </div>
       </div>
-
-      <Footer />
-    </div>
   );
 }

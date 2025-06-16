@@ -3,9 +3,8 @@
 import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Banner from "@/app/components/Banner";
-import Footer from "@/app/components/Footer";
 import SportCard from "@/app/components/Card";
 import Nothing from "@/app/components/Nothing";
 import { useAuthStore } from "@/app/store/Auth";
@@ -20,6 +19,67 @@ import SubscriptionImage from "@/public/assets/subscriptions.png";
 
 import { FaRegUser as UserIcon } from "react-icons/fa";
 
+const useVipStatus = () => {
+  const { isVip, expires, user } = useAuthStore();
+  
+  const isVipActive = useMemo(() => {
+    if (user?.isAdmin) return true;
+    if (isVip) {
+      if (!expires) return true;
+      return new Date(expires) > new Date();
+    }
+    
+    return false;
+  }, [isVip, expires, user?.isAdmin]);
+
+  const daysRemaining = useMemo(() => {
+    if (user?.isAdmin || !expires) return null;
+    
+    const remaining = Math.ceil((new Date(expires) - new Date()) / (1000 * 60 * 60 * 24));
+    return Math.max(0, remaining);
+  }, [expires, user?.isAdmin]);
+
+  const isExpired = useMemo(() => {
+    if (user?.isAdmin) return false;
+    if (isVip && !expires) return false;
+    return isVip && expires && new Date(expires) <= new Date();
+  }, [isVip, expires, user?.isAdmin]);
+
+  const isSuperAdmin = useMemo(() => {
+    return user?.isAdmin && isVip && !expires;
+  }, [user?.isAdmin, isVip, expires]);
+
+  return { isVipActive, daysRemaining, isExpired, isSuperAdmin };
+};
+
+const VipStatusBanner = ({ daysRemaining, isSuperAdmin, onRenewClick }) => {
+  if (isSuperAdmin) return null;
+  if (!daysRemaining) return null;
+  
+  const isExpiring = daysRemaining <= 7;
+  
+  return (
+    <div className={`${styles.vipBanner} ${isExpiring ? styles.expiring : ''}`}>
+      <div className={styles.vipBannerContent}>
+        <span className={styles.vipText}>
+          {isExpiring 
+            ? `Vip expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`
+            : `Vip active • ${daysRemaining} days remaining`
+          }
+        </span>
+        {isExpiring && (
+          <button 
+            className={styles.renewButton}
+            onClick={onRenewClick}
+          >
+            Renew
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function Sport() {
   const emptyCardCount = 12;
   const router = useRouter();
@@ -33,7 +93,8 @@ export default function Sport() {
 
   const currentCategory = decodeURIComponent(pathname.split("/").pop());
 
-  const { isAuth, isVip, user } = useAuthStore();
+  const { isAuth, user } = useAuthStore();
+  const { isVipActive, daysRemaining, isExpired, isSuperAdmin } = useVipStatus();
 
   const { predictions, loading, error, fetchPredictions, clearError } =
     usePredictionStore();
@@ -77,7 +138,7 @@ export default function Sport() {
       }
     };
 
-    if (isAuth && (isVip || user?.isAdmin) && selectedDate) {
+    if (isAuth && isVipActive && selectedDate) {
       loadPredictions();
     }
   }, [
@@ -85,8 +146,7 @@ export default function Sport() {
     currentCategory,
     fetchPredictions,
     isAuth,
-    isVip,
-    user?.isAdmin,
+    isVipActive,
   ]);
 
   useEffect(() => {
@@ -119,7 +179,7 @@ export default function Sport() {
   };
 
   const getFilteredPredictions = () => {
-    if (!isAuth || !isVip) return [];
+    if (!isAuth || !isVipActive) return [];
 
     let filtered = predictions.filter((prediction) => {
       const matchesSearch =
@@ -160,7 +220,7 @@ export default function Sport() {
   const shouldShowNothing =
     !loading &&
     isAuth &&
-    (isVip || user?.isAdmin) &&
+    isVipActive &&
     filteredPredictions.length === 0;
 
   const renderEmptyCards = () => {
@@ -172,6 +232,10 @@ export default function Sport() {
           key={`empty-${index}`}
         />
       ));
+  };
+
+  const handleRenewClick = () => {
+    router.push("payment");
   };
 
   if (!isAuth) {
@@ -189,7 +253,8 @@ export default function Sport() {
     );
   }
 
-  if (isAuth && isVip) {
+  // Authenticated but VIP expired or not VIP
+  if (isAuth && !isVipActive) {
     return (
       <div className={styles.sportContainer}>
         <Banner />
@@ -204,33 +269,14 @@ export default function Sport() {
           />
         </div>
         <ExclusiveOffers />
-
         <VipUpgradePrompt
-          message={`Upgrade to VIP to access ${currentCategory} predictions`}
-          buttonText="Upgrade to VIP"
-          onClick={() => router.push("/payment")}
-        />
-      </div>
-    );
-  }
-  if (isAuth && user && !user.isVip) {
-    return (
-      <div className={styles.sportContainer}>
-        <Banner />
-        <div className={styles.filtersContainer}>
-          <MobileFilter
-            searchKey={searchKey}
-            setSearchKey={setSearchKey}
-            leagueKey={leagueKey}
-            setLeagueKey={setLeagueKey}
-            countryKey={countryKey}
-            setCountryKey={setCountryKey}
-          />
-        </div>
-        <VipUpgradePrompt
-          message={`Join vip to access ${currentCategory} predictions`}
-          buttonText="Join now"
-          onClick={() => router.push("/payment")}
+          message={
+            isExpired 
+              ? `Your VIP subscription has expired. Renew to access ${currentCategory} predictions`
+              : `Join VIP to access ${currentCategory} predictions`
+          }
+          buttonText={isExpired ? "Renew VIP" : "Join VIP"}
+          onClick={handleRenewClick}
         />
       </div>
     );
@@ -240,6 +286,11 @@ export default function Sport() {
     return (
       <div className={styles.sportContainer}>
         <Banner />
+        <VipStatusBanner 
+          daysRemaining={daysRemaining} 
+          isSuperAdmin={isSuperAdmin}
+          onRenewClick={handleRenewClick}
+        />
         <div className={styles.filtersContainer}>
           <MobileFilter
             searchKey={searchKey}
@@ -259,6 +310,11 @@ export default function Sport() {
   return (
     <div className={styles.sportContainer}>
       <Banner />
+      <VipStatusBanner 
+        daysRemaining={daysRemaining} 
+        isSuperAdmin={isSuperAdmin}
+        onRenewClick={handleRenewClick}
+      />
       <div className={styles.filtersContainer}>
         <MobileFilter
           searchKey={searchKey}
@@ -315,9 +371,6 @@ export default function Sport() {
           {isMobile && <VipResults />}
         </div>
       )}
-      <div className={styles.footerMobile}>
-        <Footer />
-      </div>
     </div>
   );
 }

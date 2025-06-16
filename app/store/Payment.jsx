@@ -17,7 +17,12 @@ export const usePaymentStore = create(
           const response = await fetch(`${SERVER_API}/payment`);
           
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            return { 
+              success: false, 
+              message: errorData.message || "Failed to fetch payment plans",
+              status: response.status 
+            };
           }
           
           const data = await response.json();
@@ -25,7 +30,7 @@ export const usePaymentStore = create(
             set({ paymentPlans: data.data.plans || [] });
             return { success: true, data: data.data, message: data.message };
           }
-          throw new Error(data.message || "Failed to fetch payment plans");
+          return { success: false, message: data.message || "Failed to fetch payment plans" };
         } catch (error) {
           console.error("Fetch payment plans error:", error);
           set({ error: error.message });
@@ -41,18 +46,27 @@ export const usePaymentStore = create(
           const response = await fetch(`${SERVER_API}/payment/country/${encodeURIComponent(country)}`);
           
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            return { 
+              success: false, 
+              message: errorData.message || `No payment plan found for ${country}`,
+              status: response.status 
+            };
           }
           
           const data = await response.json();
           if (data.status === "success") {
             return { success: true, data: data.data };
           }
-          throw new Error(data.message || "Failed to fetch payment plan for country");
+          return { success: false, message: data.message || "Failed to fetch payment plan for country" };
         } catch (error) {
           console.error("Get payment plan by country error:", error);
           set({ error: error.message });
-          return { success: false, message: error.message };
+          return { 
+            success: false, 
+            message: `Payment plans not available for ${country}`,
+            status: 404 
+          };
         } finally {
           set({ loading: false });
         }
@@ -66,14 +80,19 @@ export const usePaymentStore = create(
           );
           
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            return { 
+              success: false, 
+              message: errorData.message || "Failed to fetch pricing",
+              status: response.status 
+            };
           }
           
           const data = await response.json();
           if (data.status === "success") {
             return { success: true, data: data.data };
           }
-          throw new Error(data.message || "Failed to fetch pricing");
+          return { success: false, message: data.message || "Failed to fetch pricing" };
         } catch (error) {
           console.error("Get pricing by country and plan error:", error);
           set({ error: error.message });
@@ -95,14 +114,19 @@ export const usePaymentStore = create(
           });
           
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            return { 
+              success: false, 
+              message: errorData.message || "Payment validation failed",
+              status: response.status 
+            };
           }
           
           const data = await response.json();
           if (data.status === "success") {
             return { success: true, data: data.data };
           }
-          throw new Error(data.message || "Payment validation failed");
+          return { success: false, message: data.message || "Payment validation failed" };
         } catch (error) {
           console.error("Validate payment error:", error);
           set({ error: error.message });
@@ -112,44 +136,173 @@ export const usePaymentStore = create(
         }
       },
 
+      createPaymentPlan: async (planData) => {
+        try {
+          set({ loading: true, error: null });
+          const accessToken = useAuthStore.getState().accessToken;
+          
+          if (!accessToken) {
+            return { success: false, message: "Authentication required" };
+          }
 
-      // Helper method to get payment plan by ID
+          const { country, currency, weekly, monthly, yearly } = planData;
+          if (!country || !currency || !weekly || !monthly || !yearly) {
+            return { success: false, message: "All fields (country, currency, weekly, monthly, yearly) are required" };
+          }
+          
+          const response = await fetch(`${SERVER_API}/payment`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(planData)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            return { 
+              success: false, 
+              message: errorData.message || `Failed to create payment plan`,
+              status: response.status 
+            };
+          }
+
+          const data = await response.json();
+          if (data.status === "success") {
+            set(state => ({
+              paymentPlans: [...state.paymentPlans, data.data]
+            }));
+            return { success: true, data: data.data, message: data.message };
+          }
+          return { success: false, message: data.message || "Failed to create payment plan" };
+        } catch (error) {
+          console.error("Create payment plan error:", error);
+          set({ error: error.message });
+          return { success: false, message: error.message };
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      updatePaymentPlan: async (id, updateData) => {
+        try {
+          set({ loading: true, error: null });
+          const accessToken = useAuthStore.getState().accessToken;
+          
+          if (!accessToken) {
+            return { success: false, message: "Authentication required" };
+          }
+          
+          const response = await fetch(`${SERVER_API}/payment/${id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(updateData)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            return { 
+              success: false, 
+              message: errorData.message || "Failed to update payment plan",
+              status: response.status 
+            };
+          }
+
+          const data = await response.json();
+          if (data.status === "success") {
+            set(state => ({
+              paymentPlans: state.paymentPlans.map(plan => 
+                plan._id === id ? data.data : plan
+              )
+            }));
+            return { success: true, data: data.data, message: data.message };
+          }
+          return { success: false, message: data.message || "Failed to update payment plan" };
+        } catch (error) {
+          console.error("Update payment plan error:", error);
+          set({ error: error.message });
+          return { success: false, message: error.message };
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      deletePaymentPlan: async (id) => {
+        try {
+          set({ loading: true, error: null });
+          const accessToken = useAuthStore.getState().accessToken;
+          
+          if (!accessToken) {
+            return { success: false, message: "Authentication required" };
+          }
+          
+          const response = await fetch(`${SERVER_API}/payment/${id}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            return { 
+              success: false, 
+              message: errorData.message || "Failed to delete payment plan",
+              status: response.status 
+            };
+          }
+
+          const data = await response.json();
+          if (data.status === "success") {
+            set(state => ({
+              paymentPlans: state.paymentPlans.filter(plan => plan._id !== id)
+            }));
+            return { success: true, message: data.message };
+          }
+          return { success: false, message: data.message || "Failed to delete payment plan" };
+        } catch (error) {
+          console.error("Delete payment plan error:", error);
+          set({ error: error.message });
+          return { success: false, message: error.message };
+        } finally {
+          set({ loading: false });
+        }
+      },
+
       getPaymentPlanById: (id) => {
         const state = get();
         return state.paymentPlans.find(plan => plan._id === id);
       },
 
-      // Helper method to get all countries
       getAllCountries: () => {
         const state = get();
         return [...new Set(state.paymentPlans.map(plan => plan.country))];
       },
 
-      // Helper method to get payment plans with weekly pricing
       getWeeklyPlans: () => {
         const state = get();
         return state.paymentPlans.filter(plan => plan.weekly > 0);
       },
 
-      // Helper method to get payment plans with monthly pricing
       getMonthlyPlans: () => {
         const state = get();
         return state.paymentPlans.filter(plan => plan.monthly > 0);
       },
 
-      // Helper method to get payment plans with yearly pricing
       getYearlyPlans: () => {
         const state = get();
         return state.paymentPlans.filter(plan => plan.yearly > 0);
       },
 
-      // Get all pricing for a specific country
       getCountryPricing: (country) => {
         const state = get();
         return state.paymentPlans.find(plan => plan.country === country);
       },
 
-      // Get price by country and duration
       getPriceByCountryAndDuration: (country, duration) => {
         const plan = get().getCountryPricing(country);
         if (!plan) return null;
@@ -166,7 +319,6 @@ export const usePaymentStore = create(
         }
       },
 
-      // Get plan options for a country (simple list without savings calculations)
       getPlanOptions: (country) => {
         const plan = get().getCountryPricing(country);
         if (!plan) return [];
@@ -209,16 +361,13 @@ export const usePaymentStore = create(
         return options;
       },
 
-      // Validate if a payment amount matches expected price
       isValidPaymentAmount: async (country, duration, amount) => {
         const pricing = get().getPriceByCountryAndDuration(country, duration);
         if (!pricing) return false;
 
-        // Allow small floating point differences (within 1 cent)
         return Math.abs(amount - pricing.price) < 0.01;
       },
 
-      // Format price with currency
       formatPrice: (amount, currency) => {
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -226,7 +375,6 @@ export const usePaymentStore = create(
         }).format(amount);
       },
 
-      // Get duration options for a country
       getDurationOptions: (country) => {
         const plan = get().getCountryPricing(country);
         if (!plan) return [];

@@ -4,12 +4,12 @@
     display: flex;
   }
 
+
 }
 
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
   .sportLayout {
-    height: 100%;
     padding: 10px;
     justify-content: space-between;
   }

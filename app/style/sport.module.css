@@ -14,13 +14,13 @@
     display: flex;
     padding: 10px;
     flex-wrap: wrap;
-    min-height:400px;
+    min-height: 400px;
     align-items: center;
     justify-content: center;
   }
 
   .matchPreview {
-    gap: 4px;
+    gap: 2px;
     width: 100%;
     display: flex;
     cursor: pointer;
@@ -35,7 +35,7 @@
   }
 
   .matchPreview:hover {
-    gap: 10px;
+    gap: 4px;
   }
 
   .emptyCard {
@@ -90,14 +90,63 @@
     width: auto;
     height: 60px;
   }
+
+  .vipBanner {
+    padding: 4px;
+    border-radius: 15px;
+    position: relative;
+    background: var(--background-color);
+    border: 1px solid var(--light-primary-color);
+  }
+
+  .vipBannerContent {
+    gap: 10px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    border-radius: inherit;
+    justify-content: space-between;
+    background: var(--linear-gradient-color);
+  }
+
+  .vipText {
+    flex: 1;
+    font-weight: 300;
+    font-size: 0.9rem;
+    padding-left: 10px;
+    color: var(--background-color);
+  }
+
+  .renewButton {
+    cursor: pointer;
+    font-weight: 300;
+    font-size: 0.8rem;
+    padding: 8px 20px;
+    border-radius: 15px;
+    color: var(--secondary-color);
+    background-color: var(--background-color);
+    border: 1px solid var(--background-color);
+  }
+
+  .renewButton:hover {
+    color: var(--background-color);
+    background-color: var(--secondary-color);
+    border: 1px solid var(--background-color);
+  }
+
+  .filtersContainer {
+    width: 100%;
+    padding: 0 10px;
+  }
 }
 
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
   .sportContainer {
-    height: calc(100vh - var(--navbar-height));
-  }
+    height: 100vh;
+    overflow: hidden;
 
+  }
   .content {
     padding: 10px 0;
     overflow: hidden;
@@ -115,5 +164,17 @@
 
   .footerMobile {
     display: none;
+  }
+
+  .vipBannerContent {
+    gap: 15px;
+  }
+
+  .vipText {
+    font-size: 1rem;
+  }
+
+  .filtersContainer {
+    padding: 0;
   }
 }

@@ -4,7 +4,6 @@ import Image from "next/image";
 import { toast } from "sonner";
 import DOMPurify from "dompurify";
 import { useRouter } from "next/navigation";
-import Footer from "@/app/components/Footer";
 import Nothing from "@/app/components/Nothing";
 import { useBlogStore } from "@/app/store/Blog";
 import styles from "@/app/style/blog.module.css";
@@ -412,7 +411,6 @@ export default function Blog() {
           />
         </div>
         {renderTelegramSection()}
-        <Footer />
       </div>
     );
   };
@@ -562,8 +560,6 @@ export default function Blog() {
       >
         {renderModalContent()}
       </SideSlide>
-
-      <Footer />
     </div>
   );
 }

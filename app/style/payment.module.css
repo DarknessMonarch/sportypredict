@@ -49,15 +49,15 @@
   }
 
   .paymentPlans {
+    flex-direction: column;
     height: 100%;
     display: flex;
-    gap: 16px;
-    flex-direction: column;
-    padding: 16px;
+    padding: 10px;
+    gap: 20px;
   }
 
   .countryDropdownWrapper {
-    padding: 0 16px;
+    padding: 0 10px;
     border-radius: var(--radius-sm);
     background-color: var(--background-color);
   }
@@ -76,15 +76,14 @@
 
   .subscriptionCard {
     display: flex;
-    padding: 32px;
-    border: 2px solid var(--light-background-color);
+    cursor: pointer;
+    padding: 20px;
+    position: relative;
+    transition: all 0.3s ease;
     border-radius: var(--radius-lg);
     background: var(--background-color);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
+    border: 2px solid var(--light-background-color);
+    box-shadow: var(--shadow-box);
   }
 
   .subscriptionCard:hover {
@@ -94,7 +93,6 @@
 
   .selectedCard {
     border-color: var(--secondary-color);
-
     box-shadow: 0 8px 24px rgba(37, 199, 231, 0.2);
     transform: translateY(-2px);
   }
@@ -127,7 +125,6 @@
     justify-content: space-between;
     align-items: flex-end;
     width: 100%;
-    gap: 20px;
   }
 
   .subscriptionInfo {
@@ -135,7 +132,7 @@
     align-items: flex-start;
     flex-direction: column;
     justify-content: flex-start;
-    gap: 16px;
+    gap: 10px;
     flex: 1;
   }
 
@@ -146,7 +143,7 @@
   }
 
   .subscriptionInfoInner h3 {
-    font-size: var(--font-size-1);
+    font-size: var(--font-size-2);
     font-weight: var(--font-weight-semibold);
     color: var(--primary-color);
   }
@@ -166,20 +163,16 @@
   .subscriptionPrice {
     gap: 2px;
     display: flex;
-    align-items: flex-end;
     text-align: right;
+    align-items: flex-end;
   }
+  
 
-  .subscriptionPrice p {
-    font-size: var(--font-size-4);
-    color: var(--light-primary-color);
-    font-weight: var(--font-weight-regular);
-  }
 
   .checkIcon {
     position: absolute;
-    top: 24px;
-    right: 24px;
+    top: 5px;
+    right: 5px;
     width: 24px;
     height: 24px;
     background: var(--secondary-color);
@@ -200,7 +193,8 @@
   }
 
   .paymentMethodSection h2 {
-    font-size: var(--font-size-3);
+    font-size: var(--font-size-2);
+    font-weight: var(--font-weight-regular);
   }
 
   .paymentMethods {
@@ -294,7 +288,7 @@
     border-radius: 20px;
 
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    padding: 16px;
+    padding: 10px;
     border: 2px solid rgba(255, 255, 255, 0.8);
     position: relative;
     overflow: hidden;
@@ -344,7 +338,7 @@
     gap: 24px;
     flex: 1 1 100%;
     margin-top: 20px;
-    padding: 32px;
+    padding: 20px;
     background: linear-gradient(
       135deg,
       var(--light-background-color) 0%,
@@ -352,17 +346,17 @@
     );
     border-radius: var(--radius-lg);
     border: 2px solid rgba(37, 199, 231, 0.1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
   }
 
   .manualDetailsTitle {
     font-size: var(--font-size-3);
     font-weight: var(--font-weight-semibold);
     color: var(--primary-color);
-    margin-bottom: 16px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 10px;
   }
 
   .manualDetailsTitle::before {
@@ -383,7 +377,7 @@
   }
 
   .manualMethodItem:hover {
-    box-shadow: 0 4px 16px rgba(37, 199, 231, 0.1);
+    box-shadow: 0 4px 10px rgba(37, 199, 231, 0.1);
     transform: translateY(-1px);
     border-color: var(--secondary-color);
   }
@@ -393,14 +387,13 @@
     font-weight: var(--font-weight-semibold);
     color: var(--secondary-color);
     margin: 0;
-    padding-bottom: 8px;
     border-bottom: 2px solid var(--lighter-primary-color);
   }
 
   .manualInstructions {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
   }
 
   .manualInstructions p {
@@ -416,7 +409,7 @@
     font-weight: var(--font-weight-semibold);
     display: inline-block;
     min-width: 120px;
-    margin-right: 16px;
+    margin-right: 10px;
   }
 
   .termsContainer {
@@ -432,7 +425,7 @@
   .termsLabel {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 10px;
     cursor: pointer;
   }
 
@@ -534,23 +527,23 @@
   }
 
   .Question {
+    gap: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 16px;
+    padding: 10px;
   }
 
   .QuestionCon {
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding: 32px;
+    padding: 20px;
     background: var(--background-color);
     border-radius: var(--radius-lg);
     border: 2px solid var(--light-background-color);
     transition: all 0.3s ease;
     position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-box);
     overflow: hidden;
   }
 
@@ -568,9 +561,7 @@
     font-size: var(--font-size-3);
     color: var(--primary-color);
     font-weight: var(--font-weight-semibold);
-    margin: 0;
     line-height: 1.4;
-    padding-bottom: 16px;
     border-bottom: 1px solid var(--light-background-color);
   }
 
@@ -630,9 +621,9 @@
   }
 
   .paymentMethodCard {
-    width: calc(33.333% - 16px);
+    width: calc(33.333% - 10px);
     min-height: 220px;
-    padding: 32px 24px;
+    padding: 20px 24px;
   }
 
   .paymentMethodImageWrapper {
@@ -643,12 +634,6 @@
 
   .paymentMethodTitle {
     font-size: 1.1rem;
-  }
-
-  .Question {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
   }
 
   .QuestionCon {
@@ -685,15 +670,8 @@
     padding: 20px;
   }
 
-  .paymentMethodTitle {
-    font-size: 1.2rem;
-  }
 
-  .Question {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 32px;
-  }
+
 }
 
 /* Desktop (1200px+) - Maintain 4 columns with better spacing */
@@ -701,13 +679,13 @@
   .paymentMethods {
     max-width: 1200px;
     margin: 0 auto;
-    gap: 32px;
+    gap: 20px;
   }
 
   .paymentMethodCard {
     width: calc(25% - 24px);
     min-height: 260px;
-    padding: 40px 32px;
+    padding: 40px 20px;
     max-width: 300px;
   }
 
@@ -717,11 +695,6 @@
     padding: 22px;
   }
 
-  .paymentMethodTitle {
-    font-size: 1.25rem;
-  }
 
-  .Question {
-    gap: 40px;
-  }
+
 }

@@ -21,8 +21,7 @@ export default function MobileFilter({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { predictions } = usePredictionStore();
-  
-  // Add ref for the date input
+
   const dateInputRef = useRef(null);
 
   const [selectedDate, setSelectedDate] = useState("");
@@ -57,23 +56,20 @@ export default function MobileFilter({
     };
   }, [predictions]);
 
-  // Format today's date for display and input value
   const currentDate = date.format(new Date(), "DD-MM-YYYY");
   const currentDateForInput = date.format(new Date(), "YYYY-MM-DD");
 
-  // Function to format date for display (DD-MM-YYYY)
   const formatDateForDisplay = (dateString) => {
     if (!dateString) return currentDate;
     const dateObj = new Date(dateString);
     return date.format(dateObj, "DD-MM-YYYY");
   };
 
-  // Function to get display text for the date picker
   const getDateDisplayText = () => {
     if (selectedDate) {
       return formatDateForDisplay(selectedDate);
     }
-    return currentDate; // Show today's date as default
+    return currentDate;
   };
 
   const updateURLParams = (paramName, value) => {
@@ -119,14 +115,12 @@ export default function MobileFilter({
     updateURLParams("date", dateValue);
   };
 
-  // Add function to handle date container click
   const handleDateContainerClick = () => {
     if (dateInputRef.current) {
       dateInputRef.current.showPicker?.() || dateInputRef.current.focus();
     }
   };
 
-  // Initialize with today's date on component mount
   useEffect(() => {
     if (!selectedDate && !searchParams.get("date")) {
       setSelectedDate(currentDateForInput);
@@ -156,7 +150,6 @@ export default function MobileFilter({
     if (dateParam) {
       setSelectedDate(dateParam);
     } else if (!selectedDate) {
-      // Set today's date if no date param and no selected date
       setSelectedDate(currentDateForInput);
     }
   }, [searchParams, setCountryKey, setLeagueKey]);
@@ -165,9 +158,6 @@ export default function MobileFilter({
     <div className={styles.mobileFilterContainer}>
       <div className={styles.mobileFilterHead}>
         <h1>{lastParam} Betting tips and prediction</h1>
-        <h2>
-          ({getDateDisplayText()})
-        </h2>
       </div>
       <div className={styles.filterContainer}>
         <h1>Filter by:</h1>
@@ -224,14 +214,9 @@ export default function MobileFilter({
             )}
           </div>
 
-          <div 
-            className={styles.filterDate} 
-            onClick={handleDateContainerClick}
-          >
+          <div className={styles.filterDate} onClick={handleDateContainerClick}>
             <CalendarIcon className={styles.filterIcon} alt="calendar icon" />
-            <span className={styles.dateDisplay}>
-              {getDateDisplayText()}
-            </span>
+            <span className={styles.dateDisplay}>{getDateDisplayText()}</span>
             <input
               ref={dateInputRef}
               type="date"

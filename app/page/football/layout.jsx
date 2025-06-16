@@ -13,6 +13,7 @@ export default function PageLayout({ children }) {
     <div className={styles.sportLayout}>
       {children}
       {!isSinglePage && <Filter />}
+
     </div>
   );
 }

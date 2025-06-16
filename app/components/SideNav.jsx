@@ -98,7 +98,6 @@ export default function SideNavComponent() {
     };
   }, []);
 
-  // Handler to close nav on mobile when link is clicked
   const handleLinkClick = useCallback(() => {
     if (isMobile) {
       setClose();

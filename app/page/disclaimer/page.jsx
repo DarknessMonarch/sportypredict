@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Footer from "@/app/components/Footer";
 import styles from "@/app/style/info.module.css";
 
 export default function Policy() {
@@ -32,43 +31,39 @@ export default function Policy() {
 
   return (
     <div className={styles.termsContainer}>
-      <div className={styles.termsContainerInner}>
-        <div className={styles.termHeader}>
-          <h1>Disclaimer</h1>
-        </div>
-
-        <div className={styles.section}>
-          <p>
-            sportypredict.com is not a bookmaker or betting platform and does
-            not accept bets. We provide predictions, techniques, guides, and
-            recommendations to the best of our ability, but please note that
-            errors may occur.
-          </p>
-        </div>
-
-        <div className={styles.section}>
-          <p>
-            It is important to consider our predictions as recommendations and
-            not as encouragement to engage in betting activities. Gambling
-            should be viewed as a form of entertainment. The visitor and user of
-            sportypredict are solely responsible for their actions and
-            decisions, and the site and its employees cannot be held accountable
-            for the information provided on sportypredict.
-          </p>
-        </div>
-        <div className={styles.section}>
-          <p>
-            It is important to consider our predictions as recommendations and
-            not as encouragement to engage in betting activities. Gambling
-            should be viewed as a form of entertainment. The visitor and user of
-            sportypredict are solely responsible for their actions and
-            decisions, and the site and its employees cannot be held accountable
-            for the information provided on sportypredict.
-          </p>
-        </div>
+      <div className={styles.termHeader}>
+        <h1>Disclaimer</h1>
       </div>
 
-      <Footer />
+      <div className={styles.section}>
+        <p>
+          sportypredict.com is not a bookmaker or betting platform and does not
+          accept bets. We provide predictions, techniques, guides, and
+          recommendations to the best of our ability, but please note that
+          errors may occur.
+        </p>
+      </div>
+
+      <div className={styles.section}>
+        <p>
+          It is important to consider our predictions as recommendations and not
+          as encouragement to engage in betting activities. Gambling should be
+          viewed as a form of entertainment. The visitor and user of
+          sportypredict are solely responsible for their actions and decisions,
+          and the site and its employees cannot be held accountable for the
+          information provided on sportypredict.
+        </p>
+      </div>
+      <div className={styles.section}>
+        <p>
+          It is important to consider our predictions as recommendations and not
+          as encouragement to engage in betting activities. Gambling should be
+          viewed as a form of entertainment. The visitor and user of
+          sportypredict are solely responsible for their actions and decisions,
+          and the site and its employees cannot be held accountable for the
+          information provided on sportypredict.
+        </p>
+      </div>
     </div>
   );
 }

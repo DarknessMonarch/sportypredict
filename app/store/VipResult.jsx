@@ -8,7 +8,7 @@ export const useVipResultStore = create(
   persist(
     (set, get) => ({
       results: [],
-      matchTime: { hours: 0, minutes: 0, seconds: 0, active: true },
+      matchTime: null,
       loading: false,
       error: null,
 
@@ -107,7 +107,6 @@ export const useVipResultStore = create(
             body: JSON.stringify(resultData),
           });
 
-          // BETTER ERROR HANDLING
           const text = await response.text();
           let data;
           
@@ -177,7 +176,7 @@ export const useVipResultStore = create(
             body: JSON.stringify(timeData),
           });
 
-          // BETTER ERROR HANDLING
+        
           const text = await response.text();
           let data;
           
@@ -201,15 +200,16 @@ export const useVipResultStore = create(
         }
       },
 
-      // Clear errors
       clearError: () => set({ error: null }),
 
-      // Reset loading state
       resetLoading: () => set({ loading: false }),
     }),
     {
       name: "vipresult-store",
       storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ 
+        results: state.results 
+      }),
     }
   )
 );

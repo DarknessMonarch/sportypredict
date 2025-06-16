@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Footer from "@/app/components/Footer";
 import styles from "@/app/style/info.module.css";
 
 export default function TermsConditions() {
@@ -31,8 +30,7 @@ export default function TermsConditions() {
   }, []);
 
   return (
-    <div className={styles.termsContainer}>
-      <div className={styles.termsContainerInner}>
+      <div className={styles.termsContainer}>
         <div className={styles.termHeader}>
           <h1>Terms & Conditions</h1>
         </div>
@@ -213,7 +211,5 @@ export default function TermsConditions() {
           </p>
         </div>
       </div>
-      <Footer />
-    </div>
   );
 }

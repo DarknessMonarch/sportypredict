@@ -10,44 +10,45 @@ export default function ExclusiveOffers() {
   const { bonuses, loading, error, fetchBonuses } = useBonusStore();
 
   useEffect(() => {
-    fetchBonuses();
+    fetchBonuses("location=FrontBanner");
   }, [fetchBonuses]);
 
-  const firstBonus = bonuses.length > 0 ? bonuses[0] : null;
-
-  const offer = () => {
-    if (firstBonus?.bonusLink) {
-      window.open(firstBonus.bonusLink, "_blank");
+  const offer = (bonusLink) => {
+    if (bonusLink) {
+      window.open(bonusLink, "_blank");
     }
   };
 
-  if (loading || error || !firstBonus) {
+  if (loading || error || bonuses.length === 0) {
     return null;
   }
 
   return (
     <div className={styles.exclusiveContainer}>
-      <div className={styles.offerContainer} onClick={offer}>
-        <div className={styles.offerWrap}>
-          <h1>Exclusive offer</h1>
-          <div className={styles.offerInner}>
-            <Image
-              src={firstBonus.bonusImg}
-              height={50}
-              width={100}
-              alt="offer logo"
-              priority={true}
-              className={styles.offerlogo}
-         
-            />
-            <h2>{firstBonus.title}</h2>
-            <RightIcon className={styles.arrowIcon} alt="right icon" />
+      {bonuses.map((bonus, index) => (
+        <div key={index} className={styles.offerContainer} onClick={() => offer(bonus.bonusLink)}>
+          <div className={styles.offerWrap}>
+            <h1>Exclusive offer</h1>
+            <div className={styles.offerInner}>
+              <div className={styles.imageContainer}>
+                <Image
+                  src={bonus.bonusImg}
+                  fill
+                  alt="offer logo"
+                  priority={true}
+                  className={styles.offerlogo}
+                  sizes="80px"
+                />
+              </div>
+              <h2>{bonus.title}</h2>
+              <RightIcon className={styles.arrowIcon} alt="right icon" />
+            </div>
           </div>
+          <span>
+            New customers only / Commercial content / 18+ age limit / T&C apply
+          </span>
         </div>
-        <span>
-          New customers only / Commercial content / 18+ age limit / T&C apply
-        </span>
-      </div>
+      ))}
     </div>
   );
 }

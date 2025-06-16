@@ -26,6 +26,7 @@
       inset 0 2px 6px rgba(3, 30, 60, 0.04),
       inset 0 6px 12px rgba(3, 30, 60, 0.02);
 
+    --radius-sx: 10px;
     --radius-sm: 15px;
     --radius-md: 20px;
     --radius-lg: 25px;
@@ -55,12 +56,12 @@
     box-sizing: border-box;
 
     /* global-width */
-    --sidenav-width: var(--real-10vw, 10vw);
-    --navbar-height: var(--real-9vh, 9vh);
+    --sidenav-width: 200px;
+    --navbar-height: 80px;
     --sidenav-mobile-width: 80%;
-    --navbar-mobile-height: var(--real-10vh, 10vh);
+    --navbar-mobile-height: 10%;
     --slidenav-header-width: 50%;
-    --slidenav-header-height: var(--real-10vh, 10vh);
+    --slidenav-header-height: 10%;
   }
 
   /* ::-webkit-scrollbar {

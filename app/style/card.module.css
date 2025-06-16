@@ -157,8 +157,8 @@
   }
 
   .formationCircle {
-    width: 24px;
-    height: 24px;
+    width: 21px;
+    height: 21px;
     display: flex;
     border-radius: 360%;
     align-items: center;

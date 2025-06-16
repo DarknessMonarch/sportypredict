@@ -2,12 +2,11 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 const SERVER_API = process.env.NEXT_PUBLIC_SERVER_API;
-const TOKEN_REFRESH_INTERVAL = 50 * 60 * 1000; // 50 minutes
+const TOKEN_REFRESH_INTERVAL = 50 * 60 * 1000;
 
 export const useAuthStore = create(
   persist(
     (set, get) => ({
-      // User authentication state
       isAuth: false,
       userId: "",
       username: "",
@@ -15,9 +14,9 @@ export const useAuthStore = create(
       country: "",
       profileImage: "",
       isVip: false,
-      vipPlan: "", // weekly, monthly, yearly
-      vipPlanDisplayName: "", // Weekly, Monthly, Yearly
-      duration: 0, // 7, 30, 365 days
+      vipPlan: "",
+      vipPlanDisplayName: "",
+      duration: 0,
       expires: null,
       activation: null,
       isAdmin: false,
@@ -30,7 +29,6 @@ export const useAuthStore = create(
       refreshTimeoutId: null,
       emailVerified: false,
 
-      // Admin dashboard stats
       activeUsersCount: 0,
       vipUsersCount: 0,
       adminUsersCount: 0,
@@ -93,6 +91,37 @@ export const useAuthStore = create(
           tokenExpirationTime: null,
           emailVerified: false,
         });
+      },
+
+      processPayment: async (paymentData) => {
+        try {
+          const { accessToken } = get();
+          const response = await fetch(`${SERVER_API}/auth/process-payment`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(paymentData),
+          });
+
+          const data = await response.json();
+          if (data.status === "success") {
+            get().updateUser({
+              isVip: data.data.user.isVip,
+              vipPlan: data.data.user.vipPlan,
+              vipPlanDisplayName: data.data.user.vipPlanDisplayName,
+              duration: data.data.user.duration,
+              activation: data.data.user.activation,
+              expires: data.data.user.expires,
+              payment: data.data.user.payment,
+            });
+            return { success: true, message: data.message };
+          }
+          return { success: false, message: data.message };
+        } catch (error) {
+          return { success: false, message: "Payment processing failed" };
+        }
       },
 
       verifyEmail: async (email, verificationCode) => {
@@ -200,7 +229,7 @@ export const useAuthStore = create(
           get().clearUser();
           return { success: true, message: "Logout successful" };
         } catch (error) {
-          get().clearUser(); // Clear user data even if request fails
+          get().clearUser();
           return { success: true, message: "Logged out" };
         }
       },
@@ -376,7 +405,6 @@ export const useAuthStore = create(
         }
       },
 
-      // Get payment plans for authenticated users
       getPaymentPlans: async () => {
         try {
           const { accessToken } = get();
@@ -395,7 +423,6 @@ export const useAuthStore = create(
         }
       },
 
-      // Admin functions
       toggleVipStatus: async (userData) => {
         try {
           const { accessToken } = get();
@@ -420,7 +447,6 @@ export const useAuthStore = create(
 
           const data = await response.json();
           if (data.status === "success") {
-            // Refresh user counts
             await get().getAllUsers();
             await get().getUsersByRole('vip');
             return { success: true, message: data.message, data: data.data };
@@ -445,7 +471,6 @@ export const useAuthStore = create(
 
           const data = await response.json();
           if (data.status === "success") {
-            // Refresh user counts
             await get().getAllUsers();
             await get().getUsersByRole('admin');
             return { success: true, message: data.message, data: data.data };
@@ -470,7 +495,6 @@ export const useAuthStore = create(
 
           const data = await response.json();
           if (data.status === "success") {
-            // Refresh user counts after bulk deletion
             await get().getAllUsers();
             await get().getUsersByRole('vip');
             await get().getUsersByRole('admin');
@@ -500,7 +524,6 @@ export const useAuthStore = create(
 
           const data = await response.json();
           if (data.status === "success") {
-            // Refresh user counts after deletion
             await get().getAllUsers();
             await get().getUsersByRole('vip');
             await get().getUsersByRole('admin');
@@ -541,7 +564,7 @@ export const useAuthStore = create(
           if (action === "delete" && userId) {
             url += `&action=${action}`;
             options = {
-              method: "GET", // Changed to GET as per the controller logic
+              method: "GET",
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${accessToken}`,
@@ -612,7 +635,6 @@ export const useAuthStore = create(
       setVipUsersCount: (count) => set({ vipUsersCount: count }),
       setAdminUsersCount: (count) => set({ adminUsersCount: count }),
 
-      // Token management
       scheduleTokenRefresh: () => {
         const { tokenExpirationTime, refreshTimeoutId } = get();
         if (refreshTimeoutId) {

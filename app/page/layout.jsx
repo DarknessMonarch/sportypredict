@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from "react";
 import { useDrawerStore } from "@/app/store/Drawer";
 import Popup from "@/app/components/Popup";
 import { initViewportFix } from "@/app/utility/viewportFix";
+import Footer from "@/app/components/Footer";
 
 export default function PageLayout({ children }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -74,7 +75,8 @@ export default function PageLayout({ children }) {
       </div>
       <div className={styles.pageContent}>
         <Navbar />
-        {children}
+        <div className={styles.pageChildren}>{children}</div>
+        <Footer />
       </div>
       {hasPopupAds && (
         <Popup

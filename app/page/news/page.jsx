@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import Image from "next/image";
 import DOMPurify from "dompurify";
 import { FaXTwitter } from "react-icons/fa6";
-import Footer from "@/app/components/Footer";
 import Nothing from "@/app/components/Nothing";
 import { useNewsStore } from "@/app/store/News";
 import SideSlide from "@/app/components/SideSlide";
@@ -53,7 +52,6 @@ export default function SportsNews() {
       .replace(/^-+|-+$/g, "");
   }, []);
 
-  // Helper functions
   const getAuthorName = (post) => {
     return post.authorName || post.author?.username || "Unknown Author";
   };
@@ -81,22 +79,17 @@ export default function SportsNews() {
     return articles.find((article) => createSlug(article.title) === slug);
   }, [articles, createSlug]);
 
-  // Load data function
   const loadData = useCallback(async (category = "", search = "") => {
     setIsSearching(true);
     try {
       if (search && search.trim() !== "") {
-        // If there's a search query, use search endpoint
         await searchNews(search.trim());
       } else if (category && category !== "") {
-        // If there's a category filter, use category endpoint
         await fetchNewsByCategory(category);
       } else {
-        // Load all articles
         await fetchArticles();
       }
     } catch (err) {
-      console.error("Load data error:", err);
       toast.error("Failed to load articles");
     } finally {
       setIsSearching(false);
@@ -150,11 +143,10 @@ export default function SportsNews() {
     [loadData]
   );
 
-  // Load initial data
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        await loadData(); // Load all articles initially
+        await loadData(); 
         initialLoadRef.current = false;
       } catch (err) {
         toast.error("Failed to load initial news data");
@@ -166,7 +158,6 @@ export default function SportsNews() {
     }
   }, [loadData]);
 
-  // Handle shared article URL
   useEffect(() => {
     const sharedArticleSlug = searchParams.get("article");
     if (sharedArticleSlug && articles.length > 0 && !showModal) {
@@ -181,7 +172,6 @@ export default function SportsNews() {
     }
   }, [articles, searchParams, showModal, openModal, findArticleBySlug, router, pathname]);
 
-  // Handle errors
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -189,17 +179,14 @@ export default function SportsNews() {
     }
   }, [error, clearError]);
 
-  // Handle search query changes
   useEffect(() => {
     if (searchQuery.trim()) {
       debouncedSearch(searchQuery);
     } else if (searchQuery === "") {
-      // When search is cleared, reload based on current category
       loadData(activeCategory, "");
     }
   }, [searchQuery, debouncedSearch, loadData, activeCategory]);
 
-  // Cleanup
   useEffect(() => {
     const handleEsc = (event) => {
       if (event.keyCode === 27) closeModal();
@@ -224,12 +211,10 @@ export default function SportsNews() {
       const newCategory = activeCategory === category.name ? "" : category.name;
       setActiveCategory(newCategory);
       
-      // Clear search when category changes
       if (searchQuery) {
         setSearchQuery("");
       }
       
-      // Load data for the selected category
       loadData(newCategory, "");
     } catch (err) {
       toast.error("Failed to filter by category");
@@ -266,7 +251,7 @@ export default function SportsNews() {
       const socialUrls = {
         facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
         twitter: `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
-        instagram: null, // Special case
+        instagram: null, 
       };
 
       if (platform === "instagram") {
@@ -286,7 +271,6 @@ export default function SportsNews() {
     }
   };
 
-  // Render social share buttons
   const renderSocialShareButtons = (post) => (
     <div className={styles.socialShareLinks}>
       {["facebook", "twitter", "instagram"].map((platform) => {
@@ -315,7 +299,6 @@ export default function SportsNews() {
     </div>
   );
 
-  // Render news header section
   const renderNewsHeader = () => (
     <div className={styles.blogBanner}>
       <div className={styles.blogHeader}>
@@ -343,7 +326,6 @@ export default function SportsNews() {
     </div>
   );
 
-  // Render empty state
   const renderEmptyState = () => {
     const getEmptyMessage = () => {
       if (searchQuery) return `No news found for "${searchQuery}"`;
@@ -361,7 +343,6 @@ export default function SportsNews() {
             Text={getEmptyMessage()}
           />
         </div>
-        <Footer />
       </div>
     );
   };
@@ -430,7 +411,6 @@ export default function SportsNews() {
     code: category,
   }));
 
-  // Loading state
   if ((loading || isSearching) && articles.length === 0) {
     return (
       <div className={styles.nothingContainer}>
@@ -439,7 +419,6 @@ export default function SportsNews() {
     );
   }
 
-  // Empty state
   if (articles.length === 0 && !loading && !isSearching) {
     return renderEmptyState();
   }
@@ -487,7 +466,6 @@ export default function SportsNews() {
         {renderModalContent()}
       </SideSlide>
       
-      <Footer />
     </div>
   );
 }

@@ -123,6 +123,16 @@ export default function Footer() {
               >
                 <FaFacebookF />
               </button>
+                <button
+                className={`${styles.socialButton} ${styles.whatsapp}`}
+                onClick={() =>
+                  openSocialMedia(
+                    "https://wa.me/+254703147237?text=Hi SportyPredict, I want to join your WhatsApp group"
+                  )
+                }
+              >
+                <FaWhatsapp />
+              </button>
               <button
                 className={`${styles.socialButton} ${styles.twitter}`}
                 onClick={() =>
@@ -167,16 +177,7 @@ export default function Footer() {
               >
                 <FaTiktok />
               </button>
-              <button
-                className={`${styles.socialButton} ${styles.whatsapp}`}
-                onClick={() =>
-                  openSocialMedia(
-                    "https://wa.me/+254703147237?text=Hi SportyPredict, I want to join your WhatsApp group"
-                  )
-                }
-              >
-                <FaWhatsapp />
-              </button>
+            
             </div>
             <div className={styles.appButtons}>
               <div className={styles.appButton}>
@@ -197,7 +198,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      {/* Bottom Bar */}
       <div className={styles.bottomBar}>
         <span>© {currentYear} SportyPredict. All rights reserved.</span>
         <div className={styles.bottomLinks}>

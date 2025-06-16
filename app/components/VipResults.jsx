@@ -3,7 +3,7 @@
 import Loader from "@/app/components/Loader";
 import Nothing from "@/app/components/Nothing";
 import ResultImage from "@/public/assets/result.png";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useVipResultStore } from "@/app/store/VipResult";
 import styles from "@/app/style/vipResults.module.css";
 
@@ -17,11 +17,21 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
     seconds: 0,
   });
 
-  const [timerInterval, setTimerInterval] = useState(null);
-  const [hasValidTime, setHasValidTime] = useState(false);
+  const timerRef = useRef(null);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+      setIsTimerActive(false);
+    }
+  }, []);
 
   const startCountdown = useCallback(() => {
-    if (timerInterval) clearInterval(timerInterval);
+    clearTimer(); 
+
+    if (!matchTime || !matchTime.active) return;
 
     const interval = setInterval(() => {
       setTimeRemaining((prev) => {
@@ -39,9 +49,10 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
           newHours -= 1;
         }
 
-        if (newHours === 0 && newMinutes === 0 && newSeconds === 0) {
+        if (newHours <= 0 && newMinutes <= 0 && newSeconds <= 0) {
           clearInterval(interval);
-          setHasValidTime(false);
+          setIsTimerActive(false);
+          return { hours: 0, minutes: 0, seconds: 0 };
         }
 
         return {
@@ -52,17 +63,18 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
       });
     }, 1000);
 
-    setTimerInterval(interval);
-  }, [timerInterval]);
+    timerRef.current = interval;
+    setIsTimerActive(true);
+  }, [matchTime, clearTimer]);
 
   useEffect(() => {
     fetchResults();
     getMatchTime();
 
     return () => {
-      if (timerInterval) clearInterval(timerInterval);
+      clearTimer();
     };
-  }, [fetchResults, getMatchTime, timerInterval]);
+  }, [fetchResults, getMatchTime, clearTimer]);
 
   useEffect(() => {
     if (matchTime) {
@@ -70,33 +82,18 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
       const minutes = matchTime.minutes || 0;
       const seconds = matchTime.seconds || 0;
 
-      const totalTime = hours + minutes + seconds;
+      setTimeRemaining({ hours, minutes, seconds });
 
-      if (totalTime > 0) {
-        setTimeRemaining({
-          hours,
-          minutes,
-          seconds,
-        });
-        setHasValidTime(true);
-
-        if (matchTime.active && !timerInterval) {
-          startCountdown();
-        }
+      if (matchTime.active && (hours > 0 || minutes > 0 || seconds > 0)) {
+        startCountdown();
       } else {
-        setTimeRemaining({
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-        });
-        setHasValidTime(false);
-        if (timerInterval) {
-          clearInterval(timerInterval);
-          setTimerInterval(null);
-        }
+        clearTimer();
       }
+    } else {
+      setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
+      clearTimer();
     }
-  }, [matchTime, startCountdown, timerInterval]);
+  }, [matchTime, startCountdown, clearTimer]);
 
   const formattedResults = results.map((result) => ({
     day: result.day,
@@ -105,6 +102,8 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
     failure: result.result === "loss",
     pending: result.result === "draw" || result.result === "pending",
   }));
+
+  const hasTimeRemaining = timeRemaining.hours > 0 || timeRemaining.minutes > 0 || timeRemaining.seconds > 0;
 
   return (
     <div className={styles.vipContainer}>
@@ -157,23 +156,36 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
       </div>
 
       <div className={styles.countdownSection}>
-        <h2>Today&apos;s match starts:</h2>
+        <h2>
+          {hasTimeRemaining 
+            ? "Today's match starts:" 
+            : matchTime?.active 
+              ? "Match time has ended" 
+              : "No match scheduled"
+          }
+        </h2>
         <div className={styles.countdownDisplay}>
           <div className={styles.timeUnit}>
-            <h4>{timeRemaining.hours}</h4>
+            <h4>{String(timeRemaining.hours).padStart(2, '0')}</h4>
             <p>Hours</p>
           </div>
 
           <div className={styles.timeUnit}>
-            <h4>{timeRemaining.minutes}</h4>
+            <h4>{String(timeRemaining.minutes).padStart(2, '0')}</h4>
             <p>Minutes</p>
           </div>
 
           <div className={styles.timeUnit}>
-            <h4>{timeRemaining.seconds}</h4>
+            <h4>{String(timeRemaining.seconds).padStart(2, '0')}</h4>
             <p>Seconds</p>
           </div>
         </div>
+        
+        {matchTime && !matchTime.active && (
+          <p className={styles.inactiveMessage}>
+            Match timer is currently inactive
+          </p>
+        )}
       </div>
     </div>
   );

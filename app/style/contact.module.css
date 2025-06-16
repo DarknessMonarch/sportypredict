@@ -157,13 +157,14 @@
   .formContactContainer {
     height: 100%;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
   }
 
   .contactWrap {
     height: auto;
     width: calc(100% / 2);
     padding: var(--padding-xxl);
+
   }
 }
 

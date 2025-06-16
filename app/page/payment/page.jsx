@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { toast } from "sonner";
-import axios from "axios";
-import Link from "next/link";
+import PaystackPop from "@paystack/inline-js";
 import Nothing from "@/app/components/Nothing";
 import LoadingLogo from "@/app/components/LoadingLogo";
 import Dropdown from "@/app/components/SearchableDropdown";
@@ -145,15 +144,15 @@ const SubscriptionPeriodCard = ({
       <div className={styles.subscriptionCardContent}>
         <div className={styles.subscriptionInfo}>
           <div className={styles.subscriptionInfoInner}>
-            <h2>{type}</h2>
+            <h3>{type}</h3>
             {isPromo && <span className={styles.promoLabel}>Recommended</span>}
           </div>
-          {promoText && <p>{promoText}</p>}
+          {promoText && <span className={styles.promoText}>{promoText}</span>}
         </div>
 
         <div className={styles.subscriptionPrice}>
-          <p>{currency}</p>
-          <h1>{price.toLocaleString()}</h1>
+          <span className={styles.currency}>{currency}</span>
+          <h2 className={styles.price}>{price.toLocaleString()}</h2>
         </div>
         {isSelected && (
           <div className={styles.checkIcon}>
@@ -227,15 +226,9 @@ const ManualPaymentInfo = ({
               <div key={index} className={styles.manualMethodItem}>
                 <h5 className={styles.manualMethodName}>{method.name}</h5>
                 <div className={styles.manualInstructions}>
-                  <p>
-                    <strong>Name:</strong> {method.contactName}
-                  </p>
-                  <p>
-                    <strong>Email/Address:</strong> {method.contactInfo}
-                  </p>
-                  <p>
-                    <strong>Amount:</strong> {formatPrice()}
-                  </p>
+                  <p><strong>Name:</strong> {method.contactName}</p>
+                  <p><strong>Email/Address:</strong> {method.contactInfo}</p>
+                  <p><strong>Amount:</strong> {formatPrice()}</p>
                   <p>{method.description}</p>
                 </div>
               </div>
@@ -243,15 +236,9 @@ const ManualPaymentInfo = ({
           </>
         ) : (
           <div className={styles.manualInstructions}>
-            <p>
-              <strong>Name:</strong> {paymentDetails.name}
-            </p>
-            <p>
-              <strong>Phone/Account:</strong> {paymentDetails.phone}
-            </p>
-            <p>
-              <strong>Amount:</strong> {formatPrice()}
-            </p>
+            <p><strong>Name:</strong> {paymentDetails.name}</p>
+            <p><strong>Phone/Account:</strong> {paymentDetails.phone}</p>
+            <p><strong>Amount:</strong> {formatPrice()}</p>
             <p>{paymentDetails.description}</p>
           </div>
         )}
@@ -265,8 +252,6 @@ const ManualPaymentCard = ({
   currency,
   isSelected,
   onClick,
-  onConfirmPayment,
-  termsAccepted,
 }) => {
   return (
     <>
@@ -283,49 +268,30 @@ const ManualPaymentCard = ({
           countryCode={countryCode}
           price={price}
           currency={currency}
-          onConfirmPayment={onConfirmPayment}
-          termsAccepted={termsAccepted}
         />
       )}
     </>
   );
 };
 
-const TermsCheckbox = ({ isChecked, onChange }) => (
-  <div className={styles.termsContainer}>
-    <label className={styles.termsLabel}>
-      <input
-        type="checkbox"
-        checked={isChecked}
-        onChange={onChange}
-        className={styles.termsCheckbox}
-      />
-      <span className={styles.checkboxCustom}>
-        {isChecked && <CheckIcon />}
-      </span>
-      <span className={styles.termsText}>
-        I accept the{" "}
-        <Link href="/terms" className={styles.termsLink}>
-          Terms and Conditions
-        </Link>
-      </span>
-    </label>
-  </div>
-);
-
-// Main Component
-export default function UnifiedPayment() {
+export default function Payment() {
   const router = useRouter();
   const [country, setCountry] = useState(null);
   const [paymentPlans, setPaymentPlans] = useState([]);
   const [fetchError, setFetchError] = useState(null);
 
-  // Flow state
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-  const [termsAccepted, setTermsAccepted] = useState(false);
 
-  const { country: userCountry, isAuth } = useAuthStore();
+  const { 
+    country: userCountry, 
+    isAuth, 
+    email, 
+    userId, 
+    accessToken, 
+    updateUser 
+  } = useAuthStore();
+  
   const { getPaymentPlanByCountry, loading } = usePaymentStore();
 
   const countryOptions = useMemo(
@@ -364,20 +330,44 @@ export default function UnifiedPayment() {
         if (result.success) {
           setPaymentPlans([result.data]);
           setFetchError(null);
-          toast.success(`Payment plans loaded for ${selectedCountry}`);
         } else {
           setPaymentPlans([]);
-          setFetchError(result.message);
-          toast.error(result.message);
+          setFetchError(`Payment plans not available for ${selectedCountry}`);
         }
       } catch (error) {
         setPaymentPlans([]);
-        setFetchError("Failed to fetch payment plans");
-        toast.error("Failed to fetch payment plans");
+        setFetchError(`Payment plans not available for ${selectedCountry}`);
       }
     },
     [getPaymentPlanByCountry, countryOptions]
   );
+
+  useEffect(() => {
+    // Handle payment success returns from external providers
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    const paymentMethod = urlParams.get('method');
+    
+    if (paymentStatus === 'success') {
+      if (paymentMethod === 'coinbase') {
+        const pendingPayment = sessionStorage.getItem('pendingPayment');
+        if (pendingPayment) {
+          const paymentData = JSON.parse(pendingPayment);
+          toast.success("Cryptocurrency payment successful! Processing your VIP access...");
+          
+          setSelectedPlan(paymentData.plan);
+          
+          setTimeout(() => {
+            addVIPAccess(paymentData.chargeId);
+          }, 1000);
+          
+          sessionStorage.removeItem('pendingPayment');
+          
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (isAuth && userCountry) {
@@ -428,7 +418,6 @@ export default function UnifiedPayment() {
     const selectedCountry = getCountryMapping(countryName);
     const methods = [];
 
-    // Stripe - available for most countries
     if (
       [
         "kenya",
@@ -452,7 +441,6 @@ export default function UnifiedPayment() {
       });
     }
 
-    // PayPal - available for most countries
     if (
       [
         "others",
@@ -476,7 +464,6 @@ export default function UnifiedPayment() {
       });
     }
 
-    // MPESA - for Kenya only
     if (["kenya"].includes(selectedCountry)) {
       methods.push({
         id: "mpesa",
@@ -486,7 +473,6 @@ export default function UnifiedPayment() {
       });
     }
 
-    // Coinbase - for most countries
     if (
       [
         "kenya",
@@ -522,6 +508,16 @@ export default function UnifiedPayment() {
 
   const handlePaymentMethodSelect = (methodId) => {
     setSelectedPaymentMethod(methodId);
+    
+    if (methodId === "stripe") {
+      handleCheckout();
+    } else if (methodId === "mpesa") {
+      payMpesa();
+    } else if (methodId === "coinbase") {
+      coinbasePay();
+    } else if (methodId === "manual") {
+      payManually();
+    }
   };
 
   const handlePlanSelect = (plan, type, duration) => {
@@ -536,39 +532,56 @@ export default function UnifiedPayment() {
   };
 
   const handleCheckout = () => {
-    const checkoutUrl =
-      selectedPlan?.type === "Weekly"
-        ? "https://buy.stripe.com/6oE4jh3oEh1R4jCeV2"
-        : "https://buy.stripe.com/7sI3fd3oE26X4jCaEN";
-    window.open(checkoutUrl, "_blank");
-    addVIPAccess();
+    if (!selectedPlan) {
+      toast.error("Please select a plan first");
+      return;
+    }
+
+    const checkoutUrl = selectedPlan.type === "Weekly"
+      ? "https://buy.stripe.com/6oE4jh3oEh1R4jCeV2"
+      : "https://buy.stripe.com/7sI3fd3oE26X4jCaEN";
+    
+    toast.info("Redirecting to Stripe checkout...");
+    
+    const stripeWindow = window.open(checkoutUrl, "_blank");
+    
+    if (!stripeWindow) {
+      toast.error("Please allow popups for this site");
+      return;
+    }
+
+    toast.success("Payment initiated! Processing your VIP access...");
+    // addVIPAccess(`stripe_${Date.now()}`);
   };
 
   const payMpesa = () => {
-    const email = localStorage.getItem("email") || null;
-
-    if (email !== null) {
-      const PaystackPop = require("@paystack/inline-js");
-      const paystack = new PaystackPop();
-      paystack.newTransaction({
-        key: PAYMENT_CONFIG.PAYSTACK_KEY,
-        email: email,
-        amount: selectedPlan?.price * 100,
-        currency: "KES",
-        ref: `ref_${Math.floor(Math.random() * 1000000000 + 1)}`,
-        callback: (response) => {
-          if (response.status === "success") {
-            addVIPAccess();
-          } else {
-            toast.error("Payment failed");
+    if (isAuth && email) {
+      try {
+        const paystack = new PaystackPop();
+        paystack.newTransaction({
+          key: PAYMENT_CONFIG.PAYSTACK_KEY,
+          email: email,
+          amount: selectedPlan?.price * 100,
+          currency: "KES",
+          ref: `ref_${Math.floor(Math.random() * 1000000000 + 1)}`,
+          callback: function(response) {
+            if (response.status === "success") {
+              toast.success("Payment successful! Processing your VIP access...");
+              addVIPAccess(response.reference);
+            } else {
+              toast.error("Payment failed. Please try again.");
+            }
+          },
+          onClose: function() {
+            toast.error("Payment was cancelled");
           }
-        },
-        onClose: () => {
-          toast.error("Payment failed");
-        },
-      });
+        });
+      } catch (error) {
+        console.error("Paystack initialization error:", error);
+        toast.error("Failed to initialize payment. Please try again.");
+      }
     } else {
-      toast.error("Login or create an account to pay");
+      toast.error("Please log in to make a payment");
     }
   };
 
@@ -590,36 +603,46 @@ export default function UnifiedPayment() {
         "malawi",
       ].includes(countryMapping)
     ) {
-      amount = selectedPlan?.type === "Weekly" ? 25 : 45;
+      amount = selectedPlan?.type === "Weekly" ? 25 : selectedPlan?.type === "Monthly" ? 45 : selectedPlan?.price;
     }
 
     try {
-      const response = await axios.post(
-        "https://api.commerce.coinbase.com/charges/",
-        {
-          name: "Vip subscription",
-          description: "Subscribe for vip",
+      const response = await fetch("https://api.commerce.coinbase.com/charges/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CC-Api-Key": PAYMENT_CONFIG.COINBASE_KEY,
+        },
+        body: JSON.stringify({
+          name: "VIP Subscription",
+          description: `Subscribe for VIP ${selectedPlan?.type} plan`,
           pricing_type: "fixed_price",
           local_price: {
             amount: amount,
             currency: "USD",
           },
-          cancel_url: "",
-          success_url: "https://sportypredict.com/vip",
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CC-Api-Key": PAYMENT_CONFIG.COINBASE_KEY,
-          },
-        }
-      );
+          cancel_url: window.location.href,
+          success_url: `${window.location.origin}/vip?payment=success&method=coinbase`,
+        }),
+      });
 
-      const hostedUrl = response.data.data.hosted_url;
-      router.push(hostedUrl);
+      const data = await response.json();
+      if (response.ok && data.data?.hosted_url) {
+        toast.info("Redirecting to Coinbase Commerce...");
+        
+        sessionStorage.setItem('pendingPayment', JSON.stringify({
+          method: 'coinbase',
+          plan: selectedPlan,
+          chargeId: data.data.id
+        }));
+        
+        window.location.href = data.data.hosted_url;
+      } else {
+        toast.error("Failed to initialize cryptocurrency payment");
+      }
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred");
+      toast.error("An error occurred while setting up cryptocurrency payment");
     }
   };
 
@@ -627,47 +650,68 @@ export default function UnifiedPayment() {
     toast.success("Please follow the manual payment instructions above");
   };
 
-  const addVIPAccess = async () => {
-    const customerID = localStorage.getItem("id") || null;
-
-    if (customerID !== null) {
+  const addVIPAccess = async (paymentReference = null) => {
+    if (isAuth && userId && accessToken) {
       try {
-        const token = JSON.parse(localStorage.getItem("token"));
         const currentDate = new Date();
         const formattedDate = `${
           currentDate.getMonth() + 1
         }-${currentDate.getDate()}-${currentDate.getFullYear()}`;
 
-        const account = JSON.parse(localStorage.getItem("account"));
+        const durationDays = selectedPlan?.type === "Weekly" ? 7 : selectedPlan?.type === "Monthly" ? 30 : 365;
+        const expirationDate = new Date(currentDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
 
-        const response = await axios.put(
-          `${PAYMENT_CONFIG.SERVER_HOST}/auth/update/${customerID}`,
+        const requestBody = {
+          plan: selectedPlan?.type,
+          duration: durationDays,
+          amount: selectedPlan?.price,
+          currency: selectedPlan?.currency,
+          activationDate: formattedDate,
+        };
+
+        if (paymentReference) {
+          requestBody.paymentReference = paymentReference;
+        }
+
+        const response = await fetch(
+          `${PAYMENT_CONFIG.SERVER_HOST}/auth/process-payment`,
           {
+            method: "POST",
             headers: {
-              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
             },
-            paid: true,
-            plan: selectedPlan?.type,
-            activationDate: formattedDate,
-            days: selectedPlan?.type === "Weekly" ? 7 : 30,
+            body: JSON.stringify(requestBody),
           }
         );
 
-        account.status = true;
-        localStorage.setItem("account", JSON.stringify(account));
-        localStorage.setItem("paid", "true");
+        const data = await response.json();
 
-        toast.success("Payment successful!");
-        router.push("vip");
+        if (response.ok && data.status === 'success') {
+          updateUser({
+            isVip: true,
+            vipPlan: selectedPlan?.type?.toLowerCase(),
+            vipPlanDisplayName: selectedPlan?.type,
+            duration: durationDays,
+            activation: formattedDate,
+            expires: expirationDate.toISOString(),
+            payment: selectedPlan?.price,
+          });
+
+          toast.success("Payment successful! VIP access activated!");
+          router.push("vip");
+        } else {
+          toast.error(data.message || "Payment validation failed");
+        }
       } catch (err) {
-        toast.error("An error occurred while updating your account.");
+        console.error("Update error:", err);
+        toast.error("An error occurred while processing payment. Please contact support if payment was deducted.");
       }
     } else {
-      toast.error("Login or create an account to pay");
+      toast.error("Please log in to complete payment");
     }
   };
 
-  // PayPal script loading
   useEffect(() => {
     if (selectedPaymentMethod === "paypal" && selectedPlan) {
       const countryMapping = getCountryMapping(country);
@@ -721,7 +765,8 @@ export default function UnifiedPayment() {
                 },
                 onApprove: (data, actions) => {
                   return actions.order.capture().then((details) => {
-                    addVIPAccess();
+                    toast.success("PayPal payment successful! Processing your VIP access...");
+                    addVIPAccess(details.id);
                   });
                 },
                 onError: (err) => {
@@ -744,10 +789,6 @@ export default function UnifiedPayment() {
     }
   }, [selectedPaymentMethod, selectedPlan, country]);
 
-  if (loading) {
-    return <LoadingLogo />;
-  }
-
   return (
     <div className={styles.paymentContainer}>
       <div className={styles.paymentHeader}>
@@ -767,161 +808,127 @@ export default function UnifiedPayment() {
           </div>
         </div>
       </div>
+
       <div className={styles.paymentPlans}>
-        {fetchError ||
-          (paymentPlans.length === 0 && (
-            <Nothing
-              NothingImage={Nopayment}
-              Text={fetchError}
-              Alt="No payment plans available"
-            />
-          ))}
-
-        {country && paymentPlans.length > 0 && !fetchError && (
-          <div className={styles.subscriptionSection}>
-            <div className={styles.subscriptionPeriods}>
-              {paymentPlans[0].yearly > 0 && (
-                <SubscriptionPeriodCard
-                  type="Yearly"
-                  price={paymentPlans[0].yearly}
-                  currency={paymentPlans[0].currency}
-                  duration={365}
-                  isSelected={selectedPlan?.type === "Yearly"}
-                  onClick={() =>
-                    handlePlanSelect(paymentPlans[0], "Yearly", 365)
-                  }
-                />
-              )}
-
-              {paymentPlans[0].monthly > 0 && (
-                <SubscriptionPeriodCard
-                  type="Monthly"
-                  price={paymentPlans[0].monthly}
-                  currency={paymentPlans[0].currency}
-                  duration={30}
-                  isSelected={selectedPlan?.type === "Monthly"}
-                  onClick={() =>
-                    handlePlanSelect(paymentPlans[0], "Monthly", 30)
-                  }
-                  isPromo={true}
-                  promoText={`Everyone's favorite plan!`}
-                />
-              )}
-
-              {paymentPlans[0].weekly > 0 && (
-                <SubscriptionPeriodCard
-                  type="Weekly"
-                  price={paymentPlans[0].weekly}
-                  currency={paymentPlans[0].currency}
-                  duration={7}
-                  isSelected={selectedPlan?.type === "Weekly"}
-                  onClick={() => handlePlanSelect(paymentPlans[0], "Weekly", 7)}
-                />
-              )}
-            </div>
-          </div>
-        )}
-
-        {country && paymentPlans.length === 0 && !loading && !fetchError && (
-          <Nothing
-            NothingImage={Nopayment}
-            Text="No payment plans available for this country"
-            Alt="No payment plans"
-          />
-        )}
-
-        {selectedPlan && (
-          <div className={styles.paymentMethodSection}>
-            <h2>Payment Method</h2>
-
-            {(() => {
-              const availableMethods = getAvailablePaymentMethods(country);
-              const showManualPayment = shouldShowManualPayment(country);
-
-              if (availableMethods.length === 0 && !showManualPayment) {
-                return (
-                  <Nothing
-                    NothingImage={Nopayment}
-                    Text="No payment methods available for this country"
-                    Alt="No payment methods"
-                  />
-                );
-              }
-
-              return (
-                <div className={styles.paymentMethods}>
-                  {/* Regular Payment Methods */}
-                  {availableMethods.map((method) => (
-                    <PaymentMethodCard
-                      key={method.id}
-                      image={method.image}
-                      alt={method.alt}
-                      title={method.title}
-                      isSelected={selectedPaymentMethod === method.id}
-                      onClick={() => handlePaymentMethodSelect(method.id)}
-                    >
-                      {selectedPaymentMethod === method.id &&
-                        method.id === "paypal" && (
-                          <div
-                            id="paypal-button-container"
-                            style={{ marginTop: "10px" }}
-                          ></div>
-                        )}
-                    </PaymentMethodCard>
-                  ))}
-
-                  {/* Manual Payment Card - Only for eligible countries */}
-                  {showManualPayment && (
-                    <ManualPaymentCard
-                      countryCode={countryCode}
-                      price={selectedPlan.price}
-                      currency={selectedPlan.currency}
-                      isSelected={selectedPaymentMethod === "manual"}
-                      onClick={() => handlePaymentMethodSelect("manual")}
-                      onConfirmPayment={payManually}
-                      termsAccepted={termsAccepted}
-                    />
-                  )}
-                </div>
-              );
-            })()}
-
-            {/* Manual Payment Info - rendered separately when manual is selected */}
-
-            {(getAvailablePaymentMethods(country).length > 0 || shouldShowManualPayment(country)) && (
-              <TermsCheckbox
-                isChecked={termsAccepted}
-                onChange={(e) => setTermsAccepted(e.target.checked)}
+        {loading ? (
+          <LoadingLogo />
+        ) : (
+          <>
+            {(fetchError || paymentPlans.length === 0) && (
+              <Nothing
+                NothingImage={Nopayment}
+                Text={fetchError || "No payment plans available for this country"}
+                Alt="No payment plans available"
               />
             )}
 
-            {selectedPaymentMethod &&
-              selectedPaymentMethod !== "paypal" &&
-              selectedPaymentMethod !== "manual" &&
-              getAvailablePaymentMethods(country).length > 0 && (
-                <div className={styles.paymentButtonContainer}>
-                  <button
-                    className={`${styles.paymentButton} ${
-                      !termsAccepted ? styles.paymentButtonDisabled : ""
-                    }`}
-                    disabled={!termsAccepted}
-                    onClick={() => {
-                      if (selectedPaymentMethod === "stripe") {
-                        handleCheckout();
-                      } else if (selectedPaymentMethod === "mpesa") {
-                        payMpesa();
-                      } else if (selectedPaymentMethod === "coinbase") {
-                        coinbasePay();
+            {country && paymentPlans.length > 0 && !fetchError && (
+              <div className={styles.subscriptionSection}>
+                <div className={styles.subscriptionPeriods}>
+                  {paymentPlans[0].yearly > 0 && (
+                    <SubscriptionPeriodCard
+                      type="Yearly"
+                      price={paymentPlans[0].yearly}
+                      currency={paymentPlans[0].currency}
+                      duration={365}
+                      isSelected={selectedPlan?.type === "Yearly"}
+                      onClick={() =>
+                        handlePlanSelect(paymentPlans[0], "Yearly", 365)
                       }
-                    }}
-                  >
-                    {selectedPaymentMethod === "stripe" && "Pay with card"}
-                    {selectedPaymentMethod === "mpesa" && "Pay with MPESA"}
-                    {selectedPaymentMethod === "coinbase" && "Pay with crypto"}
-                  </button>
+                    />
+                  )}
+
+                  {paymentPlans[0].monthly > 0 && (
+                    <SubscriptionPeriodCard
+                      type="Monthly"
+                      price={paymentPlans[0].monthly}
+                      currency={paymentPlans[0].currency}
+                      duration={30}
+                      isSelected={selectedPlan?.type === "Monthly"}
+                      onClick={() =>
+                        handlePlanSelect(paymentPlans[0], "Monthly", 30)
+                      }
+                      isPromo={true}
+                      promoText={`Most subscribed`}
+                    />
+                  )}
+
+                  {paymentPlans[0].weekly > 0 && (
+                    <SubscriptionPeriodCard
+                      type="Weekly"
+                      price={paymentPlans[0].weekly}
+                      currency={paymentPlans[0].currency}
+                      duration={7}
+                      isSelected={selectedPlan?.type === "Weekly"}
+                      onClick={() => handlePlanSelect(paymentPlans[0], "Weekly", 7)}
+                    />
+                  )}
                 </div>
-              )}
-          </div>
+              </div>
+            )}
+
+            {country && paymentPlans.length === 0 && !fetchError && (
+              <Nothing
+                NothingImage={Nopayment}
+                Text="No payment plans available for this country"
+                Alt="No payment plans"
+              />
+            )}
+
+            {selectedPlan && (
+              <div className={styles.paymentMethodSection}>
+                <h2>Payment Method</h2>
+
+                {(() => {
+                  const availableMethods = getAvailablePaymentMethods(country);
+                  const showManualPayment = shouldShowManualPayment(country);
+
+                  if (availableMethods.length === 0 && !showManualPayment) {
+                    return (
+                      <Nothing
+                        NothingImage={Nopayment}
+                        Text="No payment methods available for this country"
+                        Alt="No payment methods"
+                      />
+                    );
+                  }
+
+                  return (
+                    <div className={styles.paymentMethods}>
+                      {availableMethods.map((method) => (
+                        <PaymentMethodCard
+                          key={method.id}
+                          image={method.image}
+                          alt={method.alt}
+                          title={method.title}
+                          isSelected={selectedPaymentMethod === method.id}
+                          onClick={() => handlePaymentMethodSelect(method.id)}
+                        >
+                          {selectedPaymentMethod === method.id &&
+                            method.id === "paypal" && (
+                              <div
+                                id="paypal-button-container"
+                                style={{ marginTop: "10px" }}
+                              ></div>
+                            )}
+                        </PaymentMethodCard>
+                      ))}
+
+                      {showManualPayment && (
+                        <ManualPaymentCard
+                          countryCode={countryCode}
+                          price={selectedPlan.price}
+                          currency={selectedPlan.currency}
+                          isSelected={selectedPaymentMethod === "manual"}
+                          onClick={() => handlePaymentMethodSelect("manual")}
+                        />
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -960,6 +967,7 @@ export default function UnifiedPayment() {
           </p>
         </div>
       </div>
+
     </div>
   );
 }

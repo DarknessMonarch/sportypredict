@@ -24,7 +24,6 @@ export default function SingleCard({
   const { adverts, fetchAdverts, loading } = useAdvertStore();
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
 
-  // Filter ads for CardBanner location
   const cardBannerAds = adverts.filter((ad) => ad.location === "CardBanner");
   const currentAd = cardBannerAds[currentAdIndex];
 

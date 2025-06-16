@@ -40,11 +40,16 @@
     color: var(--win-color);
   }
 
-  .offerlogo {
+  .imageContainer {
+    position: relative;
+    width: 60px;
     height: 40px;
-    width: auto;
+    flex-shrink: 0;
+  }
+
+  .offerlogo {
     object-fit: contain;
-    border-radius: 5px;
+    border-radius: 10px;
   }
 
   .offerInner {
@@ -82,7 +87,10 @@
     font-size: 1.4rem;
   }
 
- 
+  .imageContainer {
+    width: 80px;
+    height: 50px;
+  }
 
   .offerInner h2 {
     font-size: 1.4rem;
@@ -91,6 +99,4 @@
   .arrowIcon {
     font-size: 40px;
   }
-
 }
-
