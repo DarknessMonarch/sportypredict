@@ -59,6 +59,14 @@ const getURLSearchParams = () => {
   };
 };
 
+// Helper function to safely access document
+const getDocumentObject = () => {
+  if (typeof document !== 'undefined') {
+    return document;
+  }
+  return null;
+};
+
 const getManualPaymentDetails = (countryCode) => {
   const africanPayments = {
     ke: {
@@ -466,8 +474,9 @@ export default function Payment() {
           sessionStorage.removeItem('pendingPayment');
           
           const windowObj = getWindowObject();
-          if (windowObj && windowObj.history) {
-            windowObj.history.replaceState({}, document.title, windowObj.location.pathname);
+          const docObj = getDocumentObject();
+          if (windowObj && windowObj.history && docObj) {
+            windowObj.history.replaceState({}, docObj.title, windowObj.location.pathname);
           }
         }
       }
@@ -715,6 +724,8 @@ export default function Payment() {
     }
 
     try {
+      const windowObj = getWindowObject();
+      
       const response = await fetch("https://api.commerce.coinbase.com/charges/", {
         method: "POST",
         headers: {
@@ -729,8 +740,8 @@ export default function Payment() {
             amount: amount,
             currency: "USD",
           },
-          cancel_url: isMounted ? window.location.href : "",
-          success_url: isMounted ? `${window.location.origin}/vip?payment=success&method=coinbase` : "",
+          cancel_url: windowObj ? windowObj.location.href : "",
+          success_url: windowObj ? `${windowObj.location.origin}/vip?payment=success&method=coinbase` : "",
         }),
       });
 
@@ -745,7 +756,6 @@ export default function Payment() {
           chargeId: data.data.id
         }));
         
-        const windowObj = getWindowObject();
         if (windowObj) {
           windowObj.location.href = data.data.hosted_url;
         }
@@ -788,11 +798,17 @@ export default function Payment() {
 
       const loadScript = (src) =>
         new Promise((resolve, reject) => {
-          const script = document.createElement("script");
+          const docObj = getDocumentObject();
+          if (!docObj) {
+            reject(new Error('Document not available'));
+            return;
+          }
+          
+          const script = docObj.createElement("script");
           script.src = src;
           script.onload = resolve;
           script.onerror = reject;
-          document.head.appendChild(script);
+          docObj.head.appendChild(script);
         });
 
       const initPayPal = async () => {
