@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import DOMPurify from "dompurify";
 import Loading from "@/app/components/LoadingLogo";
-import OfferCard from "@/app/components/OfferCard";
+import OfferCard from "@/app/components/SingleOfferCard";
 import SingleCard from "@/app/components/SingleCard";
 import { useEffect, useState } from "react";
 import Nothing from "@/app/components/Nothing";
@@ -247,16 +247,22 @@ export default function SingleSport() {
   };
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div className={styles.singleSportEmpty}>
+        <Loading />
+      </div>
+    );
   }
 
   if (!match) {
     return (
-      <Nothing
-        Alt="No predictions"
-        NothingImage={EmptySportImage}
-        Text={"No predictions details available for this match"}
-      />
+      <div className={styles.singleSportEmpty}>
+        <Nothing
+          Alt="No predictions"
+          NothingImage={EmptySportImage}
+          Text={"No predictions details available for this match"}
+        />
+      </div>
     );
   }
 

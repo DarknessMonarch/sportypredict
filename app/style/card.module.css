@@ -190,7 +190,7 @@
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
   .cardContainer {
-    width: 450px;
+    width: 400px;
   }
 
   .teamImage {

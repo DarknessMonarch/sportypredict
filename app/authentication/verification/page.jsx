@@ -30,7 +30,7 @@ export default function Verify() {
 
       if (result.success) {
         toast.success(result.message);
-        router.push("/page/football", { scroll: false });
+        router.push("/page/day", { scroll: false });
       } else {
         toast.error(result.message);
       }
@@ -72,7 +72,7 @@ export default function Verify() {
               />
             </div>
             <h1>Verify your account</h1>
-            <p>Enter your verification code</p>
+            <p>Check your email for verification code</p>
           </div>
 
           <div className={styles.authInput}>

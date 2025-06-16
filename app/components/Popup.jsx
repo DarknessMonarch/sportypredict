@@ -36,6 +36,8 @@ export default function PopupComponent({
           right: `${Right}px`,
           bottom: `${Bottom}px`,
           left: `${Left}px`,
+          width: `${Width}px`,
+          height: `${Height}px`,
           borderRadius: `${BorderRadiusTopLeft}px ${BorderRadiusTopRight}px ${BorderRadiusBottomRight}px ${BorderRadiusBottomLeft}px`,
         }}
       >

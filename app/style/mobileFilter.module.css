@@ -57,20 +57,22 @@
     box-shadow: var(--shadow-background-color);
     background-color: var(--background-color);
     position: relative;
-    cursor: pointer;
     min-width: 130px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .dateDisplay {
     font-size: 14px;
     color: inherit;
-    cursor: pointer;
     user-select: none;
     min-width: 80px;
     text-align: left;
+    pointer-events: none;
   }
 
-  /* Enhanced input with Mac compatibility */
+  /* Safari-optimized date input */
   .dateInput {
     position: absolute;
     top: 0;
@@ -86,10 +88,13 @@
     -moz-appearance: none;
     appearance: none;
     z-index: 2;
-    font-size: 16px; 
+    font-size: 16px;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
   }
 
-  /* Enhanced calendar picker indicator for better Mac compatibility */
   .dateInput::-webkit-calendar-picker-indicator {
     opacity: 0;
     position: absolute;
@@ -100,36 +105,48 @@
     width: 100%;
     height: 100%;
     cursor: pointer;
-    /* Add these for better Mac compatibility */
-    z-index: 1;
+    z-index: 3;
     margin: 0;
     padding: 0;
+    -webkit-appearance: none;
+    background: transparent;
+    display: block;
   }
 
   .dateInput::-moz-focus-inner {
     border: 0;
     padding: 0;
+    margin: 0;
   }
 
-  /* Remove all focus outlines and borders from the hidden input */
   .dateInput:focus {
-    outline: none;
-    border: none;
-    box-shadow: none;
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
   }
 
-  /* Remove focus outline from the calendar picker indicator */
+  /* Additional Safari-specific fixes */
   .dateInput::-webkit-calendar-picker-indicator:focus {
-    outline: none;
-    border: none;
-    box-shadow: none;
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
+  /* Prevent any accidental text selection */
+  .dateInput::-webkit-input-placeholder {
+    color: transparent;
+  }
 
+  .dateInput::-moz-placeholder {
+    color: transparent;
+  }
 
+  .dateInput::placeholder {
+    color: transparent;
+  }
 
   .filterIcon {
     flex-shrink: 0;
@@ -137,6 +154,7 @@
     height: 20px;
     opacity: 0.7;
     pointer-events: none;
+    z-index: 1;
   }
 }
 

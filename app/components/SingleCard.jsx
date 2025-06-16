@@ -151,11 +151,6 @@ export default function SingleCard({
           </div>
         </div>
       </div>
-
-      <div className={styles.tipContainer}>
-        <h2>Tip:</h2>
-        <h4>{tip}</h4>
-      </div>
     </div>
   );
 }

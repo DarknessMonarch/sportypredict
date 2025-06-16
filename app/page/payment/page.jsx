@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import Nothing from "@/app/components/Nothing";
 import LoadingLogo from "@/app/components/LoadingLogo";
 import Dropdown from "@/app/components/SearchableDropdown";
+import Popup from "@/app/components/PaymentPopup";
 import styles from "@/app/style/payment.module.css";
 import { usePaymentStore } from "@/app/store/Payment";
 import { useAuthStore } from "@/app/store/Auth";
@@ -20,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { RiCheckLine as CheckIcon } from "react-icons/ri";
 import { MdOutlineLanguage as GlobeIcon } from "react-icons/md";
+import { IoClose as CloseIcon } from "react-icons/io5";
 
 const PAYMENT_CONFIG = {
   PAYSTACK_KEY: process.env.NEXT_PUBLIC_PAYSTACK_KEY,
@@ -177,7 +179,10 @@ const PaymentMethodCard = ({
         isSelected ? styles.selectedPaymentCard : ""
       } ${comingSoon ? styles.comingSoonCard : ""}`}
       onClick={comingSoon ? undefined : onClick}
-      style={{ opacity: comingSoon ? 0.6 : 1, cursor: comingSoon ? 'not-allowed' : 'pointer' }}
+      style={{
+        opacity: comingSoon ? 0.6 : 1,
+        cursor: comingSoon ? "not-allowed" : "pointer",
+      }}
     >
       <div className={styles.paymentMethodContent}>
         <div className={styles.paymentMethodImageWrapper}>
@@ -196,7 +201,11 @@ const PaymentMethodCard = ({
         </div>
         <span className={styles.paymentMethodTitle}>
           {title}
-          {comingSoon && <span style={{ display: 'block', fontSize: '12px', color: '#666' }}>Coming Soon</span>}
+          {comingSoon && (
+            <span style={{ display: "block", fontSize: "12px", color: "#666" }}>
+              Coming Soon
+            </span>
+          )}
         </span>
       </div>
       {children}
@@ -204,10 +213,11 @@ const PaymentMethodCard = ({
   );
 };
 
-const ManualPaymentInfo = ({
+const ManualPaymentPopupContent = ({
   countryCode,
   price,
   currency,
+  onClose,
 }) => {
   const paymentDetails = getManualPaymentDetails(countryCode);
 
@@ -220,32 +230,75 @@ const ManualPaymentInfo = ({
   };
 
   return (
-    <div className={styles.manualDetailsContainer}>
-        <h4 className={styles.manualDetailsTitle}>Payment Instructions</h4>
+    <div className={styles.manualPaymentPopupContainer}>
+      <div className={styles.manualPaymentPopupHeader}>
+        <h2>Manual Payment Instructions</h2>
+        <CloseIcon onClick={onClose} />
+      </div>
+
+      <div className={styles.manualPaymentPopupContent}>
+        <div className={styles.manualPaymentAmount}>
+          <h4>Payment Amount</h4>
+          <p>{formatPrice()}</p>
+        </div>
 
         {paymentDetails.methods ? (
-          <>
+          <div className={styles.manualPaymentMethods}>
             {paymentDetails.methods.map((method, index) => (
-              <div key={index} className={styles.manualMethodItem}>
-                <h5 className={styles.manualMethodName}>{method.name}</h5>
-                <div className={styles.manualInstructions}>
-                  <p><strong>Name:</strong> {method.contactName}</p>
-                  <p><strong>Email/Address:</strong> {method.contactInfo}</p>
-                  <p><strong>Amount:</strong> {method.contactName === "Coming Soon" ? "Coming Soon" : formatPrice()}</p>
-                  <p>{method.description}</p>
+              <div key={index} className={styles.manualPaymentMethod}>
+                <h4 s>{method.name}</h4>
+                <div className={styles.manualPaymentMethodDetails}>
+                  <p>
+                    <strong>Name:</strong> {method.contactName}
+                  </p>
+                  <p>
+                    <strong>Email/Address:</strong> {method.contactInfo}
+                  </p>
+                  <p>
+                    <strong>Amount:</strong>{" "}
+                    {method.contactName === "Coming Soon"
+                      ? "Coming Soon"
+                      : formatPrice()}
+                  </p>
+                  <p style={{ margin: "8px 0", color: "#666" }}>
+                    {method.description}
+                  </p>
                 </div>
               </div>
             ))}
-          </>
+          </div>
         ) : (
-          <div className={styles.manualInstructions}>
-            <p><strong>Name:</strong> {paymentDetails.name}</p>
-            <p><strong>Phone/Account:</strong> {paymentDetails.phone}</p>
-            <p><strong>Amount:</strong> {paymentDetails.method === "Coming Soon" ? "Coming Soon" : formatPrice()}</p>
-            <p>{paymentDetails.description}</p>
+          <div className={styles.manualPaymentMethodDetails}>
+            <p>
+              <strong>Payment Method:</strong> {paymentDetails.method}
+            </p>
+            <p>
+              <strong>Name:</strong> {paymentDetails.name}
+            </p>
+            <p>
+              <strong>Phone/Account:</strong> {paymentDetails.phone}
+            </p>
+            <p>
+              <strong>Amount:</strong>{" "}
+              {paymentDetails.method === "Coming Soon"
+                ? "Coming Soon"
+                : formatPrice()}
+            </p>
+            <p style={{ margin: "8px 0", color: "#666" }}>
+              {paymentDetails.description}
+            </p>
+            <p>
+              <li>Make sure to send the exact amount shown above</li>
+              <li>Keep your payment receipt/confirmation</li>
+              <li>
+                Your VIP access will be activated after payment verification
+              </li>
+              <li>Contact support if you need assistance</li>
+            </p>
           </div>
         )}
       </div>
+    </div>
   );
 };
 
@@ -257,23 +310,13 @@ const ManualPaymentCard = ({
   onClick,
 }) => {
   return (
-    <>
-      <PaymentMethodCard
-        image={manualImage}
-        alt="Manual Payment"
-        title="Pay Manually"
-        isSelected={isSelected}
-        onClick={onClick}
-      />
-      
-      {isSelected && (
-        <ManualPaymentInfo
-          countryCode={countryCode}
-          price={price}
-          currency={currency}
-        />
-      )}
-    </>
+    <PaymentMethodCard
+      image={manualImage}
+      alt="Manual Payment"
+      title="Pay Manually"
+      isSelected={isSelected}
+      onClick={onClick}
+    />
   );
 };
 
@@ -283,19 +326,21 @@ export default function Payment() {
   const [paymentPlans, setPaymentPlans] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [isManualPaymentPopupOpen, setIsManualPaymentPopupOpen] =
+    useState(false);
 
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
-  const { 
-    country: userCountry, 
-    isAuth, 
-    email, 
-    userId, 
-    accessToken, 
-    updateUser 
+  const {
+    country: userCountry,
+    isAuth,
+    email,
+    userId,
+    accessToken,
+    updateUser,
   } = useAuthStore();
-  
+
   const { getPaymentPlanByCountry, loading } = usePaymentStore();
 
   const countryOptions = useMemo(
@@ -487,23 +532,27 @@ export default function Payment() {
 
   const shouldShowManualPayment = (countryName) => {
     if (!countryName) return false;
-    
+
     const selectedCountry = getCountryMapping(countryName);
     return !["others"].includes(selectedCountry) && selectedCountry !== "";
   };
 
   const handlePaymentMethodSelect = (methodId) => {
     setSelectedPaymentMethod(methodId);
-    
+
     if (methodId === "stripe") {
       handleCheckout();
     } else if (methodId === "mpesa") {
       payMpesa();
     } else if (methodId === "manual") {
-      payManually();
+      setIsManualPaymentPopupOpen(true);
     } else if (methodId === "paypal" || methodId === "coinbase") {
       toast.info("This payment method is coming soon!");
     }
+  };
+
+  const closeManualPaymentPopup = () => {
+    setIsManualPaymentPopupOpen(false);
   };
 
   const handlePlanSelect = (plan, type, duration) => {
@@ -523,15 +572,16 @@ export default function Payment() {
       return;
     }
 
-    const checkoutUrl = selectedPlan.type === "Weekly"
-      ? "https://buy.stripe.com/6oE4jh3oEh1R4jCeV2"
-      : "https://buy.stripe.com/7sI3fd3oE26X4jCaEN";
-    
+    const checkoutUrl =
+      selectedPlan.type === "Weekly"
+        ? "https://buy.stripe.com/6oE4jh3oEh1R4jCeV2"
+        : "https://buy.stripe.com/7sI3fd3oE26X4jCaEN";
+
     toast.info("Redirecting to Stripe checkout...");
-    
+
     if (typeof window !== "undefined") {
       const stripeWindow = window.open(checkoutUrl, "_blank");
-      
+
       if (!stripeWindow) {
         toast.error("Please allow popups for this site");
         return;
@@ -553,7 +603,7 @@ export default function Payment() {
         // Dynamically import PaystackPop only when needed
         const PaystackModule = await import("@paystack/inline-js");
         const PaystackPop = PaystackModule.default;
-        
+
         const paystack = new PaystackPop();
         paystack.newTransaction({
           key: PAYMENT_CONFIG.PAYSTACK_KEY,
@@ -561,17 +611,19 @@ export default function Payment() {
           amount: selectedPlan?.price * 100,
           currency: "KES",
           ref: `ref_${Math.floor(Math.random() * 1000000000 + 1)}`,
-          callback: function(response) {
+          callback: function (response) {
             if (response.status === "success") {
-              toast.success("Payment successful! Processing your VIP access...");
+              toast.success(
+                "Payment successful! Processing your VIP access..."
+              );
               addVIPAccess(response.reference);
             } else {
               toast.error("Payment failed. Please try again.");
             }
           },
-          onClose: function() {
+          onClose: function () {
             toast.error("Payment was cancelled");
-          }
+          },
         });
       } catch (error) {
         console.error("Paystack initialization error:", error);
@@ -582,10 +634,6 @@ export default function Payment() {
     }
   };
 
-  const payManually = () => {
-    toast.success("Please follow the manual payment instructions above");
-  };
-
   const addVIPAccess = async (paymentReference = null) => {
     if (isAuth && userId && accessToken) {
       try {
@@ -594,8 +642,15 @@ export default function Payment() {
           currentDate.getMonth() + 1
         }-${currentDate.getDate()}-${currentDate.getFullYear()}`;
 
-        const durationDays = selectedPlan?.type === "Weekly" ? 7 : selectedPlan?.type === "Monthly" ? 30 : 365;
-        const expirationDate = new Date(currentDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
+        const durationDays =
+          selectedPlan?.type === "Weekly"
+            ? 7
+            : selectedPlan?.type === "Monthly"
+            ? 30
+            : 365;
+        const expirationDate = new Date(
+          currentDate.getTime() + durationDays * 24 * 60 * 60 * 1000
+        );
 
         const requestBody = {
           plan: selectedPlan?.type,
@@ -623,7 +678,7 @@ export default function Payment() {
 
         const data = await response.json();
 
-        if (response.ok && data.status === 'success') {
+        if (response.ok && data.status === "success") {
           updateUser({
             isVip: true,
             vipPlan: selectedPlan?.type?.toLowerCase(),
@@ -641,16 +696,38 @@ export default function Payment() {
         }
       } catch (err) {
         console.error("Update error:", err);
-        toast.error("An error occurred while processing payment. Please contact support if payment was deducted.");
+        toast.error(
+          "An error occurred while processing payment. Please contact support if payment was deducted."
+        );
       }
     } else {
       toast.error("Please log in to complete payment");
     }
   };
 
-  // Don't render anything until mounted to avoid hydration issues
   if (!isMounted) {
-    return <LoadingLogo />;
+    return (
+      <div className={styles.paymentContainer}>
+        <div className={styles.paymentHeader}>
+          <div className={styles.paymentHeaderInner}>
+            <h1>Choose your country</h1>
+            <p>
+              Your <span>VIP account</span> will be activated after payment
+            </p>
+
+            <div className={styles.countryDropdownWrapper}>
+              <Dropdown
+                options={countryData}
+                onSelect={handleCountrySelect}
+                Icon={<GlobeIcon className={styles.globeIcon} />}
+                dropPlaceHolder={country || "Select Country"}
+              />
+            </div>
+          </div>
+        </div>
+        <LoadingLogo />
+      </div>
+    );
   }
 
   return (
@@ -681,7 +758,9 @@ export default function Payment() {
             {(fetchError || paymentPlans.length === 0) && (
               <Nothing
                 NothingImage={Nopayment}
-                Text={fetchError || "No payment plans available for this country"}
+                Text={
+                  fetchError || "No payment plans available for this country"
+                }
                 Alt="No payment plans available"
               />
             )}
@@ -724,13 +803,15 @@ export default function Payment() {
                       currency={paymentPlans[0].currency}
                       duration={7}
                       isSelected={selectedPlan?.type === "Weekly"}
-                      onClick={() => handlePlanSelect(paymentPlans[0], "Weekly", 7)}
+                      onClick={() =>
+                        handlePlanSelect(paymentPlans[0], "Weekly", 7)
+                      }
                     />
                   )}
                 </div>
               </div>
             )}
-            
+
             {country && paymentPlans.length === 0 && !fetchError && (
               <Nothing
                 NothingImage={Nopayment}
@@ -811,9 +892,9 @@ export default function Payment() {
           <h1>How do I get these daily games sent to me?</h1>
           <p>
             <span>Answer:</span> We post games on our platform:
-            <span onClick={() => router.push("vip")}>VIP</span>. You need to
-            log in on the website using your email and password or through
-            social accounts to view games.
+            <span onClick={() => router.push("vip")}>VIP</span>. You need to log
+            in on the website using your email and password or through social
+            accounts to view games.
           </p>
         </div>
         <div className={styles.QuestionCon}>
@@ -825,6 +906,20 @@ export default function Payment() {
         </div>
       </div>
 
+      {isManualPaymentPopupOpen && selectedPlan && (
+        <Popup
+          OnClose={closeManualPaymentPopup}
+          IsOpen={isManualPaymentPopupOpen}
+          Content={
+            <ManualPaymentPopupContent
+              countryCode={countryCode}
+              price={selectedPlan.price}
+              currency={selectedPlan.currency}
+              onClose={closeManualPaymentPopup}
+            />
+          }
+        />
+      )}
     </div>
   );
-};
+}
