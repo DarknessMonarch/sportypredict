@@ -76,24 +76,24 @@ const getManualPaymentDetails = (countryCode) => {
     },
     za: {
       currency: "ZAR",
-      method: "Coming Soon",
-      name: "Multiple Methods",
-      phone: "",
-      description: "PayPal and Bitcoin payment methods coming soon",
+      method: "Mukuru, Mama Money, WorldRemit (To MPesa Kenya)",
+      name: "Thwell Mugambi Gichovi",
+      phone: "‪+254703147237",
+      description: "Send payment via Mukuru, Mama Money, or WorldRemit to MPesa Kenya (Thwell Mugambi Gichovi)",
     },
     zm: {
       currency: "ZMW",
-      method: "Manual Transfer",
+      method: "Airtel Money",
       name: "John",
       phone: "(+254) 783 719 791",
-      description: "Contact for manual payment instructions",
+      description: "Contact for Airtel Money payment instructions",
     },
     mw: {
       currency: "MWK",
-      method: "Manual Transfer",
+      method: "Airtel Money",
       name: "John",
       phone: "(+254) 783 719 791",
-      description: "Contact for manual payment instructions",
+      description: "Contact for Airtel Money payment instructions",
     },
     rw: {
       currency: "RWF",
@@ -108,22 +108,16 @@ const getManualPaymentDetails = (countryCode) => {
     currency: "USD",
     methods: [
       {
-        name: "WESTERN UNION",
-        contactName: "Available",
-        contactInfo: "Contact us for details",
-        description: "Send payment via Western Union",
+        name: "SKRILL",
+        contactName: "betsmart.inc@gmail.com",
+        contactInfo: "betsmart.inc@gmail.com",
+        description: "Send payment via Skrill to betsmart.inc@gmail.com",
       },
       {
-        name: "MONEYGRAM",
-        contactName: "Available",
-        contactInfo: "Contact us for details",
-        description: "Send payment via MoneyGram",
-      },
-      {
-        name: "OTHER OPTIONS",
-        contactName: "Contact Support",
-        contactInfo: "For any other payment option contact us",
-        description: "We accept various payment methods. Contact us for assistance.",
+        name: "OTHER PAYMENT OPTIONS",
+        contactName: "MoneyGram, Western Union",
+        contactInfo: "contact@sportypredict.com",
+        description: "For MoneyGram, Western Union, and other payment options contact contact@sportypredict.com for details",
       },
     ],
   };
@@ -289,13 +283,15 @@ const ManualPaymentPopupContent = ({
               {paymentDetails.description}
             </p>
             <p>
-              <li>After payment send screenshot or receipt to whatsapp +254703147237</li>
-              <li>Make sure to send the exact amount shown above</li>
-              <li>Keep your payment receipt/confirmation</li>
+              <li>After payment send screenshot or receipt to: </li>
+              <li>Whatsapp : +254703147237 </li>
+              <li>Email : contact@sportypredict.com </li>
+              <li>- Keep your payment receipt/confirmation</li>
+              <li>- Make sure to send the exact amount shown above</li>
               <li>
-                Your VIP access will be activated after payment verification
+                - Your VIP access will be activated after payment verification
               </li>
-              <li>Contact support if you need assistance</li>
+              <li>- Contact us at contact@sportypredict.com if you need assistance</li>
             </p>
           </div>
         )}
@@ -490,7 +486,7 @@ export default function Payment() {
         title: "Skrill",
         image: SkrillImage,
         alt: "Skrill",
-        unavailable: false,
+        unavailable: true,
       });
     }
 
@@ -626,8 +622,7 @@ export default function Payment() {
 
     const skrillEmail = "betsmart.inc@gmail.com";
     toast.info(`Send payment to Skrill email: ${skrillEmail}`);
-    
-    // You can also copy to clipboard or show in a popup
+
     if (navigator.clipboard) {
       navigator.clipboard.writeText(skrillEmail);
       toast.success("Skrill email copied to clipboard!");

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import LogoImg from "@/public/assets/logo.png";
 import { useAuthStore } from "@/app/store/Auth";
 import FullLogo from "@/public/assets/fullogo.png";
@@ -38,11 +38,13 @@ import {
 
 export default function SideNavComponent() {
   const { isOpen, toggleOpen, setClose } = useDrawerStore();
+  const router = useRouter();
 
   const adverts = useAdvertStore((state) => state.adverts);
 
   const [isMobile, setMobile] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const fileInputRef = useRef(null);
   const pathname = usePathname();
@@ -59,16 +61,7 @@ export default function SideNavComponent() {
     logout,
     clearUser,
     updateProfileImage,
-  } = useAuthStore((state) => ({
-    isAuth: state.isAuth,
-    username: state.username,
-    profileImage: state.profileImage,
-    isVip: state.isVip,
-    isAdmin: state.isAdmin,
-    logout: state.logout,
-    clearUser: state.clearUser,
-    updateProfileImage: state.updateProfileImage,
-  }));
+  } = useAuthStore();
 
   useEffect(() => {
     if (sideBannerAds.length > 1) {
@@ -114,6 +107,7 @@ export default function SideNavComponent() {
     async (event) => {
       const file = event.target.files[0];
       if (!file) return;
+      
       const allowedTypes = [
         "image/jpeg",
         "image/jpg",
@@ -127,6 +121,7 @@ export default function SideNavComponent() {
         );
         return;
       }
+      
       const maxSize = 100 * 1024 * 1024; // 100MB
       if (file.size > maxSize) {
         toast.error("Image size must be less than 100MB");
@@ -147,6 +142,7 @@ export default function SideNavComponent() {
               toast.error(result.message || "Failed to update profile image");
             }
           } catch (error) {
+            console.error("Profile image update error:", error);
             toast.error("Failed to update profile image");
           } finally {
             setIsUploadingImage(false);
@@ -163,6 +159,7 @@ export default function SideNavComponent() {
 
         reader.readAsDataURL(file);
       } catch (error) {
+        console.error("File processing error:", error);
         toast.error("Failed to process the image");
         setIsUploadingImage(false);
       }
@@ -178,7 +175,7 @@ export default function SideNavComponent() {
 
   const ProfileImageComponent = () => (
     <div className={styles.profileImgWrapper}>
-      {profileImage?.startsWith("https://") ? (
+      {profileImage && profileImage.startsWith("https://") ? (
         <div className={styles.profileImgContainer}>
           <Image
             className={styles.profileImg}
@@ -234,7 +231,7 @@ export default function SideNavComponent() {
     }
 
     return (
-      <div className={`${styles.sideNavAdverts}  skeleton`}>
+      <div className={`${styles.sideNavAdverts} skeleton`}>
         <div
           className={styles.advertImageContainer}
           onClick={handleAdClick}
@@ -255,16 +252,29 @@ export default function SideNavComponent() {
   };
 
   const handleLogout = async () => {
+    if (isLoggingOut) return; 
+    
+    setIsLoggingOut(true);
     try {
       const result = await logout();
+      
       if (result.success) {
-        clearUser();
-        toast.success("Logged out successfully");
+        toast.success(result.message || "Logged out successfully");
+        setClose(); 
+        router.push("/page/football", { scroll: false });
       } else {
         toast.error(result.message || "Logout failed");
       }
     } catch (error) {
+      console.error("Logout error:", error);
       toast.error("An error occurred during logout");
+      
+      // Force clear user data even if logout fails
+      clearUser();
+      setClose(); // Close the sidebar
+      router.push("/page/football", { scroll: false });
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -274,7 +284,7 @@ export default function SideNavComponent() {
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/jpg,image/png,image/webp"
+          accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
           onChange={handleFileChange}
           style={{ display: "none" }}
           disabled={isUploadingImage}
@@ -294,14 +304,22 @@ export default function SideNavComponent() {
                   <h1>{username || "Guest"}</h1>
                   <h2>{isAdmin ? "Admin" : isVip ? "Vip" : "User"}</h2>
                 </div>
-                <button onClick={handleLogout} className={styles.sideNavButton}>
+                <button 
+                  onClick={handleLogout} 
+                  className={styles.sideNavButton}
+                  disabled={isLoggingOut}
+                  style={{
+                    opacity: isLoggingOut ? 0.6 : 1,
+                    cursor: isLoggingOut ? "not-allowed" : "pointer"
+                  }}
+                >
                   <LogoutIcon
                     className={styles.userIcon}
                     height={24}
                     width={24}
                     alt="logout icon"
                   />
-                  Logout
+                  {isLoggingOut ? "Logging out..." : "Logout"}
                 </button>
               </div>
             )}
@@ -461,14 +479,14 @@ export default function SideNavComponent() {
                     <AboutIcon className={styles.sideNavIcon} alt="about icon" />
                     <h1>About us</h1>
                   </Link>
-                      <Link
+                  <Link
                     href="/page/contact"
                     className={`${styles.sideNavLinkContainer} ${
                       pathname === "/page/contact" ? styles.activesideNav : ""
                     }`}
                     onClick={handleLinkClick}
                   >
-                    <AboutIcon className={styles.sideNavIcon} alt="about icon" />
+                    <AboutIcon className={styles.sideNavIcon} alt="contact icon" />
                     <h1>Contact us</h1>
                   </Link>
                 </>

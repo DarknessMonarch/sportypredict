@@ -31,14 +31,11 @@ export default function NewsCard({ post, onReadMore, onShare }) {
           />
         </div>
         <h3>{post.title}</h3>
+        <div className={styles.articleInnerContent}>
         <p>{post.summary}</p>
-        <div className={styles.articleMeta}>
-          <span>
-            By {post.authorName || post.author?.username || "Unknown Author"}
-          </span>
         </div>
-        <div className={styles.articleFooter}>
-          <div onClick={() => onReadMore(post)} className={styles.readMoreBtn}>
+        <div className={styles.articleMeta}>
+       <div onClick={() => onReadMore(post)} className={styles.readMoreBtn}>
             <ReadIcon
               className={styles.readMoreIcon}
               alt="Read more icon"
@@ -46,6 +43,9 @@ export default function NewsCard({ post, onReadMore, onShare }) {
             />{" "}
             Read More
           </div>
+        </div>
+        <div className={styles.articleFooter}>
+          
           <div className={styles.dateAndTime}>
             <span>
               {post.formattedDate ||

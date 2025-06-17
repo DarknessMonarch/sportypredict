@@ -62,17 +62,17 @@ export default function ArticleCard({
         </div>
 
         <h3>{post.title}</h3>
-        <p>{post.excerpt}</p>
-
+        <div className={styles.articleInnerContent}>
+          <p>{post.excerpt}</p>
+        </div>
         <div className={styles.articleMeta}>
-          <span>by {post.author || post.authorName || "Unknown Author"}</span>
           <div onClick={handleReadMore} className={styles.readMoreBtn}>
             <ReadIcon
               className={styles.readMoreIcon}
               alt="Read more icon"
               aria-label="Read more icon"
             />{" "}
-           Read More
+            Read More
           </div>
         </div>
         <div className={styles.articleFooter}>

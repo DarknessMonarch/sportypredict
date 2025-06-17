@@ -19,6 +19,7 @@ export default function NavbarComponent() {
   const { toggleOpen, setOpen, setClose } = useDrawerStore();
   const [isMobile, setMobile] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const fileInputRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
@@ -28,20 +29,11 @@ export default function NavbarComponent() {
     username,
     profileImage,
     isVip,
-    logout,
     isAdmin,
+    logout,
     clearUser,
     updateProfileImage,
-  } = useAuthStore((state) => ({
-    isAuth: state.isAuth,
-    username: state.username,
-    profileImage: state.profileImage,
-    isVip: state.isVip,
-    isAdmin: state.isAdmin,
-    logout: state.logout,
-    clearUser: state.clearUser,
-    updateProfileImage: state.updateProfileImage,
-  }));
+  } = useAuthStore();
 
   useEffect(() => {
     const handleResize = () => {
@@ -66,15 +58,28 @@ export default function NavbarComponent() {
   };
 
   const handleLogout = async () => {
+    if (isLoggingOut) return; // Prevent multiple clicks
+    
+    setIsLoggingOut(true);
     try {
       const result = await logout();
+      
       if (result.success) {
-        clearUser();
+        toast.success(result.message || "Logged out successfully");
+        // Redirect to home page after logout
+        router.push("/page/football", { scroll: false });
       } else {
         toast.error(result.message || "Logout failed");
       }
     } catch (error) {
+      console.error("Logout error:", error);
       toast.error("An error occurred during logout");
+      
+      // Force clear user data even if logout fails
+      clearUser();
+      router.push("/page/football", { scroll: false });
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -124,6 +129,7 @@ export default function NavbarComponent() {
               toast.error(result.message || "Failed to update profile image");
             }
           } catch (error) {
+            console.error("Profile image update error:", error);
             toast.error("Failed to update profile image");
           } finally {
             setIsUploadingImage(false);
@@ -140,6 +146,7 @@ export default function NavbarComponent() {
 
         reader.readAsDataURL(file);
       } catch (error) {
+        console.error("File processing error:", error);
         toast.error("Failed to process the image");
         setIsUploadingImage(false);
       }
@@ -147,9 +154,9 @@ export default function NavbarComponent() {
     [updateProfileImage]
   );
 
-  const ProfileImageComponent = ({}) => (
+  const ProfileImageComponent = () => (
     <div style={{ position: "relative", display: "inline-block" }}>
-      {profileImage.startsWith("https://") ? (
+      {profileImage && profileImage.startsWith("https://") ? (
         <div className={styles.profileImgContainer}>
           <Image
             className={styles.profileImg}
@@ -297,7 +304,7 @@ export default function NavbarComponent() {
           <div className={styles.navStartContainer}>
             {isMobile && isAuth && (
               <div className={styles.navProfile}>
-                <ProfileImageComponent height={30} width={30} />
+                <ProfileImageComponent />
               </div>
             )}
             {isAuth ? (
@@ -309,8 +316,20 @@ export default function NavbarComponent() {
                     <h2>{isAdmin ? "Admin" : isVip ? "VIP" : "User"}</h2>
                   </div>
 
-                  <button onClick={handleLogout} className={styles.navButton}>
-                    <LogoutIcon className={styles.userIcon} alt="logout icon" />
+                  <button 
+                    onClick={handleLogout} 
+                    className={styles.navButton}
+                    disabled={isLoggingOut}
+                    style={{
+                      opacity: isLoggingOut ? 0.6 : 1,
+                      cursor: isLoggingOut ? "not-allowed" : "pointer"
+                    }}
+                  >
+                    {isLoggingOut ? (
+                      <Loader size="small" />
+                    ) : (
+                      <LogoutIcon className={styles.userIcon} alt="logout icon" />
+                    )}
                   </button>
                 </div>
               </div>
