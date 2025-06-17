@@ -1,9 +1,10 @@
 @media screen {
   .cardContainer {
     width: 100%;
+    max-width: 400px;
     display: flex;
     padding: 0 10px;
-    height: fit-content;
+    min-height: 300px;
     border-radius: 15px;
     flex-direction: column;
     justify-content: space-between;
@@ -87,7 +88,6 @@
     text-transform: capitalize;
   }
 
-
   .circularShape {
     border-radius: 360%;
   }
@@ -147,7 +147,6 @@
     text-align: center;
   }
 
-
   .formation {
     gap: 3px;
     width: 100%;
@@ -185,12 +184,13 @@
   .formationCircle span {
     font-size: 0.7rem;
   }
-
 }
+
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
   .cardContainer {
-    width: 400px;
+    width: 100%; 
+    max-width: 400px;
   }
 
   .teamImage {
@@ -201,6 +201,4 @@
   .formation {
     gap: 10px;
   }
-
-
 }

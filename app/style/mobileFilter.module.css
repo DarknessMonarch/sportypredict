@@ -61,6 +61,10 @@
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+    cursor: pointer;
+    /* Prevent Safari from interfering with click events */
+    -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
   }
 
   .dateDisplay {
@@ -70,9 +74,10 @@
     min-width: 80px;
     text-align: left;
     pointer-events: none;
+    z-index: 1;
   }
 
-  /* Safari-optimized date input */
+  /* Enhanced Safari-optimized date input */
   .dateInput {
     position: absolute;
     top: 0;
@@ -87,14 +92,19 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    z-index: 2;
+    z-index: 10;
     font-size: 16px;
     -webkit-border-radius: 0;
     border-radius: 0;
     -webkit-tap-highlight-color: transparent;
+    tap-highlight-color: transparent;
     -webkit-touch-callout: none;
+    touch-callout: none;
+    margin: 0;
+    padding: 0;
   }
 
+  /* Safari calendar picker indicator styling */
   .dateInput::-webkit-calendar-picker-indicator {
     opacity: 0;
     position: absolute;
@@ -105,20 +115,26 @@
     width: 100%;
     height: 100%;
     cursor: pointer;
-    z-index: 3;
+    z-index: 15;
     margin: 0;
     padding: 0;
     -webkit-appearance: none;
+    appearance: none;
     background: transparent;
     display: block;
+    /* Critical for Safari - prevent event conflicts */
+    pointer-events: auto;
   }
 
+  /* Firefox focus handling */
   .dateInput::-moz-focus-inner {
     border: 0;
     padding: 0;
     margin: 0;
+    outline: none;
   }
 
+  /* Enhanced focus styles */
   .dateInput:focus {
     outline: none !important;
     border: none !important;
@@ -126,6 +142,7 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    background: transparent !important;
   }
 
   /* Additional Safari-specific fixes */
@@ -133,19 +150,54 @@
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
+    background: transparent !important;
   }
 
-  /* Prevent any accidental text selection */
+  /* Hide placeholder text completely */
   .dateInput::-webkit-input-placeholder {
     color: transparent;
+    opacity: 0;
   }
 
   .dateInput::-moz-placeholder {
     color: transparent;
+    opacity: 0;
   }
 
   .dateInput::placeholder {
     color: transparent;
+    opacity: 0;
+  }
+
+  /* Safari-specific date input text hiding */
+  .dateInput::-webkit-datetime-edit {
+    color: transparent;
+    background: transparent;
+  }
+
+  .dateInput::-webkit-datetime-edit-fields-wrapper {
+    color: transparent;
+    background: transparent;
+  }
+
+  .dateInput::-webkit-datetime-edit-text {
+    color: transparent;
+    background: transparent;
+  }
+
+  .dateInput::-webkit-datetime-edit-month-field {
+    color: transparent;
+    background: transparent;
+  }
+
+  .dateInput::-webkit-datetime-edit-day-field {
+    color: transparent;
+    background: transparent;
+  }
+
+  .dateInput::-webkit-datetime-edit-year-field {
+    color: transparent;
+    background: transparent;
   }
 
   .filterIcon {
@@ -155,6 +207,11 @@
     opacity: 0.7;
     pointer-events: none;
     z-index: 1;
+  }
+
+  .filterDate:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
   }
 }
 

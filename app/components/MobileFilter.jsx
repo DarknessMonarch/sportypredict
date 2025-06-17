@@ -115,9 +115,38 @@ export default function MobileFilter({
     updateURLParams("date", dateValue);
   };
 
-  const handleDateContainerClick = () => {
+  // Improved Safari-compatible date picker handling
+  const handleDateContainerClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     if (dateInputRef.current) {
-      dateInputRef.current.showPicker?.() || dateInputRef.current.focus();
+      setTimeout(() => {
+        dateInputRef.current.focus();
+        if (dateInputRef.current.showPicker) {
+          try {
+            dateInputRef.current.showPicker();
+          } catch (error) {
+            dateInputRef.current.click();
+          }
+        } else {
+          dateInputRef.current.click();
+        }
+      }, 10);
+    }
+  };
+
+  const handleDateInputClick = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleDateInputFocus = (e) => {
+    e.stopPropagation();
+    if (e.target.showPicker) {
+      try {
+        e.target.showPicker();
+      } catch (error) {
+      }
     }
   };
 
@@ -222,6 +251,8 @@ export default function MobileFilter({
               type="date"
               className={styles.dateInput}
               onChange={handleDateChange}
+              onClick={handleDateInputClick}
+              onFocus={handleDateInputFocus}
               value={selectedDate || currentDateForInput}
               title="Filter by date"
             />

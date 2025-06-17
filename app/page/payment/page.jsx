@@ -12,6 +12,7 @@ import { usePaymentStore } from "@/app/store/Payment";
 import { useAuthStore } from "@/app/store/Auth";
 import Nopayment from "@/public/assets/nopayment.png";
 import CardImage from "@/public/assets/card.png";
+import SkrillImage from "@/public/assets/skrill.png";
 import MpesaImage from "@/public/assets/mpesa.png";
 import manualImage from "@/public/assets/manual.png";
 import CoinbaseImage from "@/public/assets/crypto.png";
@@ -107,16 +108,22 @@ const getManualPaymentDetails = (countryCode) => {
     currency: "USD",
     methods: [
       {
-        name: "PAYPAL",
-        contactName: "Coming Soon",
-        contactInfo: "Payment method coming soon",
-        description: "PayPal payment coming soon",
+        name: "WESTERN UNION",
+        contactName: "Available",
+        contactInfo: "Contact us for details",
+        description: "Send payment via Western Union",
       },
       {
-        name: "BITCOIN",
-        contactName: "Coming Soon",
-        contactInfo: "Payment method coming soon",
-        description: "Bitcoin payment coming soon",
+        name: "MONEYGRAM",
+        contactName: "Available",
+        contactInfo: "Contact us for details",
+        description: "Send payment via MoneyGram",
+      },
+      {
+        name: "OTHER OPTIONS",
+        contactName: "Contact Support",
+        contactInfo: "For any other payment option contact us",
+        description: "We accept various payment methods. Contact us for assistance.",
       },
     ],
   };
@@ -171,17 +178,17 @@ const PaymentMethodCard = ({
   isSelected,
   onClick,
   children,
-  comingSoon = false,
+  unavailable = false,
 }) => {
   return (
     <div
       className={`${styles.paymentMethodCard} ${
         isSelected ? styles.selectedPaymentCard : ""
-      } ${comingSoon ? styles.comingSoonCard : ""}`}
-      onClick={comingSoon ? undefined : onClick}
+      } ${unavailable ? styles.unavailableCard : ""}`}
+      onClick={unavailable ? undefined : onClick}
       style={{
-        opacity: comingSoon ? 0.6 : 1,
-        cursor: comingSoon ? "not-allowed" : "pointer",
+        opacity: unavailable ? 0.6 : 1,
+        cursor: unavailable ? "not-allowed" : "pointer",
       }}
     >
       <div className={styles.paymentMethodContent}>
@@ -201,9 +208,9 @@ const PaymentMethodCard = ({
         </div>
         <span className={styles.paymentMethodTitle}>
           {title}
-          {comingSoon && (
+          {unavailable && (
             <span style={{ display: "block", fontSize: "12px", color: "#666" }}>
-              Coming Soon
+              Not available for now
             </span>
           )}
         </span>
@@ -246,7 +253,7 @@ const ManualPaymentPopupContent = ({
           <div className={styles.manualPaymentMethods}>
             {paymentDetails.methods.map((method, index) => (
               <div key={index} className={styles.manualPaymentMethod}>
-                <h4 s>{method.name}</h4>
+                <h4>{method.name}</h4>
                 <div className={styles.manualPaymentMethodDetails}>
                   <p>
                     <strong>Name:</strong> {method.contactName}
@@ -255,10 +262,7 @@ const ManualPaymentPopupContent = ({
                     <strong>Email/Address:</strong> {method.contactInfo}
                   </p>
                   <p>
-                    <strong>Amount:</strong>{" "}
-                    {method.contactName === "Coming Soon"
-                      ? "Coming Soon"
-                      : formatPrice()}
+                    <strong>Amount:</strong> {formatPrice()}
                   </p>
                   <p style={{ margin: "8px 0", color: "#666" }}>
                     {method.description}
@@ -279,15 +283,13 @@ const ManualPaymentPopupContent = ({
               <strong>Phone/Account:</strong> {paymentDetails.phone}
             </p>
             <p>
-              <strong>Amount:</strong>{" "}
-              {paymentDetails.method === "Coming Soon"
-                ? "Coming Soon"
-                : formatPrice()}
+              <strong>Amount:</strong> {formatPrice()}
             </p>
             <p style={{ margin: "8px 0", color: "#666" }}>
               {paymentDetails.description}
             </p>
             <p>
+              <li>After payment send screenshot or receipt to whatsapp +254703147237</li>
               <li>Make sure to send the exact amount shown above</li>
               <li>Keep your payment receipt/confirmation</li>
               <li>
@@ -445,6 +447,18 @@ export default function Payment() {
     const selectedCountry = getCountryMapping(countryName);
     const methods = [];
 
+    // For African countries - start with MPESA where available
+    if (["kenya"].includes(selectedCountry)) {
+      methods.push({
+        id: "mpesa",
+        title: "Pay with MPESA",
+        image: MpesaImage,
+        alt: "MPESA",
+        unavailable: false,
+      });
+    }
+
+    // Add card payment for all countries
     if (
       [
         "kenya",
@@ -465,10 +479,47 @@ export default function Payment() {
         title: "Pay with card",
         image: CardImage,
         alt: "Stripe Card",
-        comingSoon: false,
+        unavailable: false,
       });
     }
 
+    // Add Skrill for non-African countries
+    if (["others"].includes(selectedCountry)) {
+      methods.push({
+        id: "skrill",
+        title: "Skrill",
+        image: SkrillImage,
+        alt: "Skrill",
+        unavailable: false,
+      });
+    }
+
+    // Add crypto for all countries
+    if (
+      [
+        "kenya",
+        "others",
+        "nigeria",
+        "cameroon",
+        "ghana",
+        "southA",
+        "tanzania",
+        "uganda",
+        "zambia",
+        "rwanda",
+        "malawi",
+      ].includes(selectedCountry)
+    ) {
+      methods.push({
+        id: "crypto",
+        title: "Pay with crypto",
+        image: CoinbaseImage,
+        alt: "Cryptocurrency",
+        unavailable: false,
+      });
+    }
+
+    // Add PayPal (unavailable for now)
     if (
       [
         "others",
@@ -489,41 +540,7 @@ export default function Payment() {
         title: "PayPal",
         image: PaypalImage,
         alt: "PayPal",
-        comingSoon: true,
-      });
-    }
-
-    if (["kenya"].includes(selectedCountry)) {
-      methods.push({
-        id: "mpesa",
-        title: "Pay with MPESA",
-        image: MpesaImage,
-        alt: "MPESA",
-        comingSoon: false,
-      });
-    }
-
-    if (
-      [
-        "kenya",
-        "others",
-        "nigeria",
-        "cameroon",
-        "ghana",
-        "southA",
-        "tanzania",
-        "uganda",
-        "zambia",
-        "rwanda",
-        "malawi",
-      ].includes(selectedCountry)
-    ) {
-      methods.push({
-        id: "coinbase",
-        title: "Pay with crypto",
-        image: CoinbaseImage,
-        alt: "Cryptocurrency",
-        comingSoon: true,
+        unavailable: true,
       });
     }
 
@@ -532,9 +549,7 @@ export default function Payment() {
 
   const shouldShowManualPayment = (countryName) => {
     if (!countryName) return false;
-
-    const selectedCountry = getCountryMapping(countryName);
-    return !["others"].includes(selectedCountry) && selectedCountry !== "";
+    return true; // Show manual payment for all countries
   };
 
   const handlePaymentMethodSelect = (methodId) => {
@@ -546,8 +561,12 @@ export default function Payment() {
       payMpesa();
     } else if (methodId === "manual") {
       setIsManualPaymentPopupOpen(true);
-    } else if (methodId === "paypal" || methodId === "coinbase") {
-      toast.info("This payment method is coming soon!");
+    } else if (methodId === "skrill") {
+      handleSkrillPayment();
+    } else if (methodId === "crypto") {
+      handleCryptoPayment();
+    } else if (methodId === "paypal") {
+      toast.info("PayPal is not available for now!");
     }
   };
 
@@ -572,10 +591,18 @@ export default function Payment() {
       return;
     }
 
-    const checkoutUrl =
-      selectedPlan.type === "Weekly"
-        ? "https://buy.stripe.com/6oE4jh3oEh1R4jCeV2"
-        : "https://buy.stripe.com/7sI3fd3oE26X4jCaEN";
+    const checkoutUrls = {
+      Weekly: "https://buy.stripe.com/9B6dR95yw26l7xgbIs2go0e",
+      Monthly: "https://buy.stripe.com/cNiaEX5yw9yN5p85k42go0f",
+      Yearly: "https://buy.stripe.com/14A9ATaSQ9yN3h0aEo2go0g",
+    };
+
+    const checkoutUrl = checkoutUrls[selectedPlan.type];
+
+    if (!checkoutUrl) {
+      toast.error("Invalid plan selected");
+      return;
+    }
 
     toast.info("Redirecting to Stripe checkout...");
 
@@ -588,7 +615,55 @@ export default function Payment() {
       }
 
       toast.success("Payment initiated! Processing your VIP access...");
-      // addVIPAccess(`stripe_${Date.now()}`);
+    }
+  };
+
+  const handleSkrillPayment = () => {
+    if (!selectedPlan) {
+      toast.error("Please select a plan first");
+      return;
+    }
+
+    const skrillEmail = "betsmart.inc@gmail.com";
+    toast.info(`Send payment to Skrill email: ${skrillEmail}`);
+    
+    // You can also copy to clipboard or show in a popup
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(skrillEmail);
+      toast.success("Skrill email copied to clipboard!");
+    }
+  };
+
+  const handleCryptoPayment = () => {
+    if (!selectedPlan) {
+      toast.error("Please select a plan first");
+      return;
+    }
+
+    const cryptoUrls = {
+      Weekly: "https://nowpayments.io/payment/?iid=5027045295",
+      Monthly: "https://nowpayments.io/payment/?iid=5665831803",
+      Yearly: "https://nowpayments.io/payment/?iid=4767014589",
+    };
+
+    const cryptoUrl = cryptoUrls[selectedPlan.type];
+
+    if (!cryptoUrl) {
+      toast.error("Invalid plan selected");
+      return;
+    }
+
+    toast.info("Redirecting to crypto payment...");
+
+    if (typeof window !== "undefined") {
+      const cryptoWindow = window.open(cryptoUrl, "_blank");
+
+      if (!cryptoWindow) {
+        toast.error("Please allow popups for this site");
+        return;
+      }
+
+      toast.success("Crypto payment initiated!");
     }
   };
 
@@ -848,7 +923,7 @@ export default function Payment() {
                           title={method.title}
                           isSelected={selectedPaymentMethod === method.id}
                           onClick={() => handlePaymentMethodSelect(method.id)}
-                          comingSoon={method.comingSoon}
+                          unavailable={method.unavailable}
                         />
                       ))}
 

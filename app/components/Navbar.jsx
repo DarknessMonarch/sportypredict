@@ -79,7 +79,7 @@ export default function NavbarComponent() {
   };
 
   const sportypredict = () => {
-    router.push("/page/day", { scroll: false });
+    router.push("/page/football", { scroll: false });
   };
 
   const handleProfileImageClick = useCallback(() => {
