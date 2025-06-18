@@ -6,9 +6,10 @@ import ResultImage from "@/public/assets/result.png";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useVipResultStore } from "@/app/store/VipResult";
 import styles from "@/app/style/vipResults.module.css";
+import { useRouter } from "next/navigation";
 
 export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
-  const { results, matchTime, loading, fetchResults, getMatchTime } =
+  const { results, matchTime, loading, fetchResults, getMatchTime, getTimeRemaining } =
     useVipResultStore();
 
   const [timeRemaining, setTimeRemaining] = useState({
@@ -19,6 +20,7 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
 
   const timerRef = useRef(null);
   const [isTimerActive, setIsTimerActive] = useState(false);
+  const router = useRouter();
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -29,43 +31,28 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
   }, []);
 
   const startCountdown = useCallback(() => {
-    clearTimer(); 
+    clearTimer();
 
     if (!matchTime || !matchTime.active) return;
 
     const interval = setInterval(() => {
-      setTimeRemaining((prev) => {
-        let newSeconds = prev.seconds - 1;
-        let newMinutes = prev.minutes;
-        let newHours = prev.hours;
+      const remaining = getTimeRemaining();
+      
+      setTimeRemaining(remaining);
 
-        if (newSeconds < 0) {
-          newSeconds = 59;
-          newMinutes -= 1;
-        }
-
-        if (newMinutes < 0) {
-          newMinutes = 59;
-          newHours -= 1;
-        }
-
-        if (newHours <= 0 && newMinutes <= 0 && newSeconds <= 0) {
-          clearInterval(interval);
-          setIsTimerActive(false);
-          return { hours: 0, minutes: 0, seconds: 0 };
-        }
-
-        return {
-          hours: Math.max(0, newHours),
-          minutes: Math.max(0, newMinutes),
-          seconds: Math.max(0, newSeconds),
-        };
-      });
+      // Stop timer when countdown reaches zero
+      if (remaining.hours === 0 && remaining.minutes === 0 && remaining.seconds === 0) {
+        clearInterval(interval);
+        setIsTimerActive(false);
+      }
     }, 1000);
 
     timerRef.current = interval;
     setIsTimerActive(true);
-  }, [matchTime, clearTimer]);
+
+    // Set initial time immediately
+    setTimeRemaining(getTimeRemaining());
+  }, [matchTime, clearTimer, getTimeRemaining]);
 
   useEffect(() => {
     fetchResults();
@@ -78,16 +65,11 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
 
   useEffect(() => {
     if (matchTime) {
-      const hours = matchTime.hours || 0;
-      const minutes = matchTime.minutes || 0;
-      const seconds = matchTime.seconds || 0;
-
-      setTimeRemaining({ hours, minutes, seconds });
-
-      if (matchTime.active && (hours > 0 || minutes > 0 || seconds > 0)) {
+      if (matchTime.active) {
         startCountdown();
       } else {
         clearTimer();
+        setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
       }
     } else {
       setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
@@ -114,7 +96,7 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
           our sure VIP football subscription.
         </p>
 
-        <button className={styles.subscriptionButton}>VIP SUBSCRIPTION</button>
+        <button className={styles.subscriptionButton} onClick={() => router.push("vip")}>VIP SUBSCRIPTION</button>
       </div>
 
       <div className={styles.resultsSection}>

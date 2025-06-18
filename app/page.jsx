@@ -10,7 +10,7 @@ export default function App() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/page/day");
+    router.replace("/page/football");
   }, [router]);
 
   return (
@@ -18,7 +18,7 @@ export default function App() {
       <Head>
         <title>Sportypredict - Redirecting to Sports Betting Tips</title>
         <meta name="robots" content="noindex, follow" />
-        <link rel="canonical" href="https://sportypredict.com/page/day" />
+        <link rel="canonical" href="https://sportypredict.com/page/football" />
       </Head>
 
       <Script id="http-redirect" strategy="beforeInteractive">
@@ -27,7 +27,7 @@ export default function App() {
           if (navigator.userAgent.indexOf('Googlebot') === -1 && 
               navigator.userAgent.indexOf('bot') === -1 && 
               navigator.userAgent.indexOf('Bingbot') === -1) {
-            window.location.replace('/page/day');
+            window.location.replace('/page/football');
           }
         `}
       </Script>

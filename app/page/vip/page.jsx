@@ -16,6 +16,7 @@ import EmptySportImage from "@/public/assets/emptysport.png";
 import ExclusiveOffers from "@/app/components/ExclusiveOffer";
 import { usePathname, useSearchParams } from "next/navigation";
 import SubscriptionImage from "@/public/assets/subscriptions.png";
+import { IoIosArrowForward as RightIcon } from "react-icons/io";
 
 import { FaRegUser as UserIcon } from "react-icons/fa";
 
@@ -89,7 +90,6 @@ export default function Vip() {
   const [searchKey, setSearchKey] = useState("");
   const [leagueKey, setLeagueKey] = useState("");
   const [countryKey, setCountryKey] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
 
   const currentCategory = decodeURIComponent(pathname.split("/").pop());
 
@@ -115,39 +115,24 @@ export default function Vip() {
     };
   }, []);
 
-  useEffect(() => {
-    const urlDate = searchParams.get("date");
-    if (urlDate) {
-      setSelectedDate(urlDate);
-    } else {
-      const today = new Date().toISOString().split("T")[0];
-      setSelectedDate(today);
-    }
-  }, [searchParams]);
-
+  // Main prediction loading effect - similar to Sport component
   useEffect(() => {
     const loadPredictions = async () => {
-      if (!selectedDate) return;
+      const urlDate = searchParams.get("date");
+      
+      // Only proceed if we have auth, VIP access, and a date
+      if (!urlDate || !isAuth || !isVipActive) return;
 
       const category = currentCategory.toLowerCase();
-
-      const result = await fetchPredictions(selectedDate, category);
+      const result = await fetchPredictions(urlDate, category);
 
       if (!result.success && result.message) {
         toast.error(result.message);
       }
     };
 
-    if (isAuth && isVipActive && selectedDate) {
-      loadPredictions();
-    }
-  }, [
-    selectedDate,
-    currentCategory,
-    fetchPredictions,
-    isAuth,
-    isVipActive,
-  ]);
+    loadPredictions();
+  }, [searchParams, currentCategory, fetchPredictions, isAuth, isVipActive]);
 
   useEffect(() => {
     if (error) {
@@ -166,62 +151,39 @@ export default function Vip() {
     if (urlSearch) setSearchKey(urlSearch);
   }, [searchParams]);
 
-  const handleDateChange = async (date) => {
-    setSelectedDate(date);
+  const filteredPredictions = predictions.filter((prediction) => {
+    const matchesSearch =
+      !searchKey ||
+      prediction.teamA.toLowerCase().includes(searchKey.toLowerCase()) ||
+      prediction.teamB.toLowerCase().includes(searchKey.toLowerCase()) ||
+      prediction.tip.toLowerCase().includes(searchKey.toLowerCase());
 
-    const params = new URLSearchParams(searchParams);
-    if (date) {
-      params.set("date", date);
-    } else {
-      params.delete("date");
-    }
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
+    const matchesLeague =
+      !leagueKey ||
+      prediction.league.toLowerCase().includes(leagueKey.toLowerCase());
 
-  const getFilteredPredictions = () => {
-    if (!isAuth || !isVipActive) return [];
+    const matchesCountry =
+      !countryKey ||
+      prediction.country.toLowerCase().includes(countryKey.toLowerCase());
 
-    let filtered = predictions.filter((prediction) => {
-      const matchesSearch =
-        !searchKey ||
-        prediction.teamA.toLowerCase().includes(searchKey.toLowerCase()) ||
-        prediction.teamB.toLowerCase().includes(searchKey.toLowerCase()) ||
-        prediction.tip.toLowerCase().includes(searchKey.toLowerCase());
+    const matchesCategory =
+      prediction.category.toLowerCase() === currentCategory.toLowerCase();
 
-      const matchesLeague =
-        !leagueKey ||
-        prediction.league.toLowerCase().includes(leagueKey.toLowerCase());
+    const predictionType = searchParams.get("prediction");
+    const matchesPredictionType =
+      !predictionType ||
+      prediction.tip.toLowerCase().includes(predictionType.toLowerCase());
 
-      const matchesCountry =
-        !countryKey ||
-        prediction.country.toLowerCase().includes(countryKey.toLowerCase());
+    return (
+      matchesSearch &&
+      matchesLeague &&
+      matchesCountry &&
+      matchesCategory &&
+      matchesPredictionType
+    );
+  });
 
-      const matchesCategory =
-        prediction.category.toLowerCase() === currentCategory.toLowerCase();
-
-      const predictionType = searchParams.get("prediction");
-      const matchesPredictionType =
-        !predictionType ||
-        prediction.tip.toLowerCase().includes(predictionType.toLowerCase());
-
-      return (
-        matchesSearch &&
-        matchesLeague &&
-        matchesCountry &&
-        matchesCategory &&
-        matchesPredictionType
-      );
-    });
-
-    return filtered;
-  };
-
-  const filteredPredictions = getFilteredPredictions();
-  const shouldShowNothing =
-    !loading &&
-    isAuth &&
-    isVipActive &&
-    filteredPredictions.length === 0;
+  const shouldShowNothing = !loading && filteredPredictions.length === 0 && isAuth && isVipActive;
 
   const renderEmptyCards = () => {
     return Array(emptyCardCount)
@@ -236,6 +198,16 @@ export default function Vip() {
 
   const handleRenewClick = () => {
     router.push("payment");
+  };
+
+  const handleCardClick = (teamA, teamB, id) => {
+    if (id !== "empty") {
+      const selectedDate = searchParams.get("date");
+      router.push(
+        `/vip/${currentCategory}/single/${teamA}-vs-${teamB}?date=${selectedDate}`,
+        { scroll: false }
+      );
+    }
   };
 
   if (!isAuth) {
@@ -328,22 +300,24 @@ export default function Vip() {
       <ExclusiveOffers />
 
       {shouldShowNothing ? (
-        <Nothing
-          Alt="No prediction"
-          NothingImage={EmptySportImage}
-          Text={
-            searchKey ||
-            leagueKey ||
-            countryKey ||
-            searchParams.get("prediction")
-              ? `No ${currentCategory} predictions match your filters${
-                  selectedDate
-                    ? ` for ${new Date(selectedDate).toLocaleDateString()}`
-                    : ""
-                }`
-              : `No ${currentCategory} predictions yet! Check back later.`
-          }
-        />
+        <div className={styles.content}>
+          <Nothing
+            Alt="No prediction"
+            NothingImage={EmptySportImage}
+            Text={
+              searchKey ||
+              leagueKey ||
+              countryKey ||
+              searchParams.get("prediction")
+                ? `No ${currentCategory} predictions match your filters${
+                    searchParams.get("date")
+                      ? ` for ${new Date(searchParams.get("date")).toLocaleDateString()}`
+                      : ""
+                  }`
+                : `No ${currentCategory} predictions yet! Check back later.`
+            }
+          />
+        </div>
       ) : (
         <div className={styles.content}>
           {filteredPredictions.map((data, index) => (
@@ -365,6 +339,21 @@ export default function Vip() {
               sport={data.sport}
               showScore={data.showScore}
               showBtn={data.showBtn}
+              component={
+                <div
+                  className={styles.matchPreview}
+                  onClick={() =>
+                    handleCardClick(data.teamA, data.teamB, data._id)
+                  }
+                >
+                  <span>Match Preview </span>
+                  <RightIcon
+                    className={styles.matchArrowIcon}
+                    alt="arrow icon"
+                    height={20}
+                  />
+                </div>
+              }
             />
           ))}
 

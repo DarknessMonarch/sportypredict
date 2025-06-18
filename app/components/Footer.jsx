@@ -201,7 +201,6 @@ export default function Footer() {
       <div className={styles.bottomBar}>
         <span>© {currentYear} SportyPredict. All rights reserved.</span>
         <div className={styles.bottomLinks}>
-          <Link href="/sitemap">Sitemap</Link>
           <Link href="/page/terms">Terms</Link>
           <Link href="/page/privacy">Privacy</Link>
           <Link href="/page/disclaimer">Disclaimer</Link>

@@ -2,7 +2,8 @@
 .dropdownContainer {
   height: 50px;
   display: flex;
-  padding: 10px;
+  max-width: 150px;
+  width: 150px;
   cursor: pointer;
   position: relative;
   align-items: center;
@@ -16,15 +17,26 @@
 
 .dropdownContainer span {
   font-size: 1rem;
+  text-wrap: nowrap;
+  max-width: 100px;
+  overflow: hidden;
+}
+
+.dropdownIcon {
+  flex-shrink: 0;
+  font-size: 18px;
 }
 
 .dropdownInput {
   gap: 10px;
   width: 100%;
   display: flex;
-  border-radius: 10px;
+  height: 100%;
+  padding: 10px;
   align-items: center;
+  border-radius: inherit;
   justify-content: space-between;
+
 }
 
 .dropdownArea{
@@ -47,6 +59,9 @@
 
 .dropdownArea span {
   padding: 10px;
+  text-wrap: wrap;
+  max-width: auto;
+  overflow: auto;
   text-transform: capitalize;
 
 }

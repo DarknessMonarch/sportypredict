@@ -50,7 +50,6 @@ export default function Sport() {
     const loadPredictions = async () => {
       const urlDate = searchParams.get("date");
       
-      // Only fetch if we have a date in the URL
       if (!urlDate) return;
 
       const category = currentCategory.toLowerCase();
@@ -62,7 +61,7 @@ export default function Sport() {
     };
 
     loadPredictions();
-  }, [searchParams.get("date"), currentCategory, fetchPredictions]);
+  }, [ searchParams, currentCategory, fetchPredictions]);
 
   useEffect(() => {
     if (error) {

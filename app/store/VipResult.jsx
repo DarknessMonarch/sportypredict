@@ -9,6 +9,7 @@ export const useVipResultStore = create(
     (set, get) => ({
       results: [],
       matchTime: null,
+      timerStartTime: null, 
       loading: false,
       error: null,
 
@@ -41,7 +42,26 @@ export const useVipResultStore = create(
 
           const data = await response.json();
           if (response.ok) {
-            set({ matchTime: data });
+            const currentState = get();
+            
+            if (data.active && (!currentState.matchTime || 
+                !currentState.matchTime.active || 
+                currentState.matchTime.hours !== data.hours ||
+                currentState.matchTime.minutes !== data.minutes ||
+                currentState.matchTime.seconds !== data.seconds)) {
+              set({ 
+                matchTime: data, 
+                timerStartTime: new Date().toISOString() 
+              });
+            } else if (!data.active) {
+              set({ 
+                matchTime: data, 
+                timerStartTime: null 
+              });
+            } else {
+              set({ matchTime: data });
+            }
+            
             return { success: true, data };
           }
           throw new Error(data.error || "Failed to fetch match time");
@@ -51,6 +71,35 @@ export const useVipResultStore = create(
         } finally {
           set({ loading: false });
         }
+      },
+
+      getTimeRemaining: () => {
+        const state = get();
+        
+        if (!state.matchTime || !state.matchTime.active || !state.timerStartTime) {
+          return { hours: 0, minutes: 0, seconds: 0 };
+        }
+
+        const startTime = new Date(state.timerStartTime).getTime();
+        const now = new Date().getTime();
+        const elapsed = Math.floor((now - startTime) / 1000);
+        
+        const totalSeconds = 
+          (state.matchTime.hours || 0) * 3600 + 
+          (state.matchTime.minutes || 0) * 60 + 
+          (state.matchTime.seconds || 0);
+        
+        const remaining = Math.max(0, totalSeconds - elapsed);
+        
+        if (remaining === 0) {
+          return { hours: 0, minutes: 0, seconds: 0 };
+        }
+        
+        const hours = Math.floor(remaining / 3600);
+        const minutes = Math.floor((remaining % 3600) / 60);
+        const seconds = remaining % 60;
+        
+        return { hours, minutes, seconds };
       },
 
       createResult: async (resultData) => {
@@ -67,7 +116,6 @@ export const useVipResultStore = create(
             body: JSON.stringify(resultData),
           });
 
-          // BETTER ERROR HANDLING
           const text = await response.text();
           let data;
           
@@ -176,7 +224,6 @@ export const useVipResultStore = create(
             body: JSON.stringify(timeData),
           });
 
-        
           const text = await response.text();
           let data;
           
@@ -188,7 +235,11 @@ export const useVipResultStore = create(
           }
 
           if (response.ok) {
-            set({ matchTime: data });
+            // When updating match time, set new start time if timer is active
+            set({ 
+              matchTime: data,
+              timerStartTime: data.active ? new Date().toISOString() : null
+            });
             return { success: true, data };
           }
           throw new Error(data.error || "Failed to update match time");
@@ -201,14 +252,15 @@ export const useVipResultStore = create(
       },
 
       clearError: () => set({ error: null }),
-
       resetLoading: () => set({ loading: false }),
     }),
     {
       name: "vipresult-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ 
-        results: state.results 
+        results: state.results,
+        timerStartTime: state.timerStartTime, // Persist timer start time
+        matchTime: state.matchTime // Also persist match time
       }),
     }
   )

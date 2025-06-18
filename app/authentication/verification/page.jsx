@@ -30,7 +30,7 @@ export default function Verify() {
 
       if (result.success) {
         toast.success(result.message);
-        router.push("/page/day", { scroll: false });
+        router.push("/page/football", { scroll: false });
       } else {
         toast.error(result.message);
       }

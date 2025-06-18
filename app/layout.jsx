@@ -15,18 +15,15 @@ export const viewport = {
   themeColor: "#031e3c",
 };
 
-
 export const metadata = {
   metadataBase: new URL(SITE_URL),
-
-  
 
   title: {
     default: "SportyPredict - Free Sports Predictions",
     template: "%s | SportyPredict"
   },
   applicationName: "SportyPredict",
-  description: "SportyPredict is the ultimate destinaqtion for accurate sports betting predictions, specializing in Sports, basketball, and tennis. We provide reliable information, tips and predictions for today, tomorrow and this weekend.",
+  description: "SportyPredict is the ultimate destination for accurate sports betting predictions, specializing in Sports, basketball, and tennis. We provide reliable information, tips and predictions for today, tomorrow and this weekend.",
   authors: [{ name: "SportyPredict", url: SITE_URL }],
   generator: "Next.js",
   keywords: [
@@ -54,6 +51,11 @@ export const metadata = {
     "soccer",
     "basketball",
     "betting strategies",
+    "Over 2.5 Goals",
+    "Double Chance",
+    "Over 1.5 Goals",
+    "Under 2.5 Goals",
+    "bet of the day",
   ],
 
   openGraph: {
@@ -107,13 +109,27 @@ export const metadata = {
     apple: "/icons/apple-touch-icon.png",
     shortcut: "/favicon.ico"
   },
-
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Google Tag Manager */}
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','GTM-K2Z5KL8G');
+            `,
+          }}
+        />
+        
         {/* PayPal SDK */}
         {/* <Script
           id="paypal-sdk"
@@ -121,26 +137,38 @@ export default function RootLayout({ children }) {
           src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}`}
         /> */}
       </head>
-      {/* Google Analytics */}
-      <Script
-        id="ga-tag"
-        strategy="afterInteractive"
-        src="https://www.googletagmanager.com/gtag/js?id=G-"
-      />
-      <Script
-        id="google-analytics"
-        strategy="afterInteractive"
-      >
-        {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-', {
-              page_path: window.location.pathname,
-            });
-          `}
-      </Script>
       <body className={roboto_Condensed.className}>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe 
+            src="https://www.googletagmanager.com/ns.html?id=GTM-K2Z5KL8G"
+            height="0" 
+            width="0" 
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
+        
+        {/* Google Analytics */}
+        <Script
+          id="ga-tag"
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-SY8V8H1BQ9"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-SY8V8H1BQ9', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+        
         <Toaster
           position="top-center"
           richColors={true}

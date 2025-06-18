@@ -2,14 +2,14 @@ export default function manifest() {
   return {
     name: 'Sportypredict',
     short_name: 'Sportypredict',
-    description: 'Get expert sports betting predictions and tips on football, soccer, basketball, and more at Sportypredict. Join us for winning insights and tips to boost your betting game.',
-    start_url: '/',
+    description: 'Get expert sports betting predictions and tips on football, soccer, basketball, tennis and more at Sportypredict. Join us for winning insights and tips to boost your betting game.',
+    start_url: '/page/football',
     scope: '/',
     display: 'standalone',
     orientation: 'portrait',
     background_color: '#ffffff',
     theme_color: '#031e3c',
-    categories: ['sports', 'tips', 'predictions', 'betting', 'football', 'soccer', 'basketball'],
+    categories: ['sports', 'tips', 'predictions', 'betting', 'football', 'soccer', 'basketball', 'tennis'],
     
     icons: [
       {
@@ -48,7 +48,6 @@ export default function manifest() {
     lang: 'en',
     dir: 'ltr',
     
-    related_applications: [],
     shortcuts: [
       {
         name: 'Football Tips',
@@ -58,14 +57,7 @@ export default function manifest() {
         icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
       },
       {
-        name: 'VIP Tips',
-        short_name: 'VIP',
-        description: 'View VIP sports predictions',
-        url: '/page/vip',
-        icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
-      },
-      {
-        name: 'Bet of day Tips',
+        name: 'Bet of Day',
         short_name: 'Day',
         description: 'View bet of the day predictions',
         url: '/page/day',
@@ -79,12 +71,19 @@ export default function manifest() {
         icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
       },
       {
-        name: 'Extra Wins',
-        short_name: 'Extra',
-        description: 'View extra win predictions',
-        url: '/page/extra',
+        name: 'Tennis Tips',
+        short_name: 'Tennis',
+        description: 'View tennis predictions',
+        url: '/page/tennis',
         icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
       },
+      {
+        name: 'VIP Tips',
+        short_name: 'VIP',
+        description: 'View VIP sports predictions',
+        url: '/page/vip',
+        icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
+      }
     ],
     
     screenshots: [

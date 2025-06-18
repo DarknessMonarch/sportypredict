@@ -66,7 +66,7 @@ export default function NavbarComponent() {
       
       if (result.success) {
         toast.success(result.message || "Logged out successfully");
-        // Redirect to home page after logout
+       
         router.push("/page/football", { scroll: false });
       } else {
         toast.error(result.message || "Logout failed");
@@ -75,7 +75,7 @@ export default function NavbarComponent() {
       console.error("Logout error:", error);
       toast.error("An error occurred during logout");
       
-      // Force clear user data even if logout fails
+
       clearUser();
       router.push("/page/football", { scroll: false });
     } finally {

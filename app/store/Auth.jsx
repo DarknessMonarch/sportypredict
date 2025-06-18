@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 const SERVER_API = process.env.NEXT_PUBLIC_SERVER_API;
 const TOKEN_REFRESH_INTERVAL = 50 * 60 * 1000;
-const STATUS_CHECK_INTERVAL = 5 * 60 * 1000;
+const STATUS_CHECK_INTERVAL = 1 * 60 * 1000;
 
 export const useAuthStore = create(
   persist(
