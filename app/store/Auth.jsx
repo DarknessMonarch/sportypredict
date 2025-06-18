@@ -3,7 +3,8 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 const SERVER_API = process.env.NEXT_PUBLIC_SERVER_API;
 const TOKEN_REFRESH_INTERVAL = 50 * 60 * 1000;
-const STATUS_CHECK_INTERVAL = 1 * 60 * 1000;
+const STATUS_CHECK_INTERVAL = 30 * 1000;
+const VIP_STATUS_CHECK_INTERVAL = 15 * 1000;
 
 export const useAuthStore = create(
   persist(
@@ -29,14 +30,159 @@ export const useAuthStore = create(
       tokenExpirationTime: null,
       refreshTimeoutId: null,
       statusCheckTimeoutId: null,
+      vipCheckTimeoutId: null,
       emailVerified: false,
+      isInitialized: false, 
 
       activeUsersCount: 0,
       vipUsersCount: 0,
       adminUsersCount: 0,
 
+      vipStatusListeners: new Set(),
+
+      addVipStatusListener: (callback) => {
+        const { vipStatusListeners } = get();
+        vipStatusListeners.add(callback);
+        return () => vipStatusListeners.delete(callback);
+      },
+
+      notifyVipStatusChange: (newStatus, oldStatus) => {
+        const { vipStatusListeners } = get();
+        vipStatusListeners.forEach(callback => {
+          try {
+            callback(newStatus, oldStatus);
+          } catch (error) {
+            console.error('VIP status listener error:', error);
+          }
+        });
+
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("vipStatusChanged", {
+              detail: { newStatus, oldStatus, timestamp: Date.now() },
+            })
+          );
+        }
+      },
+
+      isVipActive: () => {
+        const { isVip, expires, isAdmin } = get();
+        if (isAdmin) return true;
+        if (!isVip) return false;
+        
+        if (!expires) return false;
+        
+        const now = new Date();
+        const expirationDate = new Date(expires);
+        const isActive = expirationDate > now;
+        if (isVip && !isActive) {
+          setTimeout(() => {
+            get().handleVipExpiration();
+          }, 100);
+        }
+
+        return isActive;
+      },
+
+      handleVipExpiration: () => {
+        const currentState = get();
+        if (currentState.isVip && !get().isVipActive()) {
+          console.log('VIP subscription expired, updating status...');
+          get().updateUser({ isVip: false });
+          get().forceVipStatusRefresh();
+        }
+      },
+
+      initializeAuth: async () => {
+        const state = get();
+        
+        if (state.isInitialized) return;
+        set({ isInitialized: true });
+
+        if (!state.isAuth || !state.accessToken || !state.refreshToken) {
+          return;
+        }
+
+        const now = Date.now();
+        const tokenExpired = !state.tokenExpirationTime || state.tokenExpirationTime <= now;
+        const tokenExpiringSoon = state.tokenExpirationTime && (state.tokenExpirationTime - now) < 300000; // 5 minutes
+
+        if (tokenExpired || tokenExpiringSoon) {
+          console.log('Token expired or expiring soon, attempting refresh...');
+          const refreshSuccess = await get().refreshAccessToken();
+          
+          if (!refreshSuccess) {
+            console.log('Token refresh failed, clearing user data');
+            get().clearUser();
+            return;
+          }
+        }
+
+        try {
+          const isValid = await get().validateAuthState();
+          if (!isValid) {
+            console.log('Auth state validation failed, clearing user data');
+            get().clearUser();
+            return;
+          }
+
+          console.log('Auth state validated successfully');
+          
+          get().handleVipExpiration();
+          
+          get().scheduleTokenRefresh();
+          get().scheduleStatusCheck();
+          get().scheduleVipStatusCheck();
+          get().startVipExpirationMonitor();
+          
+          setTimeout(() => {
+            get().forceVipStatusRefresh();
+          }, 1000);
+
+        } catch (error) {
+          get().clearUser();
+        }
+      },
+
+      validateAuthState: async () => {
+        try {
+          const { accessToken } = get();
+          if (!accessToken) return false;
+
+          const response = await fetch(`${SERVER_API}/auth/validate`, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          if (response.status === 401) {
+            return await get().refreshAccessToken();
+          }
+
+          const data = await response.json();
+          if (data.status === "success") {
+            if (data.data.user) {
+              get().updateUser(data.data.user);
+            }
+            return true;
+          }
+
+          return false;
+        } catch (error) {
+          console.error('Auth validation error:', error);
+          return false;
+        }
+      },
+
+      resetInitialization: () => {
+        set({ isInitialized: false });
+      },
+
       setUser: (userData) => {
+        const currentVipStatus = get().isVipActive();
         const tokenExpirationTime = Date.now() + TOKEN_REFRESH_INTERVAL;
+        
         set({
           isAuth: true,
           userId: userData.id,
@@ -58,21 +204,41 @@ export const useAuthStore = create(
           refreshToken: userData.tokens.refreshToken,
           lastLogin: userData.lastLogin || new Date().toISOString(),
           tokenExpirationTime,
+          isInitialized: true, 
         });
+
+        const newVipStatus = get().isVipActive();
+        if (currentVipStatus !== newVipStatus) {
+          get().notifyVipStatusChange(newVipStatus, currentVipStatus);
+        }
+
         get().scheduleTokenRefresh();
         get().scheduleStatusCheck();
+        get().scheduleVipStatusCheck();
       },
 
       updateUser: (userData) => {
+        const currentState = get();
+        const oldVipStatus = currentState.isVipActive();
+        
         set((state) => ({
           ...state,
           ...userData,
         }));
+
+        const newVipStatus = get().isVipActive();
+        if (oldVipStatus !== newVipStatus) {
+          get().notifyVipStatusChange(newVipStatus, oldVipStatus);
+        }
       },
 
       clearUser: () => {
+        const currentVipStatus = get().isVipActive();
+        
         get().cancelTokenRefresh();
         get().cancelStatusCheck();
+        get().cancelVipStatusCheck();
+        
         set({
           isAuth: false,
           userId: "",
@@ -94,11 +260,78 @@ export const useAuthStore = create(
           lastLogin: null,
           tokenExpirationTime: null,
           statusCheckTimeoutId: null,
+          vipCheckTimeoutId: null,
           emailVerified: false,
+          isInitialized: false, 
         });
+
+        if (currentVipStatus) {
+          get().notifyVipStatusChange(false, currentVipStatus);
+        }
       },
 
-      // Check user status
+      checkVipStatus: async () => {
+        try {
+          const { accessToken, isAuth, expires } = get();
+          if (!accessToken || !isAuth) return;
+
+          const currentVipActive = get().isVipActive();
+
+          const response = await fetch(`${SERVER_API}/auth/vip-status`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          const data = await response.json();
+          if (data.status === "success") {
+            const serverVipStatus = data.data.isVip;
+            const serverExpires = data.data.expires;
+            
+            // Always update with server data
+            const hasChanges = 
+              get().isVip !== serverVipStatus || 
+              expires !== serverExpires ||
+              get().vipPlan !== data.data.vipPlan;
+
+            if (hasChanges) {
+              get().updateUser({
+                isVip: serverVipStatus,
+                expires: serverExpires,
+                vipPlan: data.data.vipPlan,
+                vipPlanDisplayName: data.data.vipPlanDisplayName,
+                duration: data.data.duration,
+                activation: data.data.activation,
+              });
+            }
+          }
+        } catch (error) {
+          console.error("VIP status check failed:", error);
+        }
+      },
+
+      scheduleVipStatusCheck: () => {
+        const { vipCheckTimeoutId } = get();
+        if (vipCheckTimeoutId) {
+          clearTimeout(vipCheckTimeoutId);
+        }
+
+        const newTimeoutId = setTimeout(() => {
+          get().checkVipStatus();
+          get().scheduleVipStatusCheck();
+        }, VIP_STATUS_CHECK_INTERVAL);
+
+        set({ vipCheckTimeoutId: newTimeoutId });
+      },
+
+      cancelVipStatusCheck: () => {
+        const { vipCheckTimeoutId } = get();
+        if (vipCheckTimeoutId) {
+          clearTimeout(vipCheckTimeoutId);
+          set({ vipCheckTimeoutId: null });
+        }
+      },
+
       checkUserStatus: async () => {
         try {
           const { accessToken, isAuth } = get();
@@ -113,6 +346,7 @@ export const useAuthStore = create(
           const data = await response.json();
           if (data.status === "success") {
             const currentState = get();
+            
             const hasChanges =
               currentState.isVip !== data.data.isVip ||
               currentState.vipPlan !== data.data.vipPlan ||
@@ -170,6 +404,42 @@ export const useAuthStore = create(
         }
       },
 
+      forceVipStatusRefresh: async () => {
+        await Promise.all([
+          get().checkVipStatus(),
+          get().checkUserStatus()
+        ]);
+      },
+
+      startVipExpirationMonitor: () => {
+        const checkExpiration = () => {
+          const { isVip, expires, isAdmin } = get();
+          
+          if (isAdmin) return; // Admins don't expire
+          
+          if (isVip && expires) {
+            const now = new Date();
+            const expirationDate = new Date(expires);
+            const timeUntilExpiration = expirationDate - now;
+
+            if (timeUntilExpiration <= 0) {
+              console.log('VIP expired, updating status...');
+              get().updateUser({ isVip: false });
+              get().forceVipStatusRefresh();
+            } else if (timeUntilExpiration <= 60000) { // 1 minute
+              setTimeout(checkExpiration, 5000); // Check every 5 seconds
+            } else {
+              setTimeout(checkExpiration, VIP_STATUS_CHECK_INTERVAL);
+            }
+          }
+        };
+
+        const currentVipActive = get().isVipActive();
+        if (currentVipActive) {
+          checkExpiration();
+        }
+      },
+
       refreshAccessToken: async () => {
         try {
           const { refreshToken } = get();
@@ -198,6 +468,7 @@ export const useAuthStore = create(
 
             get().scheduleTokenRefresh();
             get().checkUserStatus();
+            get().checkVipStatus();
             return true;
           }
           get().clearUser();
@@ -211,23 +482,6 @@ export const useAuthStore = create(
       refreshUserStatus: async () => {
         return await get().checkUserStatus();
       },
-
-      isVipActive: () => {
-        const { isVip, expires, isAdmin } = get();
-        
-        // Admin has permanent access
-        if (isAdmin) return true;
-        
-        const isActive = isVip && expires && new Date(expires) > new Date();
-
-        if (isVip && !isActive) {
-          setTimeout(() => get().checkUserStatus(), 100);
-        }
-
-        return isActive;
-      },
-
-      // All the missing methods from your original auth store:
 
       verifyEmail: async (email, verificationCode) => {
         try {
@@ -302,10 +556,12 @@ export const useAuthStore = create(
             };
       
             get().setUser(userWithTokens);
+            get().startVipExpirationMonitor();
+            
             return { 
               success: true, 
               message: data.message,
-              isVip: data.data.user.isVip, 
+              isVip: get().isVipActive(), // Use computed VIP status
               isAdmin: data.data.user.isAdmin 
             };
           }
@@ -326,10 +582,8 @@ export const useAuthStore = create(
         try {
           const { accessToken } = get();
           
-          // Clear user immediately for better UX
           get().clearUser();
           
-          // Try to notify server, but don't fail if it doesn't work
           if (accessToken) {
             try {
               await fetch(`${SERVER_API}/auth/logout`, {
@@ -345,7 +599,6 @@ export const useAuthStore = create(
           
           return { success: true, message: "Logout successful" };
         } catch (error) {
-          // Ensure user is cleared even if server call fails
           get().clearUser();
           return { success: true, message: "Logged out" };
         }
@@ -375,7 +628,11 @@ export const useAuthStore = create(
               payment: data.data.user.payment,
             });
 
-            setTimeout(() => get().checkUserStatus(), 1000);
+            setTimeout(() => {
+              get().forceVipStatusRefresh();
+              get().startVipExpirationMonitor();
+            }, 1000);
+            
             return { success: true, message: data.message };
           }
           return { success: false, message: data.message };
@@ -523,7 +780,6 @@ export const useAuthStore = create(
         }
       },
 
-      // Add all other admin functions and helper functions...
       scheduleTokenRefresh: () => {
         const { tokenExpirationTime, refreshTimeoutId } = get();
         if (refreshTimeoutId) {
@@ -576,13 +832,16 @@ export const useAuthStore = create(
       },
 
       getVipTimeRemaining: () => {
-        const { expires } = get();
+        const { expires, isAdmin } = get();
+        if (isAdmin) return Infinity; // Admins never expire
         if (!expires) return 0;
         const remaining = new Date(expires) - new Date();
         return Math.max(0, remaining);
       },
 
       getVipDaysRemaining: () => {
+        const { isAdmin } = get();
+        if (isAdmin) return null; // Admins don't have expiry
         const timeRemaining = get().getVipTimeRemaining();
         return Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
       },

@@ -85,7 +85,8 @@ export default function MobileFilter({
   };
 
   const handleSportSelect = (sport) => {
-    const newSport = selectedSport === sport ? null : sport === "All" ? null : sport;
+    const newSport =
+      selectedSport === sport ? null : sport === "All" ? null : sport;
     setSelectedSport(newSport);
     updateURLParams("sport", newSport);
   };
@@ -94,40 +95,59 @@ export default function MobileFilter({
     if (country === "All" || selectedCountry === country) {
       setSelectedCountry(null);
       setCountryKey("");
-      updateURLParams("country", null);
+      setLeagueKey("");
+
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("country");
+      params.delete("league");
+
+      router.push(`${pathname}?${params.toString()}`);
       return;
     }
 
-    // Set the new country
     setSelectedCountry(country);
     setCountryKey(country);
-    
     setLeagueKey("");
+
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("league");
     params.set("country", country);
+    params.delete("league");
+
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleLeagueSelect = (league) => {
     if (league === "All" || leagueKey === league) {
       setLeagueKey("");
-      updateURLParams("league", null);
+      setSelectedCountry(null);
+      setCountryKey("");
+
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("league");
+      params.delete("country");
+
+      router.push(`${pathname}?${params.toString()}`);
       return;
     }
 
     setLeagueKey(league);
-    
     setSelectedCountry(null);
     setCountryKey("");
+
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("country");
     params.set("league", league);
+    params.delete("country");
+
     router.push(`${pathname}?${params.toString()}`);
   };
 
   const handlePredictionSelect = (prediction) => {
-    const newPrediction = selectedPrediction === prediction ? null : prediction === "All" ? null : prediction;
+    const newPrediction =
+      selectedPrediction === prediction
+        ? null
+        : prediction === "All"
+        ? null
+        : prediction;
     setSelectedPrediction(newPrediction);
     updateURLParams("prediction", newPrediction);
   };
@@ -141,7 +161,7 @@ export default function MobileFilter({
   const handleDateContainerClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (dateInputRef.current) {
       setTimeout(() => {
         dateInputRef.current.focus();
@@ -167,8 +187,7 @@ export default function MobileFilter({
     if (e.target.showPicker) {
       try {
         e.target.showPicker();
-      } catch (error) {
-      }
+      } catch (error) {}
     }
   };
 
@@ -180,7 +199,7 @@ export default function MobileFilter({
     setCountryKey("");
 
     const existingDateParam = searchParams.get("date");
-    
+
     if (!existingDateParam) {
       const params = new URLSearchParams();
       params.set("date", currentDateForInput);
@@ -196,7 +215,7 @@ export default function MobileFilter({
     } else {
       params.set("date", currentDateForInput);
     }
-    
+
     if (searchParams.toString() !== params.toString()) {
       router.replace(`${pathname}?${params.toString()}`);
     }
@@ -214,21 +233,21 @@ export default function MobileFilter({
       setCountryKey(country);
       setLeagueKey("");
     }
-    
+
     if (league && league !== "All") {
       setLeagueKey(league);
       setSelectedCountry(null);
       setCountryKey("");
     }
-    
+
     if (sport && sport !== "All") {
       setSelectedSport(sport);
     }
-    
+
     if (prediction && prediction !== "All") {
       setSelectedPrediction(prediction);
     }
-    
+
     if (dateParam && dateParam !== selectedDate) {
       setSelectedDate(dateParam);
     }

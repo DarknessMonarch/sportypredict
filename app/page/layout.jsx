@@ -1,6 +1,7 @@
 "use client";
 
 import { useAdvertStore } from "@/app/store/Advert";
+import { useAuthStore } from "@/app/store/Auth"; 
 import styles from "@/app/style/pageLayout.module.css";
 import Telegram from "@/app/components/TelegramAdvert";
 import SideNav from "@/app/components/SideNav";
@@ -14,13 +15,34 @@ import Footer from "@/app/components/Footer";
 export default function PageLayout({ children }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+  
   const { adverts } = useAdvertStore();
   const { isOpen, setClose } = useDrawerStore();
+  const { initializeAuth, isInitialized } = useAuthStore(); 
   const sideNavRef = useRef(null);
 
   const popupBannerAds = adverts.filter((ad) => ad.location === "PopupBanner");
   const hasPopupAds = popupBannerAds.length > 0;
 
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        await initializeAuth();
+        setIsAuthInitialized(true);
+      } catch (error) {
+        setIsAuthInitialized(true); 
+      }
+    };
+
+    if (!isInitialized && !isAuthInitialized) {
+      initAuth();
+    } else if (isInitialized) {
+      setIsAuthInitialized(true);
+    }
+  }, [initializeAuth, isInitialized, isAuthInitialized]);
+
+  // Viewport fix effect
   useEffect(() => {
     const cleanup = initViewportFix();
     return cleanup;
@@ -67,6 +89,7 @@ export default function PageLayout({ children }) {
   const closePopup = () => {
     setIsPopupOpen(false);
   };
+
 
   return (
     <div className={styles.pageLayout}>

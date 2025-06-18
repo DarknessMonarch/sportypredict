@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useAuthStore } from "@/app/store/Auth";
 import { useState, useEffect, useMemo } from "react";
 import styles from "@/app/style/filter.module.css";
 import VipResults from "@/app/components/VipResults";
@@ -12,7 +13,9 @@ export default function FilterComponent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { predictions } = usePredictionStore();
+  const { isVip, isAuth, isVipActive } = useAuthStore();
 
+  const isVipPage = pathname.startsWith("/page/vip");
   const [selectedLeague, setSelectedLeague] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
 
@@ -161,12 +164,14 @@ export default function FilterComponent() {
     <div className={styles.filterContainer}>
       <VipResults />
 
-      <div className={styles.filterWrapper}>
-        {filterOptions.leagues.length > 0 &&
-          renderFilterSection("leagues", "Filter Leagues")}
-        {filterOptions.countries.length > 0 &&
-          renderFilterSection("countries", "Filter Countries")}
-      </div>
+      {(!isVipPage || (isVip && isAuth && isVipActive)) && (
+        <div className={styles.filterWrapper}>
+          {filterOptions.leagues.length > 0 &&
+            renderFilterSection("leagues", "Filter Leagues")}
+          {filterOptions.countries.length > 0 &&
+            renderFilterSection("countries", "Filter Countries")}
+        </div>
+      )} 
     </div>
   );
 }

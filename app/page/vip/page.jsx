@@ -3,7 +3,7 @@
 import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Banner from "@/app/components/Banner";
 import SportCard from "@/app/components/Card";
 import Nothing from "@/app/components/Nothing";
@@ -17,58 +17,116 @@ import ExclusiveOffers from "@/app/components/ExclusiveOffer";
 import { usePathname, useSearchParams } from "next/navigation";
 import SubscriptionImage from "@/public/assets/subscriptions.png";
 import { IoIosArrowForward as RightIcon } from "react-icons/io";
-
 import { FaRegUser as UserIcon } from "react-icons/fa";
 
 const useVipStatus = () => {
-  const { isVip, expires, user } = useAuthStore();
+  const { 
+    isVip, 
+    expires, 
+    isAdmin, 
+    isVipActive, 
+    getVipDaysRemaining, 
+    addVipStatusListener,
+    getVipTimeRemaining
+  } = useAuthStore();
   
-  const isVipActive = useMemo(() => {
-    if (user?.isAdmin) return true;
-    if (isVip) {
-      if (!expires) return true;
-      return new Date(expires) > new Date();
-    }
+  const [localVipStatus, setLocalVipStatus] = useState(isVipActive());
+  const [isStatusLoading, setIsStatusLoading] = useState(false);
+  
+  useEffect(() => {
+    const unsubscribe = addVipStatusListener((newStatus, oldStatus) => {
+      setLocalVipStatus(newStatus);
+      if (oldStatus && !newStatus) {
+        toast.error("Your VIP subscription has expired");
+      } else if (!oldStatus && newStatus) {
+        toast.success("VIP subscription activated!");
+      }
+    });
+
+    const handleVipStatusChange = (event) => {
+      setLocalVipStatus(event.detail.newStatus);
+    };
+
+    const handleUserStatusUpdate = (event) => {
+      setLocalVipStatus(isVipActive());
+    };
+
+    window.addEventListener('vipStatusChanged', handleVipStatusChange);
+    window.addEventListener('userStatusUpdated', handleUserStatusUpdate);
     
-    return false;
-  }, [isVip, expires, user?.isAdmin]);
+    return () => {
+      unsubscribe();
+      window.removeEventListener('vipStatusChanged', handleVipStatusChange);
+      window.removeEventListener('userStatusUpdated', handleUserStatusUpdate);
+    };
+  }, [addVipStatusListener, isVipActive]);
+
+  useEffect(() => {
+    setLocalVipStatus(isVipActive());
+  }, [isVip, expires, isAdmin, isVipActive]);
 
   const daysRemaining = useMemo(() => {
-    if (user?.isAdmin || !expires) return null;
-    
-    const remaining = Math.ceil((new Date(expires) - new Date()) / (1000 * 60 * 60 * 24));
-    return Math.max(0, remaining);
-  }, [expires, user?.isAdmin]);
+    if (isAdmin) return null;
+    return getVipDaysRemaining();
+  }, [isAdmin, getVipDaysRemaining]);
+
+  const timeRemaining = useMemo(() => {
+    if (isAdmin) return null;
+    return getVipTimeRemaining();
+  }, [isAdmin, getVipTimeRemaining]);
 
   const isExpired = useMemo(() => {
-    if (user?.isAdmin) return false;
+    if (isAdmin) return false;
     if (isVip && !expires) return false;
     return isVip && expires && new Date(expires) <= new Date();
-  }, [isVip, expires, user?.isAdmin]);
+  }, [isVip, expires, isAdmin]);
 
   const isSuperAdmin = useMemo(() => {
-    return user?.isAdmin && isVip && !expires;
-  }, [user?.isAdmin, isVip, expires]);
+    return isAdmin && isVip && !expires;
+  }, [isAdmin, isVip, expires]);
 
-  return { isVipActive, daysRemaining, isExpired, isSuperAdmin };
+  const isExpiringSoon = useMemo(() => {
+    if (isAdmin || !daysRemaining) return false;
+    return daysRemaining <= 7;
+  }, [isAdmin, daysRemaining]);
+
+  const isCriticalExpiry = useMemo(() => {
+    if (isAdmin || !daysRemaining) return false;
+    return daysRemaining <= 3;
+  }, [isAdmin, daysRemaining]);
+
+  return { 
+    isVipActive: localVipStatus, 
+    daysRemaining, 
+    timeRemaining,
+    isExpired, 
+    isSuperAdmin,
+    isExpiringSoon,
+    isCriticalExpiry,
+    isStatusLoading
+  };
 };
 
-const VipStatusBanner = ({ daysRemaining, isSuperAdmin, onRenewClick }) => {
+const VipStatusBanner = ({ 
+  daysRemaining, 
+  isSuperAdmin, 
+  isExpiringSoon, 
+  isCriticalExpiry, 
+  onRenewClick 
+}) => {
   if (isSuperAdmin) return null;
   if (!daysRemaining) return null;
   
-  const isExpiring = daysRemaining <= 7;
-  
   return (
-    <div className={`${styles.vipBanner} ${isExpiring ? styles.expiring : ''}`}>
+    <div className={`${styles.vipBanner} ${isExpiringSoon ? styles.expiring : ''} ${isCriticalExpiry ? styles.critical : ''}`}>
       <div className={styles.vipBannerContent}>
         <span className={styles.vipText}>
-          {isExpiring 
-            ? `Vip expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`
-            : `Vip active • ${daysRemaining} days remaining`
+          {isExpiringSoon 
+            ? `VIP expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`
+            : `VIP active • ${daysRemaining} days remaining`
           }
         </span>
-        {isExpiring && (
+        {isExpiringSoon && (
           <button 
             className={styles.renewButton}
             onClick={onRenewClick}
@@ -93,11 +151,31 @@ export default function Vip() {
 
   const currentCategory = decodeURIComponent(pathname.split("/").pop());
 
-  const { isAuth, user } = useAuthStore();
-  const { isVipActive, daysRemaining, isExpired, isSuperAdmin } = useVipStatus();
+  const { 
+    isAuth, 
+    isInitialized,
+    initializeAuth,
+    startVipExpirationMonitor,
+    forceVipStatusRefresh 
+  } = useAuthStore();
+
+  const { 
+    isVipActive, 
+    daysRemaining, 
+    isExpired, 
+    isSuperAdmin, 
+    isExpiringSoon, 
+    isCriticalExpiry 
+  } = useVipStatus();
 
   const { predictions, loading, error, fetchPredictions, clearError } =
     usePredictionStore();
+
+  useEffect(() => {
+    if (!isInitialized) {
+      initializeAuth();
+    }
+  }, [isInitialized, initializeAuth]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -115,13 +193,27 @@ export default function Vip() {
     };
   }, []);
 
-  // Main prediction loading effect - similar to Sport component
+  useEffect(() => {
+    if (isAuth && isVipActive) {
+      startVipExpirationMonitor();
+    }
+  }, [isAuth, isVipActive, startVipExpirationMonitor]);
+
+  useEffect(() => {
+    if (isAuth && isVipActive && isInitialized) {
+      const refreshTimer = setTimeout(() => {
+        forceVipStatusRefresh();
+      }, 1000);
+
+      return () => clearTimeout(refreshTimer);
+    }
+  }, [isAuth, isVipActive, isInitialized, forceVipStatusRefresh]);
+
   useEffect(() => {
     const loadPredictions = async () => {
       const urlDate = searchParams.get("date");
       
-      // Only proceed if we have auth, VIP access, and a date
-      if (!urlDate || !isAuth || !isVipActive) return;
+      if (!urlDate || !isAuth || !isVipActive || !isInitialized) return;
 
       const category = currentCategory.toLowerCase();
       const result = await fetchPredictions(urlDate, category);
@@ -132,7 +224,7 @@ export default function Vip() {
     };
 
     loadPredictions();
-  }, [searchParams, currentCategory, fetchPredictions, isAuth, isVipActive]);
+  }, [searchParams, currentCategory, fetchPredictions, isAuth, isVipActive, isInitialized]);
 
   useEffect(() => {
     if (error) {
@@ -196,11 +288,11 @@ export default function Vip() {
       ));
   };
 
-  const handleRenewClick = () => {
-    router.push("payment");
-  };
+  const handleRenewClick = useCallback(() => {
+    router.push("/payment");
+  }, [router]);
 
-  const handleCardClick = (teamA, teamB, id) => {
+  const handleCardClick = useCallback((teamA, teamB, id) => {
     if (id !== "empty") {
       const selectedDate = searchParams.get("date");
       router.push(
@@ -208,7 +300,31 @@ export default function Vip() {
         { scroll: false }
       );
     }
-  };
+  }, [router, searchParams, currentCategory]);
+
+  const handleLoginClick = useCallback(() => {
+    router.push("/authentication/login");
+  }, [router]);
+
+  if (!isInitialized) {
+    return (
+      <div className={styles.sportContainer}>
+        <Banner />
+        <div className={styles.filtersContainer}>
+          <MobileFilter
+            searchKey={searchKey}
+            setSearchKey={setSearchKey}
+            leagueKey={leagueKey}
+            setLeagueKey={setLeagueKey}
+            countryKey={countryKey}
+            setCountryKey={setCountryKey}
+          />
+        </div>
+        <ExclusiveOffers />
+        <div className={styles.content}>{renderEmptyCards()}</div>
+      </div>
+    );
+  }
 
   if (!isAuth) {
     return (
@@ -219,13 +335,12 @@ export default function Vip() {
         <AuthPrompt
           message={`Login to access ${currentCategory} predictions`}
           buttonText="Login"
-          onClick={() => router.push("/authentication/login")}
+          onClick={handleLoginClick}
         />
       </div>
     );
   }
 
-  // Authenticated but VIP expired or not VIP
   if (isAuth && !isVipActive) {
     return (
       <div className={styles.sportContainer}>
@@ -261,6 +376,8 @@ export default function Vip() {
         <VipStatusBanner 
           daysRemaining={daysRemaining} 
           isSuperAdmin={isSuperAdmin}
+          isExpiringSoon={isExpiringSoon}
+          isCriticalExpiry={isCriticalExpiry}
           onRenewClick={handleRenewClick}
         />
         <div className={styles.filtersContainer}>
@@ -285,6 +402,8 @@ export default function Vip() {
       <VipStatusBanner 
         daysRemaining={daysRemaining} 
         isSuperAdmin={isSuperAdmin}
+        isExpiringSoon={isExpiringSoon}
+        isCriticalExpiry={isCriticalExpiry}
         onRenewClick={handleRenewClick}
       />
       <div className={styles.filtersContainer}>
