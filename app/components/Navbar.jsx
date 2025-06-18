@@ -160,6 +160,7 @@ export default function NavbarComponent() {
         <div className={styles.profileImgContainer}>
           <Image
             className={styles.profileImg}
+            title="Click to change profile picture"
             src={profileImage}
             alt="profile"
             fill

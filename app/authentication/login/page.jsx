@@ -21,7 +21,6 @@ import { MdOutlineVpnKey as PasswordIcon } from "react-icons/md";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [terms, setTerms] = useState(false);
   const { login } = useAuthStore();
   const router = useRouter();
 
@@ -35,14 +34,6 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleTermsChange = (event) => {
-    setTerms(event.target.checked);
-  };
-
-  const readTerms = () => {
-    router.push("/page/terms", { scroll: false });
-  };
-
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -50,7 +41,6 @@ export default function Login() {
   const forgotPassword = () => {
     router.push("resetcode", { scroll: false });
   };
-
 
   const SignUp = () => {
     router.push("signup", { scroll: false });
@@ -65,10 +55,6 @@ export default function Login() {
     }
     if (!formData.password) {
       toast.error("Password is required");
-      return;
-    }
-    if (!terms) {
-      toast.error("Please accept the terms and conditions");
       return;
     }
 
@@ -126,7 +112,7 @@ export default function Login() {
         </div>
       </div>
       <div className={styles.authWrapper}>
-        <form onSubmit={onSubmit} className={styles.formContainer}>
+        <form onSubmit={onSubmit} className={styles.formContainer} autoComplete="on">
           <div className={styles.formHeader}>
             <div className={styles.authLogo}>
               <Image
@@ -155,6 +141,7 @@ export default function Login() {
               value={formData.email}
               onChange={handleInputChange}
               placeholder="Email"
+              autoComplete="username"
               required
             />
           </div>
@@ -173,6 +160,7 @@ export default function Login() {
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Password"
+              autoComplete="current-password"
               required
             />
             <button
@@ -195,20 +183,8 @@ export default function Login() {
               )}
             </button>
           </div>
-          {/* Terms and Forgot Password */}
-          <div className={styles.formChange}>
-            <div className={styles.termsContainer}>
-              <input
-                type="checkbox"
-                id="terms"
-                checked={terms}
-                onChange={handleTermsChange}
-                required
-              />
-              <label htmlFor="terms" onClick={readTerms}>
-                Accept terms and conditions
-              </label>
-            </div>
+          {/* Forgot Password */}
+          <div className={styles.forgotpasswordspan}>
             <span onClick={forgotPassword}>Forgot Password</span>
           </div>
           <button

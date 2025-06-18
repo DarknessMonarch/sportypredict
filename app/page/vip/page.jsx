@@ -289,18 +289,9 @@ export default function Vip() {
   };
 
   const handleRenewClick = useCallback(() => {
-    router.push("/payment");
+    router.push("payment");
   }, [router]);
 
-  const handleCardClick = useCallback((teamA, teamB, id) => {
-    if (id !== "empty") {
-      const selectedDate = searchParams.get("date");
-      router.push(
-        `/vip/${currentCategory}/single/${teamA}-vs-${teamB}?date=${selectedDate}`,
-        { scroll: false }
-      );
-    }
-  }, [router, searchParams, currentCategory]);
 
   const handleLoginClick = useCallback(() => {
     router.push("/authentication/login");
@@ -345,16 +336,6 @@ export default function Vip() {
     return (
       <div className={styles.sportContainer}>
         <Banner />
-        <div className={styles.filtersContainer}>
-          <MobileFilter
-            searchKey={searchKey}
-            setSearchKey={setSearchKey}
-            leagueKey={leagueKey}
-            setLeagueKey={setLeagueKey}
-            countryKey={countryKey}
-            setCountryKey={setCountryKey}
-          />
-        </div>
         <ExclusiveOffers />
         <VipUpgradePrompt
           message={
@@ -458,21 +439,7 @@ export default function Vip() {
               sport={data.sport}
               showScore={data.showScore}
               showBtn={data.showBtn}
-              component={
-                <div
-                  className={styles.matchPreview}
-                  onClick={() =>
-                    handleCardClick(data.teamA, data.teamB, data._id)
-                  }
-                >
-                  <span>Match Preview </span>
-                  <RightIcon
-                    className={styles.matchArrowIcon}
-                    alt="arrow icon"
-                    height={20}
-                  />
-                </div>
-              }
+           
             />
           ))}
 

@@ -172,13 +172,23 @@
     justify-content: space-between;
   }
 
-  .formChange span {
+  .forgotpasswordspan {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .formChange, .forgotpasswordspan span {
     cursor: pointer;
     font-size: .9rem;
     text-decoration: underline;
   }
 
   .formChange span:hover {
+    color: var(--secondary-color);
+  }
+
+  .forgotpasswordspan span:hover {
     color: var(--secondary-color);
   }
 

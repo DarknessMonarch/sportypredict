@@ -168,7 +168,7 @@ export default function Sporty() {
   return (
     <div className={styles.authComponent}>
       <div className={styles.authWrapper}>
-        <form onSubmit={handleSubmit} className={styles.formContainer}>
+        <form onSubmit={handleSubmit} className={styles.formContainer} autoComplete="on">
           <div className={styles.formHeader}>
             <div className={styles.authLogo}>
               <Image
@@ -192,7 +192,8 @@ export default function Sporty() {
               id="username" 
               value={formData.username}
               onChange={handleInputChange}
-              placeholder="Username" 
+              placeholder="Username"
+              autoComplete="username"
               required
             />
           </div>
@@ -207,7 +208,8 @@ export default function Sporty() {
               id="email" 
               value={formData.email}
               onChange={handleInputChange}
-              placeholder="Email" 
+              placeholder="Email"
+              autoComplete="email"
               required
             />
           </div>
@@ -238,6 +240,7 @@ export default function Sporty() {
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Password"
+              autoComplete="new-password"
               required
             />
             <button
@@ -272,6 +275,7 @@ export default function Sporty() {
               value={formData.confirmPassword}
               onChange={handleInputChange}
               placeholder="Confirm Password"
+              autoComplete="new-password"
               required
             />
             <button
