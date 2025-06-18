@@ -45,26 +45,49 @@ export default function FilterComponent() {
   }, [predictions]);
 
   useEffect(() => {
+    router.replace(pathname);
+    
+    setSelectedLeague(null);
+    setSelectedCountry(null);
+  }, []); 
+
+  useEffect(() => {
     const country = searchParams.get("country");
     const league = searchParams.get("league");
 
-    if (country) {
-      setSelectedCountry(country);
-    }
-    if (league) {
-      setSelectedLeague(league);
+    const hasAnyFilter = country || league;
+    
+    if (hasAnyFilter) {
+      if (country) {
+        setSelectedCountry(country);
+      }
+      if (league) {
+        setSelectedLeague(league);
+      }
     }
   }, [searchParams]);
 
   const handleLeagueSelection = (leagueName) => {
     const newLeague = selectedLeague === leagueName ? null : leagueName;
     setSelectedLeague(newLeague);
+    
+    if (newLeague) {
+      setSelectedCountry(null);
+      updateURLParams("country", null);
+    }
+    
     updateURLParams("league", newLeague);
   };
 
   const handleCountrySelection = (countryName) => {
     const newCountry = selectedCountry === countryName ? null : countryName;
     setSelectedCountry(newCountry);
+    
+    if (newCountry) {
+      setSelectedLeague(null);
+      updateURLParams("league", null);
+    }
+    
     updateURLParams("country", newCountry);
   };
 

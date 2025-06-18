@@ -64,7 +64,6 @@
     cursor: pointer;
     /* Prevent Safari from interfering with click events */
     -webkit-tap-highlight-color: transparent;
-    tap-highlight-color: transparent;
   }
 
   .dateDisplay {
@@ -77,7 +76,6 @@
     z-index: 1;
   }
 
-  /* Enhanced Safari-optimized date input */
   .dateInput {
     position: absolute;
     top: 0;

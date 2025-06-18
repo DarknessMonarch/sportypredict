@@ -1,54 +1,42 @@
-// utils/viewportFix.js
 export const initViewportFix = () => {
   if (typeof window === 'undefined') return;
 
   const setViewportUnits = () => {
-    // Get actual viewport dimensions
     const vh = window.innerHeight * 0.01;
     const vw = window.innerWidth * 0.01;
     
-    // Set CSS custom properties
     document.documentElement.style.setProperty('--vh', `${vh}px`);
     document.documentElement.style.setProperty('--vw', `${vw}px`);
-    
-    // Set specific units for your layout
     document.documentElement.style.setProperty('--real-10vw', `${vw * 10}px`);
     document.documentElement.style.setProperty('--real-9vh', `${vh * 9}px`);
     document.documentElement.style.setProperty('--real-10vh', `${vh * 10}px`);
   };
 
-  // Set immediately
   setViewportUnits();
 
-  // Update on resize
   let resizeTimer;
   const handleResize = () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(setViewportUnits, 100);
   };
 
-  // Update on orientation change
   const handleOrientationChange = () => {
-    setTimeout(setViewportUnits, 500); // Delay for orientation change
+    setTimeout(setViewportUnits, 500); 
   };
 
-  // Add event listeners
   window.addEventListener('resize', handleResize);
   window.addEventListener('orientationchange', handleOrientationChange);
   
-  // iOS Safari specific - handle scroll events
   let scrollTimer;
   const handleScroll = () => {
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(setViewportUnits, 150);
   };
   
-  // Only add scroll listener on mobile
   if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
     window.addEventListener('scroll', handleScroll, { passive: true });
   }
 
-  // Return cleanup function
   return () => {
     window.removeEventListener('resize', handleResize);
     window.removeEventListener('orientationchange', handleOrientationChange);

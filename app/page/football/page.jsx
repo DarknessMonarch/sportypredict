@@ -24,7 +24,6 @@ export default function Sport() {
   const [searchKey, setSearchKey] = useState("");
   const [leagueKey, setLeagueKey] = useState("");
   const [countryKey, setCountryKey] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
 
   const currentCategory = decodeURIComponent(pathname.split("/").pop());
 
@@ -48,22 +47,14 @@ export default function Sport() {
   }, []);
 
   useEffect(() => {
-    const urlDate = searchParams.get("date");
-    if (urlDate) {
-      setSelectedDate(urlDate);
-    } else {
-      const today = new Date().toISOString().split("T")[0];
-      setSelectedDate(today);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
     const loadPredictions = async () => {
-      if (!selectedDate) return;
+      const urlDate = searchParams.get("date");
+      
+      // Only fetch if we have a date in the URL
+      if (!urlDate) return;
 
       const category = currentCategory.toLowerCase();
-
-      const result = await fetchPredictions(selectedDate, category);
+      const result = await fetchPredictions(urlDate, category);
 
       if (!result.success && result.message) {
         toast.error(result.message);
@@ -71,7 +62,7 @@ export default function Sport() {
     };
 
     loadPredictions();
-  }, [selectedDate, currentCategory, fetchPredictions]);
+  }, [searchParams.get("date"), currentCategory, fetchPredictions]);
 
   useEffect(() => {
     if (error) {
@@ -89,18 +80,6 @@ export default function Sport() {
     if (urlLeague) setLeagueKey(urlLeague);
     if (urlSearch) setSearchKey(urlSearch);
   }, [searchParams]);
-
-  const handleDateChange = async (date) => {
-    setSelectedDate(date);
-
-    const params = new URLSearchParams(searchParams);
-    if (date) {
-      params.set("date", date);
-    } else {
-      params.delete("date");
-    }
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-  };
 
   const filteredPredictions = predictions.filter((prediction) => {
     const matchesSearch =
@@ -150,6 +129,7 @@ export default function Sport() {
 
   const handleCardClick = (teamA, teamB, id) => {
     if (id !== "empty") {
+      const selectedDate = searchParams.get("date");
       router.push(
         `${currentCategory}/single/${teamA}-vs-${teamB}?date=${selectedDate}`,
         { scroll: false }
@@ -203,8 +183,8 @@ export default function Sport() {
               countryKey ||
               searchParams.get("prediction")
                 ? `No ${currentCategory} predictions match your filters${
-                    selectedDate
-                      ? ` for ${new Date(selectedDate).toLocaleDateString()}`
+                    searchParams.get("date")
+                      ? ` for ${new Date(searchParams.get("date")).toLocaleDateString()}`
                       : ""
                   }`
                 : `No ${currentCategory} predictions yet! Check back later.`

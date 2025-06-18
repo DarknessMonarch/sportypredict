@@ -80,7 +80,7 @@ const VipStatusBanner = ({ daysRemaining, isSuperAdmin, onRenewClick }) => {
   );
 };
 
-export default function Sport() {
+export default function Vip() {
   const emptyCardCount = 12;
   const router = useRouter();
   const pathname = usePathname();

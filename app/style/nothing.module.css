@@ -12,6 +12,7 @@
 
   .emptyState p {
     text-transform: capitalize;
+    text-align: center;
   }
 
   .emptyStateImage {

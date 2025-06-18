@@ -108,16 +108,10 @@ const getManualPaymentDetails = (countryCode) => {
     currency: "USD",
     methods: [
       {
-        name: "SKRILL",
-        contactName: "betsmart.inc@gmail.com",
-        contactInfo: "betsmart.inc@gmail.com",
-        description: "Send payment via Skrill to betsmart.inc@gmail.com",
-      },
-      {
         name: "OTHER PAYMENT OPTIONS",
         contactName: "MoneyGram, Western Union",
         contactInfo: "contact@sportypredict.com",
-        description: "For MoneyGram, Western Union, and other payment options contact contact@sportypredict.com for details",
+        description: "For MoneyGram, Western Union, and other payment options contact contact@sportypredict.com or whatsapp +254703147237  for details",
       },
     ],
   };
@@ -214,6 +208,59 @@ const PaymentMethodCard = ({
   );
 };
 
+const SkrillPaymentPopupContent = ({
+  price,
+  currency,
+  onClose,
+}) => {
+  const formatPrice = () => {
+    const numericPrice = parseFloat(price);
+    if (isNaN(numericPrice)) return price;
+
+    const displayCurrency = currency || "USD";
+    return `${displayCurrency} ${numericPrice.toLocaleString()}`;
+  };
+
+  return (
+    <div className={styles.manualPaymentPopupContainer}>
+      <div className={styles.manualPaymentPopupHeader}>
+        <h2>Skrill Payment Instructions</h2>
+        <CloseIcon onClick={onClose} />
+      </div>
+
+      <div className={styles.manualPaymentPopupContent}>
+        <div className={styles.manualPaymentAmount}>
+          <h4>Payment Amount</h4>
+          <p>{formatPrice()}</p>
+        </div>
+
+        <div className={styles.manualPaymentMethodDetails}>
+          <p>
+            <strong>Email:</strong> betsmart.inc@gmail.com
+          </p>
+          <p>
+            <strong>Amount:</strong> {formatPrice()}
+          </p>
+          <p style={{ margin: "8px 0", color: "#666" }}>
+            Send payment via Skrill to betsmart.inc@gmail.com
+          </p>
+          <p>
+            <li>After payment send screenshot or receipt to: </li>
+            <li>Whatsapp : +254703147237 </li>
+            <li>Email : contact@sportypredict.com </li>
+            <li>- Keep your payment receipt/confirmation</li>
+            <li>- Make sure to send the exact amount shown above</li>
+            <li>
+              - Your VIP access will be activated after payment verification
+            </li>
+            <li>- Contact us at contact@sportypredict.com if you need assistance</li>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ManualPaymentPopupContent = ({
   countryCode,
   price,
@@ -251,9 +298,6 @@ const ManualPaymentPopupContent = ({
                 <div className={styles.manualPaymentMethodDetails}>
                   <p>
                     <strong>Name:</strong> {method.contactName}
-                  </p>
-                  <p>
-                    <strong>Email/Address:</strong> {method.contactInfo}
                   </p>
                   <p>
                     <strong>Amount:</strong> {formatPrice()}
@@ -325,6 +369,8 @@ export default function Payment() {
   const [fetchError, setFetchError] = useState(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isManualPaymentPopupOpen, setIsManualPaymentPopupOpen] =
+    useState(false);
+  const [isSkrillPaymentPopupOpen, setIsSkrillPaymentPopupOpen] =
     useState(false);
 
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -479,16 +525,14 @@ export default function Payment() {
       });
     }
 
-    // Add Skrill for non-African countries
-    if (["others"].includes(selectedCountry)) {
-      methods.push({
-        id: "skrill",
-        title: "Skrill",
-        image: SkrillImage,
-        alt: "Skrill",
-        unavailable: true,
-      });
-    }
+    // Add Skrill for ALL countries (removed unavailable status)
+    methods.push({
+      id: "skrill",
+      title: "Skrill",
+      image: SkrillImage,
+      alt: "Skrill",
+      unavailable: false,
+    });
 
     // Add crypto for all countries
     if (
@@ -558,7 +602,7 @@ export default function Payment() {
     } else if (methodId === "manual") {
       setIsManualPaymentPopupOpen(true);
     } else if (methodId === "skrill") {
-      handleSkrillPayment();
+      setIsSkrillPaymentPopupOpen(true);
     } else if (methodId === "crypto") {
       handleCryptoPayment();
     } else if (methodId === "paypal") {
@@ -568,6 +612,10 @@ export default function Payment() {
 
   const closeManualPaymentPopup = () => {
     setIsManualPaymentPopupOpen(false);
+  };
+
+  const closeSkrillPaymentPopup = () => {
+    setIsSkrillPaymentPopupOpen(false);
   };
 
   const handlePlanSelect = (plan, type, duration) => {
@@ -611,21 +659,6 @@ export default function Payment() {
       }
 
       toast.success("Payment initiated! Processing your VIP access...");
-    }
-  };
-
-  const handleSkrillPayment = () => {
-    if (!selectedPlan) {
-      toast.error("Please select a plan first");
-      return;
-    }
-
-    const skrillEmail = "betsmart.inc@gmail.com";
-    toast.info(`Send payment to Skrill email: ${skrillEmail}`);
-
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(skrillEmail);
-      toast.success("Skrill email copied to clipboard!");
     }
   };
 
@@ -986,6 +1019,20 @@ export default function Payment() {
               price={selectedPlan.price}
               currency={selectedPlan.currency}
               onClose={closeManualPaymentPopup}
+            />
+          }
+        />
+      )}
+
+      {isSkrillPaymentPopupOpen && selectedPlan && (
+        <Popup
+          OnClose={closeSkrillPaymentPopup}
+          IsOpen={isSkrillPaymentPopupOpen}
+          Content={
+            <SkrillPaymentPopupContent
+              price={selectedPlan.price}
+              currency={selectedPlan.currency}
+              onClose={closeSkrillPaymentPopup}
             />
           }
         />
