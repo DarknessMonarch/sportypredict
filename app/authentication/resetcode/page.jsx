@@ -44,7 +44,7 @@ export default function ResetCodeX() {
   };
 
   const handleLogin = () => {
-    router.push("/login"); // Adjust the path as needed
+    router.push("login"); 
   };
 
   return (

@@ -49,7 +49,7 @@ export default function Sport() {
   useEffect(() => {
     const loadPredictions = async () => {
       const urlDate = searchParams.get("date");
-      
+
       if (!urlDate) return;
 
       const category = currentCategory.toLowerCase();
@@ -61,7 +61,7 @@ export default function Sport() {
     };
 
     loadPredictions();
-  }, [ searchParams, currentCategory, fetchPredictions]);
+  }, [searchParams, currentCategory, fetchPredictions]);
 
   useEffect(() => {
     if (error) {
@@ -126,15 +126,6 @@ export default function Sport() {
       ));
   };
 
-  const handleCardClick = (teamA, teamB, id) => {
-    if (id !== "empty") {
-      const selectedDate = searchParams.get("date");
-      router.push(
-        `${currentCategory}/single/${teamA}-vs-${teamB}?date=${selectedDate}`,
-        { scroll: false }
-      );
-    }
-  };
 
   if (loading) {
     return (
@@ -156,6 +147,45 @@ export default function Sport() {
     );
   }
 
+  if (shouldShowNothing) {
+    return (
+      <div className={styles.sportContainer}>
+        <Banner />
+        <div className={styles.filtersContainer}>
+          <MobileFilter
+            searchKey={searchKey}
+            setSearchKey={setSearchKey}
+            leagueKey={leagueKey}
+            setLeagueKey={setLeagueKey}
+            countryKey={countryKey}
+            setCountryKey={setCountryKey}
+          />
+        </div>
+        <ExclusiveOffers />
+        <div className={styles.content}>
+          <Nothing
+            Alt="No prediction"
+            NothingImage={EmptySportImage}
+            Text={
+              searchKey ||
+              leagueKey ||
+              countryKey ||
+              searchParams.get("prediction")
+                ? `No ${currentCategory} predictions match your filters${
+                    searchParams.get("date")
+                      ? ` for ${new Date(
+                          searchParams.get("date")
+                        ).toLocaleDateString()}`
+                      : ""
+                  }`
+                : `No ${currentCategory} predictions yet! Check back later.`
+            }
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.sportContainer}>
       <Banner />
@@ -170,67 +200,35 @@ export default function Sport() {
         />
       </div>
       <ExclusiveOffers />
-
-      {shouldShowNothing ? (
-        <div className={styles.content}>
-          <Nothing
-            Alt="No prediction"
-            NothingImage={EmptySportImage}
-            Text={
-              searchKey ||
-              leagueKey ||
-              countryKey ||
-              searchParams.get("prediction")
-                ? `No ${currentCategory} predictions match your filters${
-                    searchParams.get("date")
-                      ? ` for ${new Date(searchParams.get("date")).toLocaleDateString()}`
-                      : ""
-                  }`
-                : `No ${currentCategory} predictions yet! Check back later.`
-            }
+       <div
+        className={`${styles.content} ${
+          predictions ? styles.predictionMinHeight : ""
+        }`}
+      >
+        {filteredPredictions.map((data, index) => (
+          <SportCard
+            key={data._id || index}
+            formationA={data.formationA}
+            formationB={data.formationB}
+            leagueImage={data.leagueImage}
+            teamAImage={data.teamAImage}
+            teamBImage={data.teamBImage}
+            tip={data.tip}
+            league={data.league}
+            teamA={data.teamA}
+            teamB={data.teamB}
+            teamAscore={data.teamAscore}
+            teamBscore={data.teamBscore}
+            time={data.time}
+            status={data.status}
+            sport={data.sport}
+            showScore={data.showScore}
+            showBtn={data.showBtn}
+       
           />
-        </div>
-      ) : (
-        <div className={styles.content}>
-          {filteredPredictions.map((data, index) => (
-            <SportCard
-              key={data._id || index}
-              formationA={data.formationA}
-              formationB={data.formationB}
-              leagueImage={data.leagueImage}
-              teamAImage={data.teamAImage}
-              teamBImage={data.teamBImage}
-              tip={data.tip}
-              league={data.league}
-              teamA={data.teamA}
-              teamB={data.teamB}
-              teamAscore={data.teamAscore}
-              teamBscore={data.teamBscore}
-              time={data.time}
-              status={data.status}
-              sport={data.sport}
-              showScore={data.showScore}
-              showBtn={data.showBtn}
-              component={
-                <div
-                  className={styles.matchPreview}
-                  onClick={() =>
-                    handleCardClick(data.teamA, data.teamB, data._id)
-                  }
-                >
-                  <span>Match Preview </span>
-                  <RightIcon
-                    className={styles.matchArrowIcon}
-                    alt="arrow icon"
-                    height={20}
-                  />
-                </div>
-              }
-            />
-          ))}
-          {isMobile && <VipResults />}
-        </div>
-      )}
+        ))}
+        {isMobile && <VipResults />}
+      </div>
     </div>
   );
 }

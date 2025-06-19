@@ -31,6 +31,7 @@
     border-radius: 10px;
     justify-content: space-between;
     border: 1px solid var(--light-primary-color);
+
   }
 
   .offerWrap h1 {
@@ -45,6 +46,7 @@
     width: 60px;
     height: 40px;
     flex-shrink: 0;
+
   }
 
   .offerlogo {
@@ -61,6 +63,7 @@
     border-radius: 10px;
     justify-content: space-between;
     border: 1px solid var(--light-primary-color);
+
   }
 
   .offerInner h2 {
@@ -88,7 +91,6 @@
   }
 
   .imageContainer {
-    width: 80px;
     height: 50px;
   }
 

@@ -14,14 +14,11 @@
     background-color: var(--background-color);
   }
 
-
   .authComponentBgImage {
     display: none;
     position: relative;
-
   }
 
- 
   .authWrapper {
     display: flex;
   }
@@ -46,14 +43,11 @@
     font-size: 2rem;
     font-weight: 800;
     color: var(--primary-color);
-
-
   }
 
   .formHeader p {
     font-size: 1rem;
     font-weight: 400;
-
   }
 
   .authLogo {
@@ -76,7 +70,6 @@
     background: var(--light-background-color);
   }
 
-
   .authInput input {
     width: 100%;
     border: none;
@@ -87,17 +80,15 @@
 
   .authInput input::placeholder {
     font-size: .9rem;
-    
   }
+  
   .authIcon {
     font-size: 20px;
     color: var(--light-primary-color);
-
   }
 
   .authInput:hover .authIcon {
     color: var(--secondary-color);
-
   }
 
   .authInput select {
@@ -111,7 +102,6 @@
     cursor: pointer;
     background-color: transparent;
   }
-
 
   .termsContainer {
     gap: 10px;
@@ -150,7 +140,6 @@
   .termsContainer label:hover {
     color: var(--secondary-color);
   }
-
 
   .formAuthButton {
     gap: 10px;
@@ -205,7 +194,6 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-
   }
 
   .btnLoginContainer {
@@ -213,8 +201,6 @@
     text-decoration: underline;
     cursor: pointer;
   }
-
-
 }
 
 /* using it as global style for larger devices  */
@@ -227,24 +213,10 @@
     flex-direction: row;
     align-items: center;
     background-color: var(--background-color);
-    
-  }
-
-  .authWrapper {
-    padding: 0 250px;
-    align-items: center;
-
-  }
-
-
-  .authWrapper {
-    flex: 50%;
-    align-items: center;
-    justify-content: center;
   }
 
   .authComponentBgImage {
-    flex: 40%;
+    flex: 0 0 50%; 
     height: 100%;
     display: flex;
     padding: 20px;
@@ -253,6 +225,21 @@
     justify-content: center;
     background: var(--background-color);
     background: var(--linear-gradient-color);
+  }
+
+  .authWrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .formContainer {
+    width: 100%;
+    min-width: 400px;
+    max-width: 500px;
+    padding: 40px;
   }
 
   .advertImage {
@@ -272,18 +259,40 @@
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.18);
   }
-
 }
 
 /* ipad pro screens & laptop */
 @media only screen and (min-width: 49em) and (max-width: 64em) {
+  .authComponentBgImage {
+    flex: 0 0 50%; 
+  }
+  
+  .formContainer {
+    min-width: 350px;
+    max-width: 420px;
+  }
 }
 
 /* large screens : Desktop and 4k screens */
-
 @media only screen and (min-width: 64.063em) and (max-width: 90em) {
+  .authComponentBgImage {
+    flex: 0 0 50%; 
+  }
+  
+  .formContainer {
+    min-width: 400px;
+    max-width: 480px;
+  }
 }
 
 /* 5k screens and above */
 @media only screen and (min-width: 91em) {
+  .authComponentBgImage {
+    flex: 0 0 50%; 
+  }
+  
+  .formContainer {
+    min-width: 420px;
+    max-width: 520px;
+  }
 }

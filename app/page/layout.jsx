@@ -86,6 +86,7 @@ export default function PageLayout({ children }) {
     }
   }, [hasPopupAds]);
 
+
   const closePopup = () => {
     setIsPopupOpen(false);
   };

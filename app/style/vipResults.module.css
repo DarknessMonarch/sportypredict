@@ -75,11 +75,13 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+
   }
 
   .resultItem {
     gap: 5px;
     display: flex;
+    flex: 1 1 auto;
     align-items: center;
     flex-direction: column;
   }

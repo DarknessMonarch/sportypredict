@@ -67,14 +67,19 @@ export const useAuthStore = create(
 
       isVipActive: () => {
         const { isVip, expires, isAdmin } = get();
-        if (isAdmin) return true;
+        
+        // If user is not VIP, return false
         if (!isVip) return false;
         
-        if (!expires) return false;
+        // If there's no expiration date, consider it active (permanent)
+        if (!expires) return true;
         
+        // Check if the subscription is still active based on expiration date
         const now = new Date();
         const expirationDate = new Date(expires);
         const isActive = expirationDate > now;
+        
+        // If VIP status expired, handle the expiration
         if (isVip && !isActive) {
           setTimeout(() => {
             get().handleVipExpiration();
@@ -415,7 +420,8 @@ export const useAuthStore = create(
         const checkExpiration = () => {
           const { isVip, expires, isAdmin } = get();
           
-          if (isAdmin) return; // Admins don't expire
+          // Only skip expiration monitoring if admin has no expiration date
+          if (isAdmin && !expires) return;
           
           if (isVip && expires) {
             const now = new Date();
@@ -833,15 +839,17 @@ export const useAuthStore = create(
 
       getVipTimeRemaining: () => {
         const { expires, isAdmin } = get();
-        if (isAdmin) return Infinity; // Admins never expire
+        // Only return Infinity for admins without expiration dates
+        if (isAdmin && !expires) return Infinity; 
         if (!expires) return 0;
         const remaining = new Date(expires) - new Date();
         return Math.max(0, remaining);
       },
 
       getVipDaysRemaining: () => {
-        const { isAdmin } = get();
-        if (isAdmin) return null; // Admins don't have expiry
+        const { isAdmin, expires } = get();
+        // Only return null for admins without expiration dates
+        if (isAdmin && !expires) return null; 
         const timeRemaining = get().getVipTimeRemaining();
         return Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
       },

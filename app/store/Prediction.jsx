@@ -10,6 +10,7 @@ export const usePredictionStore = create(
       predictions: [],
       singlePrediction: null,
       predictionCounts: {},
+      vipSlipCounts: {},
       loading: false,
       error: null,
 
@@ -53,6 +54,50 @@ export const usePredictionStore = create(
         }
       },
 
+      fetchVIPSlipCounts: async (date) => {
+        try {
+          set({ loading: true, error: null });
+          const accessToken = useAuthStore.getState().accessToken;
+          
+          if (!accessToken) {
+            throw new Error('Authentication required for VIP slip counts');
+          }
+          
+          const requestOptions = {
+            method: 'GET',
+            headers: {
+              'Content-type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            }
+          };
+      
+          const response = await fetch(
+            `${SERVER_API}/predictions/vip-slip-counts/${date}`,
+            requestOptions
+          );
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+          }
+      
+          const data = await response.json();
+      
+          if (data.status === "success" && data.vipSlipCounts) {
+            set({ vipSlipCounts: data.vipSlipCounts });
+            return { success: true, vipSlipCounts: data.vipSlipCounts };
+          } else {
+            set({ vipSlipCounts: {} });
+            throw new Error(data.message || 'Invalid data format received from server');
+          }
+        } catch (error) {
+          set({ error: error.message, vipSlipCounts: {} });
+          return { success: false, message: error.message };
+        } finally {
+          set({ loading: false });
+        }
+      },
+
       fetchSinglePrediction: async (category, teamA, teamB, date) => {
         try {
           set({ loading: true, error: null });
@@ -73,7 +118,7 @@ export const usePredictionStore = create(
           };
       
           const response = await fetch(
-            `${SERVER_API}/predictions/${category}/${teamA}/${teamB}/${date}`,
+            `${SERVER_API}/predictions/${category}/${encodeURIComponent(teamA)}/${encodeURIComponent(teamB)}/${date}`,
             requestOptions
           );
       
@@ -112,7 +157,7 @@ export const usePredictionStore = create(
         }
       },
 
-      fetchPredictions: async (date, category = 'football') => {
+      fetchPredictions: async (date, category = 'football', vipSlip = null) => {
         try {
           set({ loading: true, error: null });
           const accessToken = useAuthStore.getState().accessToken;
@@ -123,6 +168,12 @@ export const usePredictionStore = create(
             }
           }
       
+          // Build URL with optional vipSlip filter
+          let url = `${SERVER_API}/predictions/${category}/${date}`;
+          if (category === 'vip' && vipSlip) {
+            url += `?vipSlip=${encodeURIComponent(vipSlip)}`;
+          }
+
           const requestOptions = {
             method: 'GET',
             headers: {
@@ -131,10 +182,7 @@ export const usePredictionStore = create(
             }
           };
       
-          const response = await fetch(
-            `${SERVER_API}/predictions/${category}/${date}`,
-            requestOptions
-          );
+          const response = await fetch(url, requestOptions);
       
           if (response.status === 401) {
             throw new Error('Authentication required. Please log in again.');
@@ -152,9 +200,14 @@ export const usePredictionStore = create(
           const data = await response.json();
       
           if (data.status === "success" && Array.isArray(data.data)) {
-            const sortedPredictions = data.data.sort((a, b) => 
-              new Date(a.time).getTime() - new Date(b.time).getTime()
-            );
+            // The server already handles grouping for VIP predictions
+            // Sort them by time, handling grouped predictions
+            const sortedPredictions = data.data.sort((a, b) => {
+              // Handle grouped predictions which might not have a standard time field
+              const timeA = a.time ? new Date(a.time).getTime() : 0;
+              const timeB = b.time ? new Date(b.time).getTime() : 0;
+              return timeA - timeB;
+            });
             
             set({ predictions: sortedPredictions });
             return { success: true, data: sortedPredictions };
@@ -171,6 +224,45 @@ export const usePredictionStore = create(
       },
 
 
+      // Helper method to get VIP predictions by stake
+      getVIPPredictionsByStake: (stake) => {
+        const state = get();
+        return state.predictions.filter(pred => 
+          pred.category === 'vip' && pred.stake === stake
+        );
+      },
+
+      // Helper method to calculate total odds for a stake group
+      calculateTotalOddsForStake: (stake) => {
+        const predictions = get().getVIPPredictionsByStake(stake);
+        return predictions.reduce((total, pred) => total * (pred.odd || 1), 1);
+      },
+
+      // Helper method to get all unique stakes for VIP predictions
+      getUniqueVIPStakes: () => {
+        const state = get();
+        const vipPredictions = state.predictions.filter(pred => pred.category === 'vip');
+        const stakes = [...new Set(vipPredictions.map(pred => pred.stake))];
+        return stakes.filter(stake => stake); // Remove empty stakes
+      },
+
+      // Helper method to check if a prediction is part of a grouped VIP prediction
+      isPartOfGroup: (predictionId) => {
+        const state = get();
+        return state.predictions.some(pred => 
+          pred.isGrouped && 
+          pred.originalPredictions && 
+          pred.originalPredictions.some(original => original._id === predictionId)
+        );
+      },
+
+      refreshPredictions: async (date, category, vipSlip = null) => {
+        const currentState = get();
+        if (!currentState.loading) {
+          return currentState.fetchPredictions(date, category, vipSlip);
+        }
+      },
+
       // Clear error
       clearError: () => set({ error: null }),
 
@@ -179,6 +271,7 @@ export const usePredictionStore = create(
         predictions: [],
         singlePrediction: null,
         predictionCounts: {},
+        vipSlipCounts: {},
         loading: false,
         error: null,
       }),
@@ -190,6 +283,7 @@ export const usePredictionStore = create(
         predictions: state.predictions,
         singlePrediction: state.singlePrediction,
         predictionCounts: state.predictionCounts,
+        vipSlipCounts: state.vipSlipCounts,
       })
     }
   )

@@ -37,7 +37,7 @@ export default function Reset({ params }) {
   const toggleConfirmPassword = () => setConfirmPassword(!showConfirmPassword);
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
-  const Login = () => router.push("/page/login", { scroll: false });
+  const Login = () => router.push("login", { scroll: false });
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -55,7 +55,7 @@ export default function Reset({ params }) {
 
       if (result.success) {
         toast.success(result.message || "Password reset successful");
-        router.push("/authentication/login", { scroll: false });
+        router.push("login", { scroll: false });
       } else {
         toast.error(result.message || "Reset failed");
       }

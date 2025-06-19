@@ -1,0 +1,169 @@
+@media screen {
+  .card {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    border: 2px solid var(--light-background-color);
+    box-shadow: var(--shadow-inset);
+  }
+
+  .card:hover {
+    border: none;
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .matchRow {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .matchInfo {
+    flex: 1;
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
+  }
+
+  .matchInfo span {
+    padding: 10px 5px;
+    width: fit-content;
+    border-radius: 5px;
+    box-shadow: var(--shadow-background-color);
+  }
+
+  .leagueSection {
+    gap: 10px;
+    display: flex;
+    padding: 10px;
+    font-size: 1rem;
+    align-items: center;
+    border-bottom: 2px solid var(--light-background-color);
+  }
+  .leagueSection h1 {
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  .leagueIcon {
+    border-radius: 360%;
+  }
+
+  .teamsSection {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+
+
+  .teamContainer {
+    flex: 1;
+    gap: 5px;
+    display: flex;
+    padding: 25px 5px;
+    align-items: center;
+    justify-content: center;
+  }
+
+ 
+
+  .teamContainer h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    text-transform: capitalize;
+  }
+
+  .timeSection {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 2px solid var(--light-background-color);
+    border-right: 2px solid var(--light-background-color); 
+  }
+
+  .timeSection span {
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  .betSection {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-top: 2px solid var(--light-background-color);
+    border-bottom: 2px solid var(--light-background-color);
+
+  }
+
+  .betSectioninner {
+    flex: 1;
+    gap: 5px;
+    display: flex;
+    padding: 20px 5px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .betSectioninner h3 {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .adBanner {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    border-radius: 30px;
+  }
+
+  .adBannerImage {
+    width: 100%;
+    height: 100%;
+  }
+
+  .advertImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .totalSection {
+    flex: 1;
+    gap: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .totalSectionInner {
+    flex: 1;
+    gap: 5px;
+    display: flex;
+    padding: 10px 5px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .totalSectionInner span {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .totalSectionInner:first-child {
+    justify-content: flex-end;
+  }
+  
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+}

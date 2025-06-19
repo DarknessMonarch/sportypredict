@@ -3,36 +3,69 @@
 import { toast } from "sonner";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useMemo, useCallback } from "react";
 import Banner from "@/app/components/Banner";
-import SportCard from "@/app/components/Card";
+import VipCard from "@/app/components/VipCard";
 import Nothing from "@/app/components/Nothing";
 import { useAuthStore } from "@/app/store/Auth";
 import styles from "@/app/style/sport.module.css";
 import VipResults from "@/app/components/VipResults";
+import VipDropdown from "@/app/components/VipDropdown";
 import MobileFilter from "@/app/components/MobileFilter";
 import { usePredictionStore } from "@/app/store/Prediction";
 import EmptySportImage from "@/public/assets/emptysport.png";
 import ExclusiveOffers from "@/app/components/ExclusiveOffer";
 import { usePathname, useSearchParams } from "next/navigation";
 import SubscriptionImage from "@/public/assets/subscriptions.png";
-import { IoIosArrowForward as RightIcon } from "react-icons/io";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { FaRegUser as UserIcon } from "react-icons/fa";
+import { MdFilterList as FilterIcon } from "react-icons/md";
+
+const vipSlipOptions = [
+  "All VIP Slips",
+  "Banker Slip",
+  "Tennis Slip",
+  "Basketball Slip",
+  "3+ Odds Slip",
+  "Extras",
+];
+
+const vipSlipMapping = {
+  "All VIP Slips": "",
+  "Banker Slip": "banker",
+  "Tennis Slip": "tennis",
+  "Basketball Slip": "basketball",
+  "3+ Odds Slip": "3odds",
+  Extras: "extras",
+};
 
 const useVipStatus = () => {
-  const { 
-    isVip, 
-    expires, 
-    isAdmin, 
-    isVipActive, 
-    getVipDaysRemaining, 
+  const {
+    isVip,
+    expires,
+    isAdmin,
+    isVipActive,
+    getVipDaysRemaining,
     addVipStatusListener,
-    getVipTimeRemaining
+    getVipTimeRemaining,
+    isAuth,
+    isInitialized,
   } = useAuthStore();
-  
-  const [localVipStatus, setLocalVipStatus] = useState(isVipActive());
-  const [isStatusLoading, setIsStatusLoading] = useState(false);
-  
+
+  const [localVipStatus, setLocalVipStatus] = useState(false);
+  const [isStatusLoading, setIsStatusLoading] = useState(true);
+
+  // Initialize VIP status when auth is ready
+  useEffect(() => {
+    if (isInitialized && isAuth) {
+      const currentStatus = isVipActive();
+      setLocalVipStatus(currentStatus);
+      setIsStatusLoading(false);
+    } else if (!isAuth) {
+      setLocalVipStatus(false);
+      setIsStatusLoading(false);
+    }
+  }, [isInitialized, isAuth, isVipActive]);
+
   useEffect(() => {
     const unsubscribe = addVipStatusListener((newStatus, oldStatus) => {
       setLocalVipStatus(newStatus);
@@ -48,89 +81,119 @@ const useVipStatus = () => {
     };
 
     const handleUserStatusUpdate = (event) => {
-      setLocalVipStatus(isVipActive());
+      if (isInitialized && isAuth) {
+        setLocalVipStatus(isVipActive());
+      }
     };
 
-    window.addEventListener('vipStatusChanged', handleVipStatusChange);
-    window.addEventListener('userStatusUpdated', handleUserStatusUpdate);
-    
+    window.addEventListener("vipStatusChanged", handleVipStatusChange);
+    window.addEventListener("userStatusUpdated", handleUserStatusUpdate);
+
     return () => {
       unsubscribe();
-      window.removeEventListener('vipStatusChanged', handleVipStatusChange);
-      window.removeEventListener('userStatusUpdated', handleUserStatusUpdate);
+      window.removeEventListener("vipStatusChanged", handleVipStatusChange);
+      window.removeEventListener("userStatusUpdated", handleUserStatusUpdate);
     };
-  }, [addVipStatusListener, isVipActive]);
+  }, [addVipStatusListener, isVipActive, isInitialized, isAuth]);
 
+  // Update local status when auth state changes
   useEffect(() => {
-    setLocalVipStatus(isVipActive());
-  }, [isVip, expires, isAdmin, isVipActive]);
+    if (isInitialized && isAuth) {
+      setLocalVipStatus(isVipActive());
+    }
+  }, [isVip, expires, isAdmin, isVipActive, isInitialized, isAuth]);
 
   const daysRemaining = useMemo(() => {
-    if (isAdmin) return null;
-    return getVipDaysRemaining();
-  }, [isAdmin, getVipDaysRemaining]);
+    if (!isAuth || !isInitialized) return null;
+
+    if (isAdmin && !expires) return null;
+    const days = getVipDaysRemaining();
+    return days > 0 ? days : null;
+  }, [isAdmin, expires, getVipDaysRemaining, isAuth, isInitialized]);
 
   const timeRemaining = useMemo(() => {
-    if (isAdmin) return null;
+    if (!isAuth || !isInitialized) return null;
+
+    if (isAdmin && !expires) return null;
     return getVipTimeRemaining();
-  }, [isAdmin, getVipTimeRemaining]);
+  }, [isAdmin, expires, getVipTimeRemaining, isAuth, isInitialized]);
 
   const isExpired = useMemo(() => {
-    if (isAdmin) return false;
+    if (!isAuth || !isInitialized) return false;
+    if (isAdmin && !expires) return false;
     if (isVip && !expires) return false;
     return isVip && expires && new Date(expires) <= new Date();
-  }, [isVip, expires, isAdmin]);
+  }, [isVip, expires, isAdmin, isAuth, isInitialized]);
 
   const isSuperAdmin = useMemo(() => {
+    if (!isAuth || !isInitialized) return false;
     return isAdmin && isVip && !expires;
-  }, [isAdmin, isVip, expires]);
+  }, [isAdmin, isVip, expires, isAuth, isInitialized]);
 
   const isExpiringSoon = useMemo(() => {
-    if (isAdmin || !daysRemaining) return false;
+    if (!isAuth || !isInitialized) return false;
+    if (isAdmin && !expires) return false;
+    if (!daysRemaining) return false;
     return daysRemaining <= 7;
-  }, [isAdmin, daysRemaining]);
+  }, [isAdmin, expires, daysRemaining, isAuth, isInitialized]);
 
   const isCriticalExpiry = useMemo(() => {
-    if (isAdmin || !daysRemaining) return false;
+    if (!isAuth || !isInitialized) return false;
+    if (isAdmin && !expires) return false;
+    if (!daysRemaining) return false;
     return daysRemaining <= 3;
-  }, [isAdmin, daysRemaining]);
+  }, [isAdmin, expires, daysRemaining, isAuth, isInitialized]);
 
-  return { 
-    isVipActive: localVipStatus, 
-    daysRemaining, 
+  return {
+    isVipActive: localVipStatus,
+    daysRemaining,
     timeRemaining,
-    isExpired, 
+    isExpired,
     isSuperAdmin,
     isExpiringSoon,
     isCriticalExpiry,
-    isStatusLoading
+    isStatusLoading,
   };
 };
 
-const VipStatusBanner = ({ 
-  daysRemaining, 
-  isSuperAdmin, 
-  isExpiringSoon, 
-  isCriticalExpiry, 
-  onRenewClick 
+const VipStatusBanner = ({
+  daysRemaining,
+  isSuperAdmin,
+  isExpiringSoon,
+  isCriticalExpiry,
+  onRenewClick,
+  isAuth,
+  isInitialized,
+  isVipActive,
 }) => {
+  // Don't show banner if not authenticated or not initialized
+  if (!isAuth || !isInitialized) return null;
+
+  // Don't show for super admins (admins without expiration)
   if (isSuperAdmin) return null;
-  if (!daysRemaining) return null;
-  
+
+  // Don't show if not VIP active
+  if (!isVipActive) return null;
+
+  // Show banner if we have valid days remaining (including for admins with expiration)
+  if (!daysRemaining || daysRemaining <= 0) return null;
+
   return (
-    <div className={`${styles.vipBanner} ${isExpiringSoon ? styles.expiring : ''} ${isCriticalExpiry ? styles.critical : ''}`}>
+    <div
+      className={`${styles.vipBanner} ${
+        isExpiringSoon ? styles.expiring : ""
+      } ${isCriticalExpiry ? styles.critical : ""}`}
+    >
       <div className={styles.vipBannerContent}>
         <span className={styles.vipText}>
-          {isExpiringSoon 
-            ? `VIP expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`
-            : `VIP active • ${daysRemaining} days remaining`
-          }
+          {isExpiringSoon
+            ? `VIP expires in ${daysRemaining} day${
+                daysRemaining !== 1 ? "s" : ""
+              }`
+            : `VIP active • ${daysRemaining} days remaining`}
         </span>
         {isExpiringSoon && (
-          <button 
-            className={styles.renewButton}
-            onClick={onRenewClick}
-          >
+          <button className={styles.renewButton} onClick={onRenewClick}>
             Renew
           </button>
         )}
@@ -148,28 +211,35 @@ export default function Vip() {
   const [searchKey, setSearchKey] = useState("");
   const [leagueKey, setLeagueKey] = useState("");
   const [countryKey, setCountryKey] = useState("");
+  const [vipSlipFilter, setVipSlipFilter] = useState("");
 
   const currentCategory = decodeURIComponent(pathname.split("/").pop());
 
-  const { 
-    isAuth, 
+  const {
+    isAuth,
     isInitialized,
     initializeAuth,
     startVipExpirationMonitor,
-    forceVipStatusRefresh 
+    forceVipStatusRefresh,
   } = useAuthStore();
 
-  const { 
-    isVipActive, 
-    daysRemaining, 
-    isExpired, 
-    isSuperAdmin, 
-    isExpiringSoon, 
-    isCriticalExpiry 
+  const {
+    isVipActive,
+    daysRemaining,
+    isExpired,
+    isSuperAdmin,
+    isExpiringSoon,
+    isCriticalExpiry,
   } = useVipStatus();
 
-  const { predictions, loading, error, fetchPredictions, clearError } =
-    usePredictionStore();
+  const {
+    predictions,
+    loading,
+    error,
+    fetchPredictions,
+    clearError,
+    refreshPredictions,
+  } = usePredictionStore();
 
   useEffect(() => {
     if (!isInitialized) {
@@ -179,11 +249,7 @@ export default function Vip() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setMobile(true);
-      } else {
-        setMobile(false);
-      }
+      setMobile(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);
@@ -210,21 +276,47 @@ export default function Vip() {
   }, [isAuth, isVipActive, isInitialized, forceVipStatusRefresh]);
 
   useEffect(() => {
+    const urlCountry = searchParams.get("country");
+    const urlLeague = searchParams.get("league");
+    const urlSearch = searchParams.get("search");
+    const urlVipSlip = searchParams.get("vipSlip");
+
+    setCountryKey(urlCountry || "");
+    setLeagueKey(urlLeague || "");
+    setSearchKey(urlSearch || "");
+    setVipSlipFilter(urlVipSlip || "");
+  }, [searchParams]);
+
+  useEffect(() => {
     const loadPredictions = async () => {
       const urlDate = searchParams.get("date");
-      
+
       if (!urlDate || !isAuth || !isVipActive || !isInitialized) return;
 
       const category = currentCategory.toLowerCase();
-      const result = await fetchPredictions(urlDate, category);
+      const vipSlip = searchParams.get("vipSlip");
 
-      if (!result.success && result.message) {
-        toast.error(result.message);
+      try {
+        const result = await fetchPredictions(urlDate, category, vipSlip);
+
+        if (!result.success && result.message) {
+          toast.error(result.message);
+        }
+      } catch (error) {
+        console.error("Error loading VIP predictions:", error);
+        toast.error("Failed to load VIP predictions");
       }
     };
 
     loadPredictions();
-  }, [searchParams, currentCategory, fetchPredictions, isAuth, isVipActive, isInitialized]);
+  }, [
+    searchParams,
+    currentCategory,
+    fetchPredictions,
+    isAuth,
+    isVipActive,
+    isInitialized,
+  ]);
 
   useEffect(() => {
     if (error) {
@@ -233,49 +325,118 @@ export default function Vip() {
     }
   }, [error, clearError]);
 
-  useEffect(() => {
-    const urlCountry = searchParams.get("country");
-    const urlLeague = searchParams.get("league");
-    const urlSearch = searchParams.get("search");
+  const handleVipSlipFilterChange = useCallback(
+    async (selectedOption) => {
+      const vipSlipValue = vipSlipMapping[selectedOption] || "";
+      setVipSlipFilter(vipSlipValue);
 
-    if (urlCountry) setCountryKey(urlCountry);
-    if (urlLeague) setLeagueKey(urlLeague);
-    if (urlSearch) setSearchKey(urlSearch);
-  }, [searchParams]);
+      const params = new URLSearchParams(searchParams);
+      if (vipSlipValue) {
+        params.set("vipSlip", vipSlipValue);
+      } else {
+        params.delete("vipSlip");
+      }
 
-  const filteredPredictions = predictions.filter((prediction) => {
-    const matchesSearch =
-      !searchKey ||
-      prediction.teamA.toLowerCase().includes(searchKey.toLowerCase()) ||
-      prediction.teamB.toLowerCase().includes(searchKey.toLowerCase()) ||
-      prediction.tip.toLowerCase().includes(searchKey.toLowerCase());
+      const newUrl = `${pathname}?${params.toString()}`;
+      router.push(newUrl, { scroll: false });
 
-    const matchesLeague =
-      !leagueKey ||
-      prediction.league.toLowerCase().includes(leagueKey.toLowerCase());
+      // Refresh predictions with new filter
+      const urlDate = searchParams.get("date");
+      if (urlDate && isAuth && isVipActive) {
+        try {
+          await refreshPredictions(
+            urlDate,
+            currentCategory.toLowerCase(),
+            vipSlipValue
+          );
+        } catch (error) {
+          console.error("Error refreshing predictions:", error);
+        }
+      }
+    },
+    [
+      searchParams,
+      pathname,
+      router,
+      refreshPredictions,
+      currentCategory,
+      isAuth,
+      isVipActive,
+    ]
+  );
 
-    const matchesCountry =
-      !countryKey ||
-      prediction.country.toLowerCase().includes(countryKey.toLowerCase());
+  const filteredPredictions = useMemo(() => {
+    return predictions.filter((prediction) => {
+      // Handle grouped predictions for search
+      let searchableData = {
+        teamA: prediction.teamA || "",
+        teamB: prediction.teamB || "",
+        tip: prediction.tip || "",
+        league: prediction.league || "",
+        country: prediction.country || "",
+      };
 
-    const matchesCategory =
-      prediction.category.toLowerCase() === currentCategory.toLowerCase();
+      // For grouped predictions, include data from original predictions
+      if (prediction.isGrouped && prediction.originalPredictions) {
+        const combinedData = prediction.originalPredictions.reduce((acc, orig) => {
+          return {
+            teamA: acc.teamA + " " + (orig.teamA || ""),
+            teamB: acc.teamB + " " + (orig.teamB || ""),
+            tip: acc.tip + " " + (orig.tip || ""),
+            league: acc.league + " " + (orig.league || ""),
+            country: acc.country + " " + (orig.country || ""),
+          };
+        }, searchableData);
+        searchableData = combinedData;
+      }
 
-    const predictionType = searchParams.get("prediction");
-    const matchesPredictionType =
-      !predictionType ||
-      prediction.tip.toLowerCase().includes(predictionType.toLowerCase());
+      const matchesSearch =
+        !searchKey ||
+        searchableData.teamA.toLowerCase().includes(searchKey.toLowerCase()) ||
+        searchableData.teamB.toLowerCase().includes(searchKey.toLowerCase()) ||
+        searchableData.tip.toLowerCase().includes(searchKey.toLowerCase());
 
-    return (
-      matchesSearch &&
-      matchesLeague &&
-      matchesCountry &&
-      matchesCategory &&
-      matchesPredictionType
-    );
-  });
+      const matchesLeague =
+        !leagueKey ||
+        searchableData.league.toLowerCase().includes(leagueKey.toLowerCase());
 
-  const shouldShowNothing = !loading && filteredPredictions.length === 0 && isAuth && isVipActive;
+      const matchesCountry =
+        !countryKey ||
+        searchableData.country.toLowerCase().includes(countryKey.toLowerCase());
+
+      const matchesCategory =
+        prediction.category.toLowerCase() === currentCategory.toLowerCase();
+
+      const predictionType = searchParams.get("prediction");
+      const matchesPredictionType =
+        !predictionType ||
+        searchableData.tip.toLowerCase().includes(predictionType.toLowerCase());
+
+      const matchesVipSlip =
+        !vipSlipFilter ||
+        (prediction.vipSlip && prediction.vipSlip === vipSlipFilter);
+
+      return (
+        matchesSearch &&
+        matchesLeague &&
+        matchesCountry &&
+        matchesCategory &&
+        matchesPredictionType &&
+        matchesVipSlip
+      );
+    });
+  }, [
+    predictions,
+    searchKey,
+    leagueKey,
+    countryKey,
+    currentCategory,
+    searchParams,
+    vipSlipFilter,
+  ]);
+
+  const shouldShowNothing =
+    !loading && filteredPredictions.length === 0 && isAuth && isVipActive;
 
   const renderEmptyCards = () => {
     return Array(emptyCardCount)
@@ -289,9 +450,8 @@ export default function Vip() {
   };
 
   const handleRenewClick = useCallback(() => {
-    router.push("payment");
+    router.push("/payment");
   }, [router]);
-
 
   const handleLoginClick = useCallback(() => {
     router.push("/authentication/login");
@@ -322,7 +482,6 @@ export default function Vip() {
       <div className={styles.sportContainer}>
         <Banner />
         <ExclusiveOffers />
-
         <AuthPrompt
           message={`Login to access ${currentCategory} predictions`}
           buttonText="Login"
@@ -339,7 +498,7 @@ export default function Vip() {
         <ExclusiveOffers />
         <VipUpgradePrompt
           message={
-            isExpired 
+            isExpired
               ? `Your VIP subscription has expired. Renew to access ${currentCategory} predictions`
               : `Join VIP to access ${currentCategory} predictions`
           }
@@ -354,13 +513,6 @@ export default function Vip() {
     return (
       <div className={styles.sportContainer}>
         <Banner />
-        <VipStatusBanner 
-          daysRemaining={daysRemaining} 
-          isSuperAdmin={isSuperAdmin}
-          isExpiringSoon={isExpiringSoon}
-          isCriticalExpiry={isCriticalExpiry}
-          onRenewClick={handleRenewClick}
-        />
         <div className={styles.filtersContainer}>
           <MobileFilter
             searchKey={searchKey}
@@ -377,16 +529,79 @@ export default function Vip() {
     );
   }
 
+  if (shouldShowNothing) {
+    return (
+      <div className={styles.sportContainer}>
+        <Banner />
+        <div className={styles.StatusContainerWrapper}>
+          <VipStatusBanner
+            daysRemaining={daysRemaining}
+            isSuperAdmin={isSuperAdmin}
+            isExpiringSoon={isExpiringSoon}
+            isCriticalExpiry={isCriticalExpiry}
+            onRenewClick={handleRenewClick}
+            isAuth={isAuth}
+            isInitialized={isInitialized}
+            isVipActive={isVipActive}
+          />
+        </div>
+        <div className={styles.filtersContainer}>
+          <MobileFilter
+            searchKey={searchKey}
+            setSearchKey={setSearchKey}
+            leagueKey={leagueKey}
+            setLeagueKey={setLeagueKey}
+            countryKey={countryKey}
+            setCountryKey={setCountryKey}
+          />
+        </div>
+        <ExclusiveOffers />
+        <div className={styles.content}>
+          <Nothing
+            Alt="No prediction"
+            NothingImage={EmptySportImage}
+            Text={
+              searchKey ||
+              leagueKey ||
+              countryKey ||
+              vipSlipFilter ||
+              searchParams.get("prediction")
+                ? `No ${currentCategory} predictions match your filters${
+                    searchParams.get("date")
+                      ? ` for ${new Date(
+                          searchParams.get("date")
+                        ).toLocaleDateString()}`
+                      : ""
+                  }`
+                : `No ${currentCategory} predictions yet! Check back later.`
+            }
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.sportContainer}>
       <Banner />
-      <VipStatusBanner 
-        daysRemaining={daysRemaining} 
-        isSuperAdmin={isSuperAdmin}
-        isExpiringSoon={isExpiringSoon}
-        isCriticalExpiry={isCriticalExpiry}
-        onRenewClick={handleRenewClick}
-      />
+      <div className={styles.StatusContainerWrapper}>
+        <VipStatusBanner
+          daysRemaining={daysRemaining}
+          isSuperAdmin={isSuperAdmin}
+          isExpiringSoon={isExpiringSoon}
+          isCriticalExpiry={isCriticalExpiry}
+          onRenewClick={handleRenewClick}
+          isAuth={isAuth}
+          isInitialized={isInitialized}
+          isVipActive={isVipActive}
+        />
+        <VipDropdown
+          options={vipSlipOptions}
+          onSelect={handleVipSlipFilterChange}
+          Icon={<FilterIcon />}
+          dropPlaceHolder="Filter by VIP Slip"
+        />
+      </div>
       <div className={styles.filtersContainer}>
         <MobileFilter
           searchKey={searchKey}
@@ -398,54 +613,33 @@ export default function Vip() {
         />
       </div>
       <ExclusiveOffers />
-
-      {shouldShowNothing ? (
-        <div className={styles.content}>
-          <Nothing
-            Alt="No prediction"
-            NothingImage={EmptySportImage}
-            Text={
-              searchKey ||
-              leagueKey ||
-              countryKey ||
-              searchParams.get("prediction")
-                ? `No ${currentCategory} predictions match your filters${
-                    searchParams.get("date")
-                      ? ` for ${new Date(searchParams.get("date")).toLocaleDateString()}`
-                      : ""
-                  }`
-                : `No ${currentCategory} predictions yet! Check back later.`
-            }
+      <div
+        className={`${styles.content} ${
+          predictions.length > 0 ? styles.predictionMinHeight : ""
+        }`}
+      >
+        {filteredPredictions.map((data, index) => (
+          <VipCard
+            key={data._id || `prediction-${index}`}
+            leagueImage={data.leagueImage}
+            teamAImage={data.teamAImage}
+            teamBImage={data.teamBImage}
+            tip={data.tip}
+            league={data.league}
+            teamA={data.teamA}
+            teamB={data.teamB}
+            time={data.time}
+            odd={data.odd}
+            stake={data.stake}
+            status={data.status}
+            totalOdds={data.totalOdds}
+            isGrouped={data.isGrouped || false}
+            originalPredictions={data.originalPredictions || []}
           />
-        </div>
-      ) : (
-        <div className={styles.content}>
-          {filteredPredictions.map((data, index) => (
-            <SportCard
-              key={data._id || index}
-              formationA={data.formationA}
-              formationB={data.formationB}
-              leagueImage={data.leagueImage}
-              teamAImage={data.teamAImage}
-              teamBImage={data.teamBImage}
-              tip={data.tip}
-              league={data.league}
-              teamA={data.teamA}
-              teamB={data.teamB}
-              teamAscore={data.teamAscore}
-              teamBscore={data.teamBscore}
-              time={data.time}
-              status={data.status}
-              sport={data.sport}
-              showScore={data.showScore}
-              showBtn={data.showBtn}
-           
-            />
-          ))}
+        ))}
 
-          {isMobile && <VipResults />}
-        </div>
-      )}
+        {isMobile && <VipResults />}
+      </div>
     </div>
   );
 }
