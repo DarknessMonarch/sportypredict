@@ -21,6 +21,9 @@ export default function VipCard({
   totalOdds,
   isGrouped = false,
   originalPredictions = [],
+  onEdit,
+  onDelete,
+  itemData,
 }) {
   const { adverts, fetchAdverts, loading } = useAdvertStore();
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
@@ -56,8 +59,25 @@ export default function VipCard({
     }
   };
 
+  const handleEdit = (predictionData = null) => {
+    if (onEdit) {
+      onEdit(predictionData || itemData);
+    }
+  };
+
+  const handleDelete = (predictionData = null) => {
+    if (onDelete) {
+      onDelete(predictionData || itemData);
+    }
+  };
+
   const renderAdBanner = () => {
-    if (loading || !currentAd) {
+    // Add null check like in SingleCard
+    if (!currentAd) {
+      return null;
+    }
+
+    if (loading) {
       return (
         <div className={`${styles.adBanner} skeleton`}>
           <div className={styles.adBannerImage}></div>
@@ -78,7 +98,7 @@ export default function VipCard({
           fill
           sizes="100%"
           quality={100}
-          style={{ objectFit: "contain" }}
+          objectFit="contain"
           priority={true}
         />
       </div>
@@ -88,7 +108,8 @@ export default function VipCard({
   const renderSingleMatch = (
     matchData,
     showOdds = true,
-    useFormattedTime = true
+    useFormattedTime = true,
+    showIndividualActions = false
   ) => {
     const matchTime = useFormattedTime
       ? formattedTime
@@ -159,7 +180,7 @@ export default function VipCard({
         <>
           {originalPredictions.map((prediction, index) => (
             <div key={prediction._id || index}>
-              {renderSingleMatch(prediction, false, false)}
+              {renderSingleMatch(prediction, true, true)}
               {index < originalPredictions.length - 1 && (
                 <div className={styles.divider} />
               )}
