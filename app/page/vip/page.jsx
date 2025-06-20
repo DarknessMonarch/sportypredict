@@ -7,7 +7,6 @@ import VipCard from "@/app/components/VipCard";
 import Nothing from "@/app/components/Nothing";
 import { useAuthStore } from "@/app/store/Auth";
 import styles from "@/app/style/sport.module.css";
-import VipResults from "@/app/components/VipResults";
 import VipFilter from "@/app/components/VipFilter";
 import { usePredictionStore } from "@/app/store/Prediction";
 import EmptySportImage from "@/public/assets/emptysport.png";
@@ -260,20 +259,17 @@ export default function Vip() {
     }
   }, [isAuth, isVipActive, isInitialized, forceVipStatusRefresh]);
 
-  // Sync URL parameters with local state
   useEffect(() => {
     const urlSearch = searchParams.get("search");
     const urlVipSlip = searchParams.get("vipSlip");
 
     setSearchKey(urlSearch || "");
 
-    // Only update vipSlipFilter if it's different to prevent loops
     if ((urlVipSlip || "") !== vipSlipFilter) {
       setVipSlipFilter(urlVipSlip || "");
     }
-  }, [searchParams]);
+  }, [searchParams, vipSlipFilter]);
 
-  // Main prediction loading effect
   useEffect(() => {
     const loadPredictions = async () => {
       const urlDate = searchParams.get("date");
@@ -402,7 +398,7 @@ export default function Vip() {
   };
 
   const handleRenewClick = useCallback(() => {
-    router.push("/payment");
+    router.push("payment");
   }, [router]);
 
   const handleLoginClick = useCallback(() => {
@@ -470,16 +466,18 @@ export default function Vip() {
   if (shouldShowNothing) {
     return (
       <div className={styles.sportContainer}>
-        <VipStatusBanner
-          daysRemaining={daysRemaining}
-          isSuperAdmin={isSuperAdmin}
-          isExpiringSoon={isExpiringSoon}
-          isCriticalExpiry={isCriticalExpiry}
-          onRenewClick={handleRenewClick}
-          isAuth={isAuth}
-          isInitialized={isInitialized}
-          isVipActive={isVipActive}
-        />
+        <div className={styles.sportContainerHeader}>
+          <VipStatusBanner
+            daysRemaining={daysRemaining}
+            isSuperAdmin={isSuperAdmin}
+            isExpiringSoon={isExpiringSoon}
+            isCriticalExpiry={isCriticalExpiry}
+            onRenewClick={handleRenewClick}
+            isAuth={isAuth}
+            isInitialized={isInitialized}
+            isVipActive={isVipActive}
+          />
+        </div>
         <div className={styles.vipSlider}>
           {vipSlipOptions.map((option) => {
             const vipSlipValue = vipSlipMapping[option] || "";
@@ -527,16 +525,18 @@ export default function Vip() {
 
   return (
     <div className={styles.sportContainer}>
-      <VipStatusBanner
-        daysRemaining={daysRemaining}
-        isSuperAdmin={isSuperAdmin}
-        isExpiringSoon={isExpiringSoon}
-        isCriticalExpiry={isCriticalExpiry}
-        onRenewClick={handleRenewClick}
-        isAuth={isAuth}
-        isInitialized={isInitialized}
-        isVipActive={isVipActive}
-      />
+      <div className={styles.sportContainerHeader}>
+        <VipStatusBanner
+          daysRemaining={daysRemaining}
+          isSuperAdmin={isSuperAdmin}
+          isExpiringSoon={isExpiringSoon}
+          isCriticalExpiry={isCriticalExpiry}
+          onRenewClick={handleRenewClick}
+          isAuth={isAuth}
+          isInitialized={isInitialized}
+          isVipActive={isVipActive}
+        />
+      </div>
       <div className={styles.vipSlider}>
         {vipSlipOptions.map((option) => {
           const vipSlipValue = vipSlipMapping[option] || "";
@@ -586,8 +586,6 @@ export default function Vip() {
             originalPredictions={data.originalPredictions || []}
           />
         ))}
-
-        {isMobile && <VipResults />}
       </div>
     </div>
   );

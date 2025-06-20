@@ -331,7 +331,7 @@ export default function SideNavComponent() {
                   className={styles.logoImg}
                   src={FullLogo}
                   alt="logo"
-                  height={40}
+                  height={60}
                   priority={true}
                 />
               </div>

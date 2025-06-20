@@ -727,7 +727,7 @@
   .QuestionCon {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 10px;
     padding: 20px;
     background: var(--background-color);
     border-radius: var(--radius-lg);

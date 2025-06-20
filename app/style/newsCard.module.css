@@ -4,17 +4,15 @@
     display: flex;
     height: fit-content;
     flex-direction: column;
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
   }
 
   .articleCard:hover {
-    box-shadow: var(--shadow-box);
+    box-shadow: var(--shadow-background-color);
   }
 
   .articleImageWrapper {
     height: 200px;
-    min-height: 200px;
-    max-height: 200px;
     position: relative;
     margin: var(--padding-sm);
     border-radius: var(--radius-sm);
@@ -32,28 +30,8 @@
     transform: scale(1.02);
   }
 
-  .articleFooter {
-    bottom: 0;
-    width: 100%;
-    z-index: 999;
-    padding: 10px;
-    position: absolute;
-    color: var(--background-color);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background-color: rgba(17, 25, 40, 0.13);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.125);
-  }
-
-  .readTime {
-    gap: 5px;
-    display: flex;
-    align-items: center;
-  }
-
   .articleContent {
-    gap: 10px;
+    gap: var(--radius-sm);
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -62,6 +40,7 @@
 
   .articleInnerContent {
     flex: 1;
+
   }
 
   .articleHeader {
@@ -71,7 +50,7 @@
   }
 
   .articleHeader span {
-    font-size: var(--font-size-4);
+    font-size: var( --font-size-4);
     padding: var(--padding-sm) var(--radius-sm);
     border-radius: var(--radius-sm);
     text-transform: uppercase;
@@ -97,12 +76,11 @@
   }
 
   .articleMeta {
+    gap: var(--padding-sm);
     display: flex;
     flex-wrap: wrap;
-    text-align: end;
-    align-items: center;
-    justify-content: flex-end;
     font-size: var(--font-size-4);
+    justify-content: space-between;
     color: var(--light-primary-color);
   }
 
@@ -113,13 +91,12 @@
   }
 
   .articleTags span {
-    font-size: var(--font-size-4);
+    font-size: var( --font-size-4);
     text-transform: capitalize;
   }
 
-  .readMoreBtnT {
+  .readMoreBtn {
     gap: 10px;
-    padding-left: 5px;
     cursor: pointer;
     font-weight: 300;
     align-items: center;
@@ -129,18 +106,6 @@
     color: var(--secondary-color);
   }
 
-  .readMoreBtn:hover {
-    color: var(--secondary-color);
-  }
-
-  .readMoreBtn {
-    gap: 5px;
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    justify-content: flex-end;
-    text-decoration: underline;
-  }
 
   .readMoreIcon {
     font-size: 18px;
@@ -156,14 +121,11 @@
 
   .articleFooter {
     display: flex;
-    padding: 10px;
+    margin-top: auto;
+    padding-top: var(--radius-sm);
     align-items: center;
     justify-content: space-between;
-  }
-
-  .articleTags {
-    position: relative;
-    z-index: 999;
+    border-top: 1px solid var(--light-background-color);
   }
 
   .dateAndTime {
@@ -172,10 +134,19 @@
     align-items: center;
     justify-content: flex-end;
   }
+
+  .readTime {
+    gap: 5px;
+    display: flex;
+    font-size: var(--font-size-4);
+    align-items: center;
+    color: var(--light-primary-color);
+  }
 }
 
 @media only screen and (min-width: 48em) {
   .articleCard {
     width: 400px;
+    
   }
 }

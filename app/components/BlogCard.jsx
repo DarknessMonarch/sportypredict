@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { IoMdShare } from "react-icons/io";
 import { FaRegClock } from "react-icons/fa";
 import styles from "@/app/style/articleCard.module.css";
-import { IoReaderOutline as ReadIcon } from "react-icons/io5";
+
 
 export default function ArticleCard({
   post,
@@ -30,6 +30,15 @@ export default function ArticleCard({
   return (
     <div className={`${styles.articleCard} ${className}`}>
       <div className={styles.articleImageWrapper}>
+        <div className={styles.articleFooter}>
+          <span className={styles.readTime}>
+            <FaRegClock /> {post.readTime}
+          </span>
+          <span className={styles.date}>
+            {post.formattedDate ||
+              new Date(post.publishedAt || post.createdAt).toLocaleDateString()}
+          </span>
+        </div>
         <Image
           className={styles.articleImage}
           src={post.image}
@@ -42,8 +51,6 @@ export default function ArticleCard({
           }}
           priority={true}
         />
-      </div>
-      <div className={styles.articleContent}>
         {post.tags.length > 0 && (
           <div className={styles.articleTags}>
             {post.tags.map((tag) => (
@@ -51,6 +58,8 @@ export default function ArticleCard({
             ))}
           </div>
         )}
+      </div>
+      <div className={styles.articleContent}>
         <div className={styles.articleHeader}>
           <span>{post.category}</span>
           <IoMdShare
@@ -60,31 +69,12 @@ export default function ArticleCard({
             aria-label="Share icon"
           />
         </div>
-
-        <h3>{post.title}</h3>
-        <div className={styles.articleInnerContent}>
-          <p>{post.excerpt}</p>
-        </div>
-        <div className={styles.articleMeta}>
-          <div onClick={handleReadMore} className={styles.readMoreBtn}>
-            <ReadIcon
-              className={styles.readMoreIcon}
-              alt="Read more icon"
-              aria-label="Read more icon"
-            />{" "}
+        <h3>
+          {post.title}
+          <div onClick={handleReadMore} className={styles.readMoreBtnT}>
             Read More
           </div>
-        </div>
-        <div className={styles.articleFooter}>
-          <span className={styles.readTime}>
-            <FaRegClock /> {post.readTime}
-          </span>
-
-          <span className={styles.date}>
-            {post.formattedDate ||
-              new Date(post.publishedAt || post.createdAt).toLocaleDateString()}
-          </span>
-        </div>
+        </h3>
       </div>
     </div>
   );

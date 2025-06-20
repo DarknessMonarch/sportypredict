@@ -86,12 +86,10 @@ export default function VipFilter({
     }
   };
 
-  // Initialize date parameter only if it doesn't exist
   useEffect(() => {
     const existingDateParam = searchParams.get("date");
 
     if (!existingDateParam) {
-      // Use the existing searchParams and only add the date
       const params = new URLSearchParams(searchParams.toString());
       params.set("date", currentDateForInput);
       router.replace(`${pathname}?${params.toString()}`);
@@ -99,9 +97,8 @@ export default function VipFilter({
     } else {
       setSelectedDate(existingDateParam);
     }
-  }, []); // Empty dependency array - only run once on mount
+  }, []); 
 
-  // Sync selectedDate with URL parameter changes
   useEffect(() => {
     const dateParam = searchParams.get("date");
 

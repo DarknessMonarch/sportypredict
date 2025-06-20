@@ -9,7 +9,7 @@ import { useBlogStore } from "@/app/store/Blog";
 import styles from "@/app/style/blog.module.css";
 import SideSlide from "@/app/components/SideSlide";
 import LoadingLogo from "@/app/components/LoadingLogo";
-import ArticleCard from "@/app/components/ArticleCard";
+import ArticleCard from "@/app/components/BlogCard";
 import EmptyBlogImage from "@/public/assets/emptyblog.png";
 import { useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -55,7 +55,7 @@ export default function Blog() {
 
   // Helper function to get author name
   const getAuthorName = (post) => {
-    return post.author || post.authorName || "Unknown Author";
+    return post.author || post.author || "Unknown Author";
   };
 
   const getFormattedDate = (post) => {

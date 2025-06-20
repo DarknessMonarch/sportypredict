@@ -249,7 +249,7 @@ export default function NavbarComponent() {
                   pathname === "/page/offers" ? styles.activeNavLinks : ""
                 }`}
               >
-                Offers
+                 Offers
               </Link>
               <Link
                 href="/page/about"
@@ -267,38 +267,7 @@ export default function NavbarComponent() {
               >
                 Contact us
               </Link>
-              <Link
-                href="/page/terms"
-                className={`${styles.navlinks} ${
-                  pathname === "/page/terms" ? styles.activeNavLinks : ""
-                }`}
-              >
-                Terms & Condition
-              </Link>
-              <Link
-                href="/page/privacy"
-                className={`${styles.navlinks} ${
-                  pathname === "/page/privacy" ? styles.activeNavLinks : ""
-                }`}
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/page/refund"
-                className={`${styles.navlinks} ${
-                  pathname === "/page/refund" ? styles.activeNavLinks : ""
-                }`}
-              >
-                Refund Policy
-              </Link>
-              <Link
-                href="/page/disclaimer"
-                className={`${styles.navlinks} ${
-                  pathname === "/page/disclaimer" ? styles.activeNavLinks : ""
-                }`}
-              >
-                Disclaimer
-              </Link>
+  
             </div>
           )}
 

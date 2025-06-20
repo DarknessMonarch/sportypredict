@@ -79,7 +79,8 @@ const getManualPaymentDetails = (countryCode) => {
       method: "Mukuru, Mama Money, WorldRemit (To MPesa Kenya)",
       name: "Thwell Mugambi Gichovi",
       phone: "‪+254703147237",
-      description: "Send payment via Mukuru, Mama Money, or WorldRemit to MPesa Kenya (Thwell Mugambi Gichovi)",
+      description:
+        "Send payment via Mukuru, Mama Money, or WorldRemit to MPesa Kenya (Thwell Mugambi Gichovi)",
     },
     zm: {
       currency: "ZMW",
@@ -111,7 +112,8 @@ const getManualPaymentDetails = (countryCode) => {
         name: "OTHER PAYMENT OPTIONS",
         contactName: "MoneyGram, Western Union",
         contactInfo: "contact@sportypredict.com",
-        description: "For MoneyGram, Western Union, and other payment options contact contact@sportypredict.com or whatsapp +254703147237  for details",
+        description:
+          "For MoneyGram, Western Union, and other payment options contact contact@sportypredict.com or whatsapp +254703147237  for details",
       },
     ],
   };
@@ -208,11 +210,7 @@ const PaymentMethodCard = ({
   );
 };
 
-const SkrillPaymentPopupContent = ({
-  price,
-  currency,
-  onClose,
-}) => {
+const SkrillPaymentPopupContent = ({ price, currency, onClose }) => {
   const formatPrice = () => {
     const numericPrice = parseFloat(price);
     if (isNaN(numericPrice)) return price;
@@ -253,7 +251,9 @@ const SkrillPaymentPopupContent = ({
             <li>
               - Your VIP access will be activated after payment verification
             </li>
-            <li>- Contact us at contact@sportypredict.com if you need assistance</li>
+            <li>
+              - Contact us at contact@sportypredict.com if you need assistance
+            </li>
           </p>
         </div>
       </div>
@@ -335,7 +335,9 @@ const ManualPaymentPopupContent = ({
               <li>
                 - Your VIP access will be activated after payment verification
               </li>
-              <li>- Contact us at contact@sportypredict.com if you need assistance</li>
+              <li>
+                - Contact us at contact@sportypredict.com if you need assistance
+              </li>
             </p>
           </div>
         )}
@@ -974,6 +976,19 @@ export default function Payment() {
       </div>
 
       <div className={styles.Question}>
+        <div className={styles.QuestionCon}>
+          <h1>What&apos;s offered in our VIP Club?</h1>
+          <span>Answer:</span>
+          <p>- 2–5 expert picks daily</p>
+          <p>- 2-5 Odds per slip/bet</p>
+          <p>- Banker of the Day</p>
+          <p>- Tennis & Basketball tips</p>
+          <p>- Combo tickets + staking guides</p>
+          <p>- 90%+ win rate</p>
+          <p>- Live odds (bets)+ expert insights</p>
+          <p>- Full support from the SportyPredict team</p>
+        </div>
+
         <div className={styles.QuestionCon}>
           <h1>How guaranteed are your games?</h1>
           <p>

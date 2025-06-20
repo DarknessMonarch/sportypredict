@@ -199,13 +199,19 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
 
   return (
     <div className={styles.vipContainer}>
-      <h1>DON&apos;T GAMBLE, INVEST INSTEAD</h1>
+      <h1>Our Exclusive 2-5 Odds VIP PLAN 💰</h1>
       <div className={styles.infoBox}>
+        <h3>🔥What You Get in Our VIP Club:🔥</h3>
         <p>
-          Make {profitPercentage}% profits with up to {accuracy}% accuracy on
-          our sure VIP football subscription.
+          ✅ 2–5 expert picks daily<br/>
+          ✅ 2-5 Odds per slip/bet<br/>
+          ✅ Banker of the Day<br/>
+          ✅ Tennis & Basketball tips<br/>
+          ✅ Combo tickets + staking guides<br/>
+          ✅ 90%+ win rate<br/>
+          ✅ Live odds (bets)+ expert insights<br/>
+          ✅ Full support from the SportyPredict team
         </p>
-
         <button className={styles.subscriptionButton} onClick={() => router.push("vip")}>VIP SUBSCRIPTION</button>
       </div>
 

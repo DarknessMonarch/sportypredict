@@ -12,12 +12,12 @@
 
   .vipContainer h1 {
     font-size: var(--font-size-3);
-    font-weight: var( --font-weight-medium);
+    font-weight: var(--font-weight-medium);
     text-align: center;
   }
 
   .infoBox {
-    gap: 10px;
+    gap: 5px;
     padding: 10px;
     display: flex;
     text-align: center;
@@ -27,20 +27,30 @@
     background-color: var(--background-color);
   }
 
-  .infoBox p {
+  .infoBox h2 {
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-medium);
+    color: var(--primary-color);
+  }
+
+  .infoBox h3 {
     font-size: var(--font-size-3);
-    text-align: justify;
+    font-weight: var(--font-weight-normal);
+  }
+
+  .infoBox p {
+    font-size: var(--font-size-5);
   }
 
   .subscriptionButton {
     width: 100%;
     border: none;
     cursor: pointer;
-    font-size:var(--font-size-4);
     text-align: center;
-    padding: 15px 10px;
+    padding: 10px;
     height: fit-content;
     border-radius: 10px;
+    font-size: var(--font-size-4);
     color: var(--background-color);
     background-color: var(--primary-color);
     transition: background-color 0.2s ease-in-out;
@@ -75,7 +85,6 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-
   }
 
   .resultItem {

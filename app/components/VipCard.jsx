@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState, useEffect } from "react";
 import { DateTime } from "luxon";
+import WaterMarkImage from "@/public/assets/watermark.png";
+import { useMemo, useState, useEffect } from "react";
 import { useAdvertStore } from "@/app/store/Advert";
 import styles from "@/app/style/vipcard.module.css";
 
@@ -176,6 +177,16 @@ export default function VipCard({
 
   return (
     <div className={styles.card}>
+        <Image
+          className={styles.watermarkImage}
+          src={WaterMarkImage}
+          alt={"Watermark"}
+          fill
+          sizes="100%"
+          quality={100}
+          objectFit="contain"
+          priority={true}
+        />
       {isGrouped && originalPredictions.length > 0 ? (
         <>
           {originalPredictions.map((prediction, index) => (

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { IoMdShare } from "react-icons/io";
-import styles from "@/app/style/articleCard.module.css";
-import { IoReaderOutline as ReadIcon } from "react-icons/io5";
+import styles from "@/app/style/newsCard.module.css";
 
 export default function NewsCard({ post, onReadMore, onShare }) {
   return (
@@ -19,6 +18,12 @@ export default function NewsCard({ post, onReadMore, onShare }) {
           }}
           priority={true}
         />
+        <div className={styles.dateAndTime}>
+          <span>
+            {post.formattedDate ||
+              new Date(post.publishDate || post.createdAt).toLocaleDateString()}
+          </span>
+        </div>
       </div>
       <div className={styles.articleContent}>
         <div className={styles.articleHeader}>
@@ -30,31 +35,9 @@ export default function NewsCard({ post, onReadMore, onShare }) {
             aria-label="Share icon"
           />
         </div>
-        <h3>{post.title}</h3>
-        <div className={styles.articleInnerContent}>
-        <p>{post.summary}</p>
-        </div>
-        <div className={styles.articleMeta}>
-       <div onClick={() => onReadMore(post)} className={styles.readMoreBtn}>
-            <ReadIcon
-              className={styles.readMoreIcon}
-              alt="Read more icon"
-              aria-label="Read more icon"
-            />{" "}
+        <h3>{post.title} <div onClick={() => onReadMore(post)} className={styles.readMoreBtn}>
             Read More
-          </div>
-        </div>
-        <div className={styles.articleFooter}>
-          
-          <div className={styles.dateAndTime}>
-            <span>
-              {post.formattedDate ||
-                new Date(
-                  post.publishDate || post.createdAt
-                ).toLocaleDateString()}
-            </span>
-          </div>
-        </div>
+          </div></h3>
       </div>
     </div>
   );

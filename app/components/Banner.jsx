@@ -70,9 +70,7 @@ export default function Banner() {
           fill
           sizes="100%"
           quality={100}
-          style={{
-            objectFit: "cover",
-          }}
+          objectFit="cover"
           priority={true}
         />
       </div>
