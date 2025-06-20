@@ -449,7 +449,7 @@ export default function Blog() {
             <span className={styles.category}>{selectedPost.category}</span>
             <span>By {getAuthorName(selectedPost)}</span>
           </div>
-          <h2>{selectedPost.title}</h2>
+          <h1 className={styles.sideSlideTitle}>{selectedPost.title}</h1>
           <div
             className={styles.sideSlideInnerContent}
             dangerouslySetInnerHTML={{

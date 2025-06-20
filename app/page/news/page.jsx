@@ -383,7 +383,7 @@ export default function SportsNews() {
             </span>
             <span>By {getAuthorName(selectedPost)}</span>
           </div>
-          <h2>{selectedPost.title}</h2>
+          <h2 className={styles.sideSlideTitle}>{selectedPost.title}</h2>
           <div
             className={styles.sideSlideInnerContent}
             dangerouslySetInnerHTML={{
