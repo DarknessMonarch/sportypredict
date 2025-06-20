@@ -17,7 +17,6 @@
     padding: 20px var(--padding-sm);
     color: var(--background-color);
     background: var(--linear-gradient-color);
-
   }
 
   .blogHeader {
@@ -28,8 +27,6 @@
     flex-direction: column;
     box-shadow: var(--shadow-background-color);
   }
-
- 
 
   .blogBanner::before {
     content: "";
@@ -157,7 +154,6 @@
 
   .featuredImageWrapper {
     min-height: 250px;
-
   }
 
   .featuredContent {
@@ -361,9 +357,10 @@
 
   .sideSlideInnerContentDetails {
     gap: var(--padding-md);
-    height: 100%;
     display: flex;
     flex-direction: column;
+    min-height: 100%;
+
   }
 
   .authorContainer {
@@ -378,8 +375,6 @@
     text-wrap: wrap;
     min-height: 100px;
     border-radius: var(--padding-md);
-    background-color: var(--lighter-primary-color);
-  
   }
 
   .SideSlideFooter {
@@ -412,7 +407,6 @@
     padding: var(--padding-sm);
   }
 
-
   .featuredArticle {
     height: 400px;
     display: flex;
@@ -427,8 +421,7 @@
     height: 100%;
   }
 
-  .sideSlideInnerContent {
-      overflow: hidden;
-    overflow-y: auto;
-  }
+
+
+
 }

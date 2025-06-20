@@ -8,7 +8,7 @@ import { useVipResultStore } from "@/app/store/VipResult";
 import styles from "@/app/style/vipResults.module.css";
 import { useRouter } from "next/navigation";
 
-export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
+export default function VipResults({ }) {
   const { results, matchTime, loading, fetchResults, getMatchTime } = useVipResultStore();
 
   const [timeRemaining, setTimeRemaining] = useState({
@@ -29,7 +29,6 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
     }
   }, []);
 
-  // Function to parse time string and calculate countdown
   const calculateTimeRemaining = useCallback(() => {
     if (!matchTime || !matchTime.active || !matchTime.time) {
       return { hours: 0, minutes: 0, seconds: 0 };
@@ -39,42 +38,34 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
     let matchDateTime;
 
     try {
-      // Handle different time formats
       const timeStr = matchTime.time.toString().trim();
       
-      // Parse various time formats
       let hours, minutes = 0;
       
       if (timeStr.includes(':')) {
-        // Format: "14:30" or "2:30 PM"
         const timeParts = timeStr.split(':');
         hours = parseInt(timeParts[0]);
         if (timeParts[1]) {
-          const minutesPart = timeParts[1].replace(/[^\d]/g, ''); // Remove non-digit characters
+          const minutesPart = timeParts[1].replace(/[^\d]/g, ''); 
           minutes = parseInt(minutesPart) || 0;
         }
         
-        // Handle AM/PM format
         if (timeStr.toLowerCase().includes('pm') && hours < 12) {
           hours += 12;
         } else if (timeStr.toLowerCase().includes('am') && hours === 12) {
           hours = 0;
         }
       } else if (/^\d{3,4}$/.test(timeStr)) {
-        // Format: "1430" (military time)
         hours = Math.floor(parseInt(timeStr) / 100);
         minutes = parseInt(timeStr) % 100;
       } else {
-        // Format: just hours "14" or any number
         hours = parseInt(timeStr) || 0;
         minutes = 0;
       }
 
-      // Create match time for today
       matchDateTime = new Date();
       matchDateTime.setHours(hours, minutes, 0, 0);
 
-      // If the match time has already passed today, set it for tomorrow
       if (matchDateTime <= now) {
         matchDateTime.setDate(matchDateTime.getDate() + 1);
       }
@@ -83,15 +74,12 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
       console.error('Error parsing match time:', error);
       return { hours: 0, minutes: 0, seconds: 0 };
     }
-
-    // Calculate difference in milliseconds
     const timeDiff = matchDateTime.getTime() - now.getTime();
 
     if (timeDiff <= 0) {
       return { hours: 0, minutes: 0, seconds: 0 };
     }
 
-    // Convert to hours, minutes, seconds
     const totalSeconds = Math.floor(timeDiff / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -110,7 +98,6 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
       
       setTimeRemaining(remaining);
 
-      // Stop timer when countdown reaches zero
       if (remaining.hours === 0 && remaining.minutes === 0 && remaining.seconds === 0) {
         clearInterval(interval);
         setIsTimerActive(false);
@@ -120,7 +107,6 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
     timerRef.current = interval;
     setIsTimerActive(true);
 
-    // Set initial time immediately
     setTimeRemaining(calculateTimeRemaining());
   }, [matchTime, clearTimer, calculateTimeRemaining]);
 
@@ -147,32 +133,26 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
     }
   }, [matchTime, startCountdown, clearTimer]);
 
-  // Get only the last 6 results
-  const formattedResults = results
-    .slice(-6) // Take the last 6 results
-    .map((result) => ({
-      day: result.day,
-      date: result.date,
-      success: result.result === "win",
-      failure: result.result === "loss",
-      pending: result.result === "draw" || result.result === "pending",
-    }));
+  const formattedResults = results.map((result) => ({
+    day: result.day,
+    date: result.date,
+    success: result.result === "win",
+    failure: result.result === "loss",
+    pending: result.result === "draw" || result.result === "pending",
+  }));
 
   const hasTimeRemaining = timeRemaining.hours > 0 || timeRemaining.minutes > 0 || timeRemaining.seconds > 0;
   const hasValidMatchTime = matchTime?.active && matchTime?.time;
 
-  // Format display time for better UX
   const getDisplayMatchTime = () => {
     if (!matchTime?.time) return "No time set";
     
     const timeStr = matchTime.time.toString().trim();
     
-    // If it's already in a nice format, return as is
     if (timeStr.includes(':') && (timeStr.includes('AM') || timeStr.includes('PM'))) {
       return timeStr;
     }
     
-    // Try to format it nicely
     try {
       let hours, minutes = 0;
       
@@ -190,7 +170,6 @@ export default function VipResults({ accuracy = 96, profitPercentage = 100 }) {
         hours = parseInt(timeStr) || 0;
       }
       
-      // Format as 24-hour time
       return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     } catch (error) {
       return timeStr;
