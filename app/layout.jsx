@@ -8,7 +8,7 @@ const roboto_Condensed = Roboto_Condensed({
   subsets: ["latin"],
 });
 
-const SITE_URL = "https://sportypredict.433tips.com";
+const SITE_URL = "https://sportypredict.com";
 const BANNER_URL = "https://raw.githubusercontent.com/DarknessMonarch/sportypredict/refs/heads/master/public/assets/banner.png";
 
 export const viewport = { 
@@ -101,7 +101,7 @@ export const metadata = {
   },
 
   alternates: {
-    canonical: `${SITE_URL}/page/day`,
+    canonical: `${SITE_URL}/page/football`,
   },
 
   icons: {

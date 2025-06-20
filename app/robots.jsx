@@ -42,7 +42,7 @@ export default function robots() {
         disallow: ['/']
       }
     ],
-    sitemap: 'https://sportypredict.433tips.com/sitemap.xml',
-    host: 'https://sportypredict.433tips.com'
+    sitemap: 'https://sportypredict.com/sitemap.xml',
+    host: 'https://sportypredict.com'
   }
 }

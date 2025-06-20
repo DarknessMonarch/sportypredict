@@ -1,5 +1,5 @@
 export default async function sitemap() {
-  const baseUrl = "https://sportypredict.433tips.com";
+  const baseUrl = "https://sportypredict.com";
 
   const authRoutes = [
     "/authentication/login",
