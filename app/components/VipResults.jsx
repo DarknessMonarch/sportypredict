@@ -30,7 +30,8 @@ export default function VipResults({ }) {
   }, []);
 
   const calculateTimeRemaining = useCallback(() => {
-    if (!matchTime || !matchTime.active || !matchTime.time) {
+    // Return 0:0:0 if matchTime is null, undefined, empty, or inactive
+    if (!matchTime || !matchTime.active || !matchTime.time || matchTime.time === "") {
       return { hours: 0, minutes: 0, seconds: 0 };
     }
 
@@ -39,6 +40,11 @@ export default function VipResults({ }) {
 
     try {
       const timeStr = matchTime.time.toString().trim();
+      
+      // Return 0:0:0 if timeStr is empty after trimming
+      if (!timeStr) {
+        return { hours: 0, minutes: 0, seconds: 0 };
+      }
       
       let hours, minutes = 0;
       
@@ -74,6 +80,7 @@ export default function VipResults({ }) {
       console.error('Error parsing match time:', error);
       return { hours: 0, minutes: 0, seconds: 0 };
     }
+    
     const timeDiff = matchDateTime.getTime() - now.getTime();
 
     if (timeDiff <= 0) {
@@ -91,7 +98,10 @@ export default function VipResults({ }) {
   const startCountdown = useCallback(() => {
     clearTimer();
 
-    if (!matchTime || !matchTime.active || !matchTime.time) return;
+    if (!matchTime || !matchTime.active || !matchTime.time || matchTime.time === "") {
+      setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
+      return;
+    }
 
     const interval = setInterval(() => {
       const remaining = calculateTimeRemaining();
@@ -120,32 +130,31 @@ export default function VipResults({ }) {
   }, [fetchResults, getMatchTime, clearTimer]);
 
   useEffect(() => {
-    if (matchTime) {
-      if (matchTime.active && matchTime.time) {
-        startCountdown();
-      } else {
-        clearTimer();
-        setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
-      }
+    // Check if matchTime exists and has valid data
+    if (matchTime && matchTime.active && matchTime.time && matchTime.time !== "") {
+      startCountdown();
     } else {
-      setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
+      // Clear timer and reset to 0:0:0 when matchTime is invalid
       clearTimer();
+      setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
     }
   }, [matchTime, startCountdown, clearTimer]);
 
-  const formattedResults = results.map((result) => ({
+const formattedResults = results
+  .slice(0, 6) 
+  .map((result) => ({
     day: result.day,
     date: result.date,
     success: result.result === "win",
     failure: result.result === "loss",
     pending: result.result === "draw" || result.result === "pending",
   }));
-
+  
   const hasTimeRemaining = timeRemaining.hours > 0 || timeRemaining.minutes > 0 || timeRemaining.seconds > 0;
-  const hasValidMatchTime = matchTime?.active && matchTime?.time;
+  const hasValidMatchTime = matchTime?.active && matchTime?.time && matchTime.time !== "";
 
   const getDisplayMatchTime = () => {
-    if (!matchTime?.time) return "No time set";
+    if (!matchTime?.time || matchTime.time === "") return "No time set";
     
     const timeStr = matchTime.time.toString().trim();
     
