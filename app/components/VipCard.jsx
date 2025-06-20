@@ -16,6 +16,7 @@ export default function VipCard({
   teamA,
   teamB,
   time,
+  times,
   odd,
   status,
   stake,
@@ -48,7 +49,7 @@ export default function VipCard({
         setCurrentAdIndex(
           (prevIndex) => (prevIndex + 1) % cardBannerAds.length
         );
-      }, 5000); // Change ad every 5 seconds
+      }, [cardBannerAds.length]);
 
       return () => clearInterval(interval);
     }
@@ -73,7 +74,6 @@ export default function VipCard({
   };
 
   const renderAdBanner = () => {
-    // Add null check like in SingleCard
     if (!currentAd) {
       return null;
     }
@@ -106,19 +106,23 @@ export default function VipCard({
     );
   };
 
+  const formatIndividualTime = (timeValue) => {
+    if (!timeValue) return "00:00";
+    const localTime = DateTime.fromISO(timeValue).setZone(DateTime.local().zoneName);
+    return localTime.toFormat("HH:mm");
+  };
+
   const renderSingleMatch = (
     matchData,
     showOdds = true,
-    useFormattedTime = true,
+    individualTime = null,
     showIndividualActions = false
   ) => {
-    const matchTime = useFormattedTime
-      ? formattedTime
+    const matchTime = individualTime 
+      ? formatIndividualTime(individualTime)
       : matchData.time
-      ? DateTime.fromISO(matchData.time)
-          .setZone(DateTime.local().zoneName)
-          .toFormat("HH:mm")
-      : "00:00";
+      ? formatIndividualTime(matchData.time)
+      : formattedTime;
 
     return (
       <div className={styles.matchRow}>
@@ -189,14 +193,17 @@ export default function VipCard({
         />
       {isGrouped && originalPredictions.length > 0 ? (
         <>
-          {originalPredictions.map((prediction, index) => (
-            <div key={prediction._id || index}>
-              {renderSingleMatch(prediction, true, true)}
-              {index < originalPredictions.length - 1 && (
-                <div className={styles.divider} />
-              )}
-            </div>
-          ))}
+          {originalPredictions.map((prediction, index) => {
+            const individualTime = times && times[index] ? times[index] : prediction.time;
+            return (
+              <div key={prediction._id || index}>
+                {renderSingleMatch(prediction, true, individualTime)}
+                {index < originalPredictions.length - 1 && (
+                  <div className={styles.divider} />
+                )}
+              </div>
+            );
+          })}
           <div className={styles.totalSection}>
             <div className={styles.totalSectionInner}>
               <span>Total Odds: {totalOdds || "N/A"}</span>
@@ -208,7 +215,7 @@ export default function VipCard({
         </>
       ) : (
         <>
-          {renderSingleMatch({}, true, true)}
+          {renderSingleMatch({}, true, null)}
           <div className={styles.totalSection}>
             <div className={styles.totalSectionInner}>
               <span>Odds: {odd || "N/A"}</span>

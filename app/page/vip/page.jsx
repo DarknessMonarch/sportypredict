@@ -578,6 +578,7 @@ export default function Vip() {
             teamA={data.teamA}
             teamB={data.teamB}
             time={data.time}
+            times={data.times}
             odd={data.odd}
             stake={data.stake}
             status={data.status}
