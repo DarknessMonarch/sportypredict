@@ -50,9 +50,17 @@
     cursor: pointer;
     border-radius: 5px;
     align-items: center;
+    justify-content: center;
     color: var(--background-color);
     background: var(--primary-color);
     border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .bannerBtn h1 {
+    font-size: .8rem;
+    font-weight: 400;
+    text-transform: capitalize;
+    color: var(--secondary-color);
   }
 
   .bannerBtn:hover {
@@ -60,6 +68,10 @@
   }
 
   .bannerBtn:hover .bannerIcon {
+    color: var(--primary-color);
+  }
+
+  .bannerBtn:hover h1 {
     color: var(--primary-color);
   }
 

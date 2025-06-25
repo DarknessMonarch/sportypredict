@@ -58,7 +58,7 @@ export default function NavbarComponent() {
   };
 
   const handleLogout = async () => {
-    if (isLoggingOut) return; // Prevent multiple clicks
+    if (isLoggingOut) return; 
     
     setIsLoggingOut(true);
     try {

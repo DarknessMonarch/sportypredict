@@ -127,7 +127,7 @@ export default function Footer() {
                 className={`${styles.socialButton} ${styles.whatsapp}`}
                 onClick={() =>
                   openSocialMedia(
-                    "https://wa.me/+254703147237?text=Hi SportyPredict, I want to join your WhatsApp group"
+                    "https://whatsapp.com/channel/0029VaADp5iL7UVSqjrKVw2h"
                   )
                 }
               >

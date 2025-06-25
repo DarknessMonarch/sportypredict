@@ -18,7 +18,7 @@
 
   .offerContainer span {
     font-weight: 200;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     color: var(--primary-color);
   }
 
@@ -100,5 +100,9 @@
 
   .arrowIcon {
     font-size: 40px;
+  }
+
+   .offerContainer span {
+    font-size: 0.9rem;
   }
 }

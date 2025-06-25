@@ -55,6 +55,56 @@ export default function VipCard({
     }
   }, [cardBannerAds.length]);
 
+  const getStatusIcon = (status) => {
+    const statusIcons = {
+      won: "✓",
+      loss: "✗",
+      refund: "↻",
+      cancelled: "⊗",
+      postponed: "⏸",
+    };
+    return statusIcons[status] || "";
+  };
+
+  const calculateOverallStatus = (predictions) => {
+    if (!predictions || predictions.length === 0) return null;
+
+    const statuses = predictions.map((p) => p.status).filter(Boolean);
+    if (statuses.length === 0) return null;
+
+    // If any game is a loss, overall is loss
+    if (statuses.includes("loss")) return "loss";
+
+    // If any game is cancelled, overall is cancelled
+    if (statuses.includes("cancelled")) return "cancelled";
+
+    // If any game is postponed, overall is postponed
+    if (statuses.includes("postponed")) return "postponed";
+
+    // If all games are won, overall is won
+    if (statuses.every((s) => s === "won")) return "won";
+
+    // If mix of won and refund, overall is won
+    if (statuses.includes("won") && statuses.includes("refund")) return "won";
+
+    // If all are refund, overall is refund
+    if (statuses.every((s) => s === "refund")) return "refund";
+
+    return null;
+  };
+
+  // Get status class name
+  const getStatusClassName = (status) => {
+    const statusClasses = {
+      won: styles.statusWon,
+      loss: styles.statusLoss,
+      refund: styles.statusRefund,
+      cancelled: styles.statusCancelled,
+      postponed: styles.statusPostponed,
+    };
+    return statusClasses[status] || "";
+  };
+
   const handleAdClick = () => {
     if (currentAd?.link) {
       window.open(currentAd.link, "_blank", "noopener,noreferrer");
@@ -108,7 +158,9 @@ export default function VipCard({
 
   const formatIndividualTime = (timeValue) => {
     if (!timeValue) return "00:00";
-    const localTime = DateTime.fromISO(timeValue).setZone(DateTime.local().zoneName);
+    const localTime = DateTime.fromISO(timeValue).setZone(
+      DateTime.local().zoneName
+    );
     return localTime.toFormat("HH:mm");
   };
 
@@ -118,11 +170,13 @@ export default function VipCard({
     individualTime = null,
     showIndividualActions = false
   ) => {
-    const matchTime = individualTime 
+    const matchTime = individualTime
       ? formatIndividualTime(individualTime)
       : matchData.time
       ? formatIndividualTime(matchData.time)
       : formattedTime;
+
+    const matchStatus = matchData.status || status;
 
     return (
       <div className={styles.matchRow}>
@@ -137,7 +191,6 @@ export default function VipCard({
             />
             <h1>{matchData.league || league || "League"}</h1>
           </div>
-          {(matchData.status || status) && <span>{matchData.status || status}</span>}
         </div>
         <div className={styles.teamsSection}>
           <div className={styles.teamContainer}>
@@ -171,7 +224,18 @@ export default function VipCard({
           {renderAdBanner()}
           {showOdds && (
             <div className={styles.betSectioninner}>
-              <h3>Odd: {matchData.odd || odd || "N/A"}</h3>
+              <div className={styles.oddWithStatus}>
+                <h3>Odd: {matchData.odd || odd || "N/A"}</h3>
+                {matchStatus && (
+                  <span
+                    className={`${styles.statusIcon} ${getStatusClassName(
+                      matchStatus
+                    )}`}
+                  >
+                    {getStatusIcon(matchStatus)}
+                  </span>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -179,22 +243,27 @@ export default function VipCard({
     );
   };
 
+  const overallStatus = isGrouped
+    ? calculateOverallStatus(originalPredictions)
+    : status;
+
   return (
     <div className={styles.card}>
-        <Image
-          className={styles.watermarkImage}
-          src={WaterMarkImage}
-          alt={"Watermark"}
-          fill
-          sizes="100%"
-          quality={100}
-          objectFit="contain"
-          priority={true}
-        />
+      <Image
+        className={styles.watermarkImage}
+        src={WaterMarkImage}
+        alt={"Watermark"}
+        fill
+        sizes="100%"
+        quality={100}
+        objectFit="contain"
+        priority={true}
+      />
       {isGrouped && originalPredictions.length > 0 ? (
         <>
           {originalPredictions.map((prediction, index) => {
-            const individualTime = times && times[index] ? times[index] : prediction.time;
+            const individualTime =
+              times && times[index] ? times[index] : prediction.time;
             return (
               <div key={prediction._id || index}>
                 {renderSingleMatch(prediction, true, individualTime)}
@@ -204,13 +273,26 @@ export default function VipCard({
               </div>
             );
           })}
-          <div className={styles.totalSection}>
+          <div
+            className={`${styles.totalSection} ${getStatusClassName(
+              overallStatus
+            )}`}
+          >
             <div className={styles.totalSectionInner}>
               <span>Total Odds: {totalOdds || "N/A"}</span>
             </div>
             <div className={styles.totalSectionInner}>
               <span>(Stake: {stake || "N/A"})</span>
             </div>
+            {overallStatus && (
+              <div className={styles.totalSectionInner}>
+                <span className={styles.overallStatus}>
+                  Status:{" "}
+                  {overallStatus.charAt(0).toUpperCase() +
+                    overallStatus.slice(1)}
+                </span>
+              </div>
+            )}
           </div>
         </>
       ) : (
@@ -223,6 +305,19 @@ export default function VipCard({
             <div className={styles.totalSectionInner}>
               <span>(Stake: {stake || "N/A"})</span>
             </div>
+            {overallStatus && (
+              <div className={styles.totalSectionInner}>
+                <span
+                  className={`${styles.overallStatus} ${getStatusClassName(
+                    overallStatus
+                  )}`}
+                >
+                  Status:{" "}
+                  {overallStatus.charAt(0).toUpperCase() +
+                    overallStatus.slice(1)}
+                </span>
+              </div>
+            )}
           </div>
         </>
       )}

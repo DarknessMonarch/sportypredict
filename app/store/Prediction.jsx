@@ -200,10 +200,7 @@ export const usePredictionStore = create(
           const data = await response.json();
       
           if (data.status === "success" && Array.isArray(data.data)) {
-            // The server already handles grouping for VIP predictions
-            // Sort them by time, handling grouped predictions
             const sortedPredictions = data.data.sort((a, b) => {
-              // Handle grouped predictions which might not have a standard time field
               const timeA = a.time ? new Date(a.time).getTime() : 0;
               const timeB = b.time ? new Date(b.time).getTime() : 0;
               return timeA - timeB;
@@ -224,7 +221,6 @@ export const usePredictionStore = create(
       },
 
 
-      // Helper method to get VIP predictions by stake
       getVIPPredictionsByStake: (stake) => {
         const state = get();
         return state.predictions.filter(pred => 
@@ -232,13 +228,11 @@ export const usePredictionStore = create(
         );
       },
 
-      // Helper method to calculate total odds for a stake group
       calculateTotalOddsForStake: (stake) => {
         const predictions = get().getVIPPredictionsByStake(stake);
         return predictions.reduce((total, pred) => total * (pred.odd || 1), 1);
       },
 
-      // Helper method to get all unique stakes for VIP predictions
       getUniqueVIPStakes: () => {
         const state = get();
         const vipPredictions = state.predictions.filter(pred => pred.category === 'vip');
@@ -246,7 +240,6 @@ export const usePredictionStore = create(
         return stakes.filter(stake => stake); // Remove empty stakes
       },
 
-      // Helper method to check if a prediction is part of a grouped VIP prediction
       isPartOfGroup: (predictionId) => {
         const state = get();
         return state.predictions.some(pred => 

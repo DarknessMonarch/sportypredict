@@ -41,18 +41,35 @@ export default function MobileFilter({
       };
     }
 
-    const sports = [...new Set(predictions.map((pred) => pred.sport))].sort();
-    const countries = [
-      ...new Set(predictions.map((pred) => pred.country)),
-    ].sort();
-    const leagues = [...new Set(predictions.map((pred) => pred.league))].sort();
-    const tips = [...new Set(predictions.map((pred) => pred.tip))].sort();
+    const sports = [...new Set(
+      predictions
+        .map((pred) => pred.sport)
+        .filter(Boolean) 
+    )].sort();
+
+    const countries = [...new Set(
+      predictions
+        .map((pred) => pred.country)
+        .filter(Boolean) 
+    )].sort();
+
+    const leagues = [...new Set(
+      predictions
+        .map((pred) => pred.league)
+        .filter(Boolean) 
+    )].sort();
+
+    const tips = [...new Set(
+      predictions
+        .map((pred) => pred.tip)
+        .filter(Boolean) 
+    )].sort();
 
     return {
-      sports: ["All", ...sports],
-      countries: ["All", ...countries],
-      leagues: ["All", ...leagues],
-      tips: ["All", ...tips],
+      sports: sports.length > 0 ? ["All", ...sports] : [],
+      countries: countries.length > 0 ? ["All", ...countries] : [],
+      leagues: leagues.length > 0 ? ["All", ...leagues] : [],
+      tips: tips.length > 0 ? ["All", ...tips] : [],
     };
   }, [predictions]);
 
@@ -219,7 +236,7 @@ export default function MobileFilter({
     if (searchParams.toString() !== params.toString()) {
       router.replace(`${pathname}?${params.toString()}`);
     }
-  }, [pathname]); // Only run when pathname changes
+  }, [pathname]);
 
   useEffect(() => {
     const country = searchParams.get("country");
@@ -274,7 +291,7 @@ export default function MobileFilter({
               />
             )}
 
-            {filterOptions.countries.length > 1 && (
+            {filterOptions.countries.length > 2 && (
               <MobileDropdown
                 options={filterOptions.countries}
                 Icon={
@@ -288,7 +305,8 @@ export default function MobileFilter({
                 selectedValue={selectedCountry}
               />
             )}
-            {filterOptions.leagues.length > 1 && (
+
+            {filterOptions.leagues.length > 2 && (
               <MobileDropdown
                 options={filterOptions.leagues}
                 Icon={

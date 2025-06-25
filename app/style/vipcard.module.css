@@ -27,7 +27,6 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: 2px solid var(--light-background-color);
-    
   }
 
   .matchInfo span {
@@ -44,12 +43,12 @@
     gap: 10px;
     display: flex;
     padding: 10px;
-    font-size: .9rem;
+    font-size: 0.9rem;
     align-items: center;
   }
-  
+
   .leagueSection h1 {
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 300;
   }
 
@@ -64,8 +63,6 @@
     justify-content: space-between;
   }
 
-
-
   .teamContainer {
     flex: 1;
     gap: 5px;
@@ -75,10 +72,8 @@
     justify-content: center;
   }
 
- 
-
   .teamContainer h2 {
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 400;
     text-transform: capitalize;
   }
@@ -89,11 +84,11 @@
     align-items: center;
     justify-content: center;
     border-left: 2px solid var(--light-background-color);
-    border-right: 2px solid var(--light-background-color); 
+    border-right: 2px solid var(--light-background-color);
   }
 
   .timeSection span {
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 300;
   }
 
@@ -104,7 +99,6 @@
     justify-content: space-between;
     border-top: 2px solid var(--light-background-color);
     border-bottom: 2px solid var(--light-background-color);
-
   }
 
   .betSectioninner {
@@ -117,11 +111,77 @@
   }
 
   .betSectioninner h3 {
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 400;
   }
 
- 
+  .oddWithStatus {
+    gap: 10px;
+    display: flex;
+    align-items: top;
+    justify-content: top;
+  }
+
+  .oddWithStatus h3 {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .statusIcon {
+    font-size: 1rem;
+  }
+
+  .statusWon {
+    color: var(--win-color);
+  }
+
+  .statusWon .statusIcon {
+    color: var(--background-color);
+  }
+
+  .statusLoss {
+    color: var(--loose-color);
+  }
+
+  .statusLoss .statusIcon {
+    color: var(--background-color);
+
+  }
+
+  .statusRefund {
+    color: var(--draw-color);
+  }
+
+  .statusRefund .statusIcon {
+    color: var(--background-color);
+  }
+
+  .statusCancelled {
+    color: var(--draw-color);
+
+  }
+
+  .statusCancelled .statusIcon {
+    color: var(--background-color);
+  }
+
+  .statusPostponed {
+    color: var(--draw-color);
+
+  }
+
+  .statusPostponed .statusIcon {
+    color: var(--background-color);
+  }
+
+  .overallStatus {
+    display: flex;
+    align-items: center;
+  }
+
+
   .adBanner {
     flex: 1;
     width: 100%;
@@ -132,12 +192,10 @@
     justify-content: center;
   }
 
-
   .advertImage {
     width: 100%;
     height: 40px;
     object-fit: contain;
-
   }
 
   .totalSection {
@@ -146,6 +204,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    color: var(--primary-color);
   }
 
   .totalSectionInner {
@@ -158,14 +217,13 @@
   }
 
   .totalSectionInner span {
-    font-size: .9rem;
+    font-size: 0.9rem;
     font-weight: 400;
   }
 
   .totalSectionInner:first-child {
     justify-content: flex-end;
   }
-  
 }
 
 /* using it as global style for larger devices  */

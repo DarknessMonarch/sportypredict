@@ -28,15 +28,50 @@ export default function FilterComponent() {
       };
     }
 
-    const countries = [
-      ...new Set(predictions.map((pred) => pred.country)),
-    ].sort();
-    const leagues = [...new Set(predictions.map((pred) => pred.league))].sort();
+    const normalizeText = (text) => {
+      if (!text) return '';
+      return text.toString()
+        .trim()
+        .replace(/\s+/g, ' ') 
+        .toLowerCase()
+    };
+
+    const countryMap = new Map();
+    predictions.forEach(pred => {
+      if (pred.country) {
+        const originalCountry = pred.country.toString().trim();
+        const normalizedKey = normalizeText(pred.country);
+        if (normalizedKey && !countryMap.has(normalizedKey)) {
+          countryMap.set(normalizedKey, originalCountry);
+        }
+      }
+    });
+
+    // Process leagues with normalization  
+    const leagueMap = new Map();
+    predictions.forEach(pred => {
+      if (pred.league) {
+        const originalLeague = pred.league.toString().trim();
+        const normalizedKey = normalizeText(pred.league);
+        if (normalizedKey && !leagueMap.has(normalizedKey)) {
+          leagueMap.set(normalizedKey, originalLeague);
+        }
+      }
+    });
+
+    const countries = Array.from(countryMap.values()).sort();
+    const leagues = Array.from(leagueMap.values()).sort();
+
+    console.log('Final countries after Map deduplication:', countries);
+    console.log('Final leagues after Map deduplication:', leagues);
 
     const leagueImages = {};
     predictions.forEach((pred) => {
-      if (pred.league && pred.leagueImage && !leagueImages[pred.league]) {
-        leagueImages[pred.league] = pred.leagueImage;
+      if (pred.league && pred.leagueImage) {
+        const normalizedLeague = pred.league.toString().trim();
+        if (normalizedLeague && !leagueImages[normalizedLeague]) {
+          leagueImages[normalizedLeague] = pred.leagueImage;
+        }
       }
     });
 
@@ -166,9 +201,9 @@ export default function FilterComponent() {
 
       {(!isVipPage || (isVip && isAuth && isVipActive)) && (
         <div className={styles.filterWrapper}>
-          {filterOptions.leagues.length > 0 &&
+          {filterOptions.leagues.length >= 2 &&
             renderFilterSection("leagues", "Filter Leagues")}
-          {filterOptions.countries.length > 0 &&
+          {filterOptions.countries.length >= 2 &&
             renderFilterSection("countries", "Filter Countries")}
         </div>
       )} 

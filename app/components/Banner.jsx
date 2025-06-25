@@ -46,6 +46,20 @@ export default function Banner() {
     router.push("payment", { scroll: false });
   };
 
+  const getStatus = (status) => {
+    switch (status) { 
+      case "pending":
+        return "Pending";
+      case "won":
+        return "Won";
+      case "lost":
+        return "Lost";
+      default:
+        return "Unknown";
+    }
+  }
+
+
   const handleAdClick = () => {
     if (currentAd?.link) {
       window.open(currentAd.link, "_blank", "noopener,noreferrer");
@@ -83,6 +97,7 @@ export default function Banner() {
       <div className={styles.btnContainer}>
         <div className={styles.bannerBtn} onClick={openVip} title="VIP">
           <VipIcon className={styles.bannerIcon} alt="vip icon" />
+          <h1>Vip tips</h1>
         </div>
         <div
           className={styles.bannerBtn}
@@ -90,9 +105,11 @@ export default function Banner() {
           title="Telegram"
         >
           <TelegramIcon className={styles.bannerIcon} alt="telegram icon" />
+          <h1>Telegram</h1>
         </div>
         <div className={styles.bannerBtn} onClick={openPricing} title="Pricing">
           <PaymentIcon className={styles.bannerIcon} alt="payment icon" />
+          <h1>Payment</h1>
         </div>
       </div>
 
