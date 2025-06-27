@@ -1,8 +1,8 @@
 "use client";
 
-import styles from "@/app/style/sportLayout.module.css";
 import Filter from "@/app/components/Filter";
 import { usePathname } from "next/navigation";
+import styles from "@/app/style/sportLayout.module.css";
 import { usePredictionStore } from "@/app/store/Prediction";
 
 export default function PageLayout({ children }) {

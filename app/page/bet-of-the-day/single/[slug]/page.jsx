@@ -24,18 +24,18 @@ export default function SingleSport() {
   const idParam = searchParams.get("id");
   const pathParts = pathname.split("/");
 
-  // Fixed path parsing for URL structure: /page/basketball/single/team1-vs-team2
   const currentSport = pathParts[2];
   const slug = pathParts[4] || "";
 
   const teamNames = slug.split("-vs-");
 
   const teamAFromUrl = teamNames[0]
-    ? decodeURIComponent(teamNames[0]).replace(/[+]/g, " ").trim()
+    ? decodeURIComponent(teamNames[0]).replace(/[-]/g, " ").replace(/[+]/g, " ").trim()
     : "";
   const teamBFromUrl = teamNames[1]
-    ? decodeURIComponent(teamNames[1]).replace(/[+]/g, " ").trim()
+    ? decodeURIComponent(teamNames[1]).replace(/[-]/g, " ").replace(/[+]/g, " ").trim()
     : "";
+
   const selectedDate = searchParams.get("date");
 
   const {
@@ -89,37 +89,22 @@ export default function SingleSport() {
       clearError();
 
       if (!teamAFromUrl || !teamBFromUrl) {
-        console.error("Missing team names:", {
-          teamAFromUrl,
-          teamBFromUrl,
-          slug,
-        });
         toast.error("Invalid team names in URL");
         return;
       }
 
       if (!currentSport) {
-        console.error("Missing sport category");
         toast.error("Sport category is missing");
         return;
       }
 
       if (!selectedDate) {
-        console.error("Missing date parameter");
         toast.error("Date parameter is missing");
         return;
       }
 
       try {
         const category = getSportCategory(currentSport);
-
-        console.log("Making API request with:", {
-          category,
-          teamA: teamAFromUrl,
-          teamB: teamBFromUrl,
-          date: selectedDate,
-          originalSport: currentSport,
-        });
 
         const result = await fetchSinglePrediction(
           category,
@@ -132,20 +117,12 @@ export default function SingleSport() {
           toast.error(result.message);
         }
       } catch (err) {
-        console.error("Error loading prediction:", err);
         toast.error("Failed to load match details");
       }
     };
 
     if (teamAFromUrl && teamBFromUrl && currentSport && selectedDate) {
       loadSinglePrediction();
-    } else {
-      console.error("Missing required parameters:", {
-        teamAFromUrl,
-        teamBFromUrl,
-        currentSport,
-        selectedDate,
-      });
     }
   }, [
     currentSport,

@@ -266,7 +266,7 @@ export default function MobileFilter({
     <div className={styles.mobileFilterContainer}>
       <div className={styles.mobileFilterHead}>
         <h1>
-          {lastParam === "day" ? "Bet of the day" : lastParam} Betting tips and
+          {lastParam === "bet-of-the-day" ? "Bet of the day" : lastParam} Betting tips and
           prediction
         </h1>
       </div>

@@ -95,7 +95,6 @@ export default function Sport() {
       !countryKey ||
       prediction.country.toLowerCase().includes(countryKey.toLowerCase());
 
-    // Filter by category instead of sport
     const matchesCategory =
       prediction.category.toLowerCase() === currentCategory.toLowerCase();
 
@@ -128,11 +127,36 @@ export default function Sport() {
 
   const handleCardClick = (teamA, teamB, id) => {
     if (id !== "empty") {
-      const selectedDate = searchParams.get("date");
-      router.push(
-        `${currentCategory}/single/${teamA}-vs-${teamB}?date=${selectedDate}`,
-        { scroll: false }
-      );
+      let selectedDate = searchParams.get("date");
+      
+      if (!selectedDate) {
+        const today = new Date();
+        selectedDate = today.toISOString().split('T')[0];
+      }
+      
+      const cleanTeamA = teamA
+        ?.toString()
+        ?.trim()
+        ?.replace(/\s+/g, '-')
+        ?.replace(/[^\w\-]/g, '')
+        ?.replace(/--+/g, '-')
+        ?.replace(/^-|-$/g, '')
+        || 'team-a';
+        
+      const cleanTeamB = teamB
+        ?.toString()
+        ?.trim()
+        ?.replace(/\s+/g, '-')
+        ?.replace(/[^\w\-]/g, '')
+        ?.replace(/--+/g, '-')
+        ?.replace(/^-|-$/g, '')
+        || 'team-b';
+      
+      const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
+      const baseUrl = `/page/${currentCategory}/single/${matchSlug}`;
+      const fullUrl = `${baseUrl}?date=${selectedDate}`;
+      
+      router.push(fullUrl, { scroll: false });
     }
   };
 

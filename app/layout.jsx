@@ -1,4 +1,4 @@
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 import "@/app/style/global.css";
 import Script from "next/script";
 import { Roboto_Condensed } from "next/font/google";
@@ -6,24 +6,30 @@ import { Roboto_Condensed } from "next/font/google";
 const roboto_Condensed = Roboto_Condensed({
   weight: ["200", "300", "400", "500", "600", "700"],
   subsets: ["latin"],
+  display: "swap",
 });
 
 const SITE_URL = "https://sportypredict.com";
-const BANNER_URL = "https://raw.githubusercontent.com/DarknessMonarch/sportypredict/refs/heads/master/public/assets/banner.png";
+const BANNER_URL =
+  "https://raw.githubusercontent.com/DarknessMonarch/sportypredict/refs/heads/master/public/assets/banner.png";
 
-export const viewport = { 
+export const viewport = {
   themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1,
+  colorScheme: "light",
 };
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
 
   title: {
-    default: "SportyPredict - Free Sports Predictions",
-    template: "%s | SportyPredict"
+    default: "Sportypredict - Expert Sports Betting Predictions & Tips",
+    template: "%s | SportyPredict",
   },
   applicationName: "SportyPredict",
-  description: "SportyPredict is the ultimate destination for accurate sports betting predictions, specializing in Sports, basketball, and tennis. We provide reliable information, tips and predictions for today, tomorrow and this weekend.",
+  description:
+    "Get expert sports betting predictions and tips on football, soccer, basketball, tennis and more at Sportypredict. Join us for winning insights and tips to boost your betting game.",
   authors: [{ name: "SportyPredict", url: SITE_URL }],
   generator: "Next.js",
   keywords: [
@@ -56,32 +62,47 @@ export const metadata = {
     "Over 1.5 Goals",
     "Under 2.5 Goals",
     "bet of the day",
+    "sports predictions",
   ],
+
+  referrer: "origin-when-cross-origin",
+  creator: "SportyPredict",
+  publisher: "SportyPredict",
+
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: "SportyPredict - Free Sports Predictions",
-    description: "SportyPredict is the ultimate destination for accurate sports betting predictions, specializing in Sports, basketball, and tennis. We provide reliable information, tips and predictions for today, tomorrow and this weekend.",
     url: SITE_URL,
     siteName: "SportyPredict",
-    images: [{
-      url: BANNER_URL,
-      width: 1200,
-      height: 630,
-      alt: "SportyPredict Banner"
-    }]
+    title: "SportyPredict - Expert Sports Betting Predictions & Tips",
+    description:
+      "Get expert sports betting predictions and tips on football, soccer, basketball, tennis and more.",
+    images: [
+      {
+        url: BANNER_URL,
+        width: 1200,
+        height: 630,
+        alt: "SportyPredict - Sports Betting Predictions",
+      },
+    ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "SportyPredict - Sports Betting Predictions & Tips",
-    description: "Expert sports betting predictions and tips",
+    title: "SportyPredict - Expert Sports Betting Predictions & Tips",
+    description:
+      "Get expert sports betting predictions and tips on football, soccer, basketball, tennis and more.",
     images: [BANNER_URL],
-    creator: "@SportyPredict"
+    creator: "@SportyPredict",
   },
 
-  robots: {
+ robots: {
     index: true,
     follow: true,
     nocache: true,
@@ -101,22 +122,67 @@ export const metadata = {
   },
 
   alternates: {
-    canonical: `${SITE_URL}/page/football`,
+    canonical: `${SITE_URL}`,
   },
-
-
 
   icons: {
     icon: "/favicon.ico",
     apple: "/icons/apple-touch-icon.png",
-    shortcut: "/favicon.ico"
+    shortcut: "/favicon.ico",
   },
 };
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "SportyPredict",
+  url: SITE_URL,
+  logo: `${SITE_URL}/assets/logo.png`,
+  description: "Expert sports betting predictions and tips platform",
+  sameAs: [
+    "https://www.facebook.com/profile.php?id=100093225097104&mibextid=LQQJ4d",
+    "https://whatsapp.com/channel/0029VaADp5iL7UVSqjrKVw2h",
+    "https://twitter.com/sportypredict?s=21&t=ordgrMn8HjrBLUy3PdpsBA",
+    "https://instagram.com/sportypredict_?igshid=MTIzZWMxMTBkOA==",
+    "https://www.youtube.com/@Sportypredict",
+    "https://t.me/sportyPredictTG",
+    "https://www.tiktok.com/@sportypredict?_t=8dxjShAnRI5&_r=1"
+
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "contact@sportypredict.com",
+    contactType: "Customer Support",
+    url: SITE_URL,
+    telephone: "254703147237",
+    areaServed: "Worldwide",
+    availableLanguage: "English",
+  },
+  sameAs: [
+    "https://www.facebook.com/profile.php?id=100093225097104&mibextid=LQQJ4d",
+    "https://whatsapp.com/channel/0029VaADp5iL7UVSqjrKVw2h",
+    "https://twitter.com/sportypredict?s=21&t=ordgrMn8HjrBLUy3PdpsBA",
+    "https://instagram.com/sportypredict_?igshid=MTIzZWMxMTBkOA==",
+    "https://www.youtube.com/@Sportypredict",
+    "https://t.me/sportyPredictTG",
+    "https://www.tiktok.com/@sportypredict?_t=8dxjShAnRI5&_r=1"
+  ],
+      
+};
+
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+            {/* Organization Schema - Global */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema)
+          }}
+        />
+
         {/* Google Tag Manager */}
         <Script
           id="gtm-script"
@@ -131,7 +197,7 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
-        
+
         {/* PayPal SDK */}
         {/* <Script
           id="paypal-sdk"
@@ -142,14 +208,14 @@ export default function RootLayout({ children }) {
       <body className={roboto_Condensed.className}>
         {/* Google Tag Manager (noscript) */}
         <noscript>
-          <iframe 
+          <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-K2Z5KL8G"
-            height="0" 
-            width="0" 
-            style={{ display: 'none', visibility: 'hidden' }}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        
+
         {/* Google Analytics */}
         <Script
           id="ga-tag"
@@ -170,7 +236,7 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
-        
+
         <Toaster
           position="top-center"
           richColors={true}

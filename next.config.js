@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
-  transpilePackages: ['@google-translate-select/react'],
   images: {
     remotePatterns: [
       {
@@ -17,23 +16,13 @@ const nextConfig = {
         pathname: '/dttvkmjpd/image/upload/**',
       },
       {
-      protocol: 'https',
-      hostname: 'minio.swiftsyn.com',
-      port: '',
-      pathname: '/**', 
-    }
+        protocol: 'https',
+        hostname: 'minio.swiftsyn.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
-    
-  },
 
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/page/football',
-        permanent: true,
-      },
-    ];
   }
 };
 

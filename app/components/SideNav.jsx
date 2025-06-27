@@ -25,7 +25,6 @@ import {
   MdOutlineSportsTennis as TennisIcon,
 } from "react-icons/md";
 import { PiCourtBasketball as BetOfTheDayIcon } from "react-icons/pi";
-import { TbStars as ExtraIcon } from "react-icons/tb";
 
 import { 
   IoNewspaperOutline as NewsIcon,
@@ -380,9 +379,9 @@ export default function SideNavComponent() {
                 <h1>Football</h1>
               </Link>
               <Link
-                href="/page/day"
+                href="/page/bet-of-the-day"
                 className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/day" || pathname.startsWith("/page/day")
+                  pathname === "/page/bet-of-the-day" || pathname.startsWith("/page/bet-of-the-day")
                     ? styles.activesideNav
                     : ""
                 }`}
@@ -390,7 +389,7 @@ export default function SideNavComponent() {
               >
                 <BetOfTheDayIcon
                   className={styles.sideNavIcon}
-                  alt="day icon"
+                  alt="bet of the day icon"
                 />
                 <h1>Bet of the day</h1>
               </Link>
@@ -423,20 +422,7 @@ export default function SideNavComponent() {
                 <TennisIcon className={styles.sideNavIcon} alt="tennis icon" />
                 <h1>Tennis</h1>
               </Link>
-              <Link
-                href="/page/extra"
-                className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/extra" ||
-                  pathname.startsWith("/single/extra")
-                    ? styles.activesideNav
-                    : ""
-                }`}
-                onClick={handleLinkClick}
-              >
-                <ExtraIcon className={styles.sideNavIcon} alt="extra icon" />
-                <h1>Extra prediction</h1>
-              </Link>
-
+          
               {/* Mobile-only navigation links */}
               {isMobile && (
                 <>
