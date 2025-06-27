@@ -6,18 +6,21 @@ async function getMatchUrls() {
     
     const apiUrl = `${baseUrl}/api/predictions/sitemap`;
     
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
     const response = await fetch(apiUrl, {
       next: { revalidate: 3600 },
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'NextJS-Sitemap-Generator'
       },
-      signal: AbortSignal.timeout(15000)
+      signal: controller.signal
     });
     
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      const errorText = await response.text();
-      console.warn(`Failed to fetch match data for sitemap. Status: ${response.status}, Body: ${errorText}`);
       return [];
     }
     
@@ -45,7 +48,6 @@ async function getMatchUrls() {
     return matchUrls;
     
   } catch (error) {
-    console.error('Error fetching predictions for sitemap:', error);
     return [];
   }
 }
@@ -58,18 +60,21 @@ async function getNewsUrls() {
     
     const apiUrl = `${baseUrl}/api/news/sitemap`;
     
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
     const response = await fetch(apiUrl, {
       next: { revalidate: 7200 },
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'NextJS-Sitemap-Generator'
       },
-      signal: AbortSignal.timeout(15000)
+      signal: controller.signal
     });
     
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      const errorText = await response.text();
-      console.warn(`Failed to fetch news data for sitemap. Status: ${response.status}`);
       return [];
     }
     
@@ -95,7 +100,6 @@ async function getNewsUrls() {
     return newsUrls;
     
   } catch (error) {
-    console.error('Error fetching news for sitemap:', error);
     return [];
   }
 }
@@ -108,18 +112,21 @@ async function getBlogUrls() {
     
     const apiUrl = `${baseUrl}/api/blog/sitemap`;
     
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
     const response = await fetch(apiUrl, {
       next: { revalidate: 86400 },
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'NextJS-Sitemap-Generator'
       },
-      signal: AbortSignal.timeout(15000)
+      signal: controller.signal
     });
     
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      const errorText = await response.text();
-      console.warn(`Failed to fetch blog data for sitemap. Status: ${response.status}`);
       return [];
     }
     
@@ -149,7 +156,6 @@ async function getBlogUrls() {
     return blogUrls;
     
   } catch (error) {
-    console.error('Error fetching blogs for sitemap:', error);
     return [];
   }
 }
@@ -181,7 +187,6 @@ async function getCategoryUrls() {
     return categoryUrls;
     
   } catch (error) {
-    console.error('Error generating category URLs:', error);
     return [];
   }
 }
