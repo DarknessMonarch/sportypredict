@@ -247,7 +247,6 @@ const articleSchema = {
   ]
 };
 
-import ClientLayout from "@/app/refund-policy/clientLayout";
 
 export default function RefundPolicyLayout({ children }) {
   return (
@@ -267,7 +266,7 @@ export default function RefundPolicyLayout({ children }) {
         }}
       />
       
-      <ClientLayout>{children}</ClientLayout>
+   {children}
     </>
   );
 }

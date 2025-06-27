@@ -126,7 +126,6 @@ export async function generateMetadata({ searchParams }) {
     console.error('Error generating blog metadata:', error);
   }
 
-  // Fallback to default blog metadata if blog not found
   return {
     title: 'Sports Blog | Expert Insights | SportyPredict',
     description: 'Expert insights, analysis and thoughts on sports betting, predictions, and industry trends.',

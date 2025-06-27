@@ -149,7 +149,6 @@ const faqSchema = {
   ]
 };
 
-import ClientLayout from "@/app/contact/clientLayout";
 
 export default function ContactLayout({ children }) {
   return (
@@ -167,7 +166,7 @@ export default function ContactLayout({ children }) {
         }}
       />
       
-      <ClientLayout>{children}</ClientLayout>
+     {children}
     </>
   );
 }

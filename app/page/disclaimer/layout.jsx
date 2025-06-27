@@ -173,7 +173,6 @@ const legalDocumentSchema = {
   ]
 };
 
-import ClientLayout from "@/app/disclaimer/clientLayout";
 
 export default function DisclaimerLayout({ children }) {
   return (
@@ -192,7 +191,7 @@ export default function DisclaimerLayout({ children }) {
         }}
       />
       
-      <ClientLayout>{children}</ClientLayout>
+   {children}
     </>
   );
 }

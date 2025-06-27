@@ -100,7 +100,6 @@ const breadcrumbSchema = {
   ]
 };
 
-import ClientLayout from "@/app/about/clientLayout";
 
 export default function AboutLayout({ children }) {
   return (
@@ -112,7 +111,7 @@ export default function AboutLayout({ children }) {
         }}
       />
       
-      <ClientLayout>{children}</ClientLayout>
+      {children}
     </>
   );
 }

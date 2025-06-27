@@ -277,7 +277,6 @@ const articleSchema = {
   ]
 };
 
-import ClientLayout from "@/app/terms/clientLayout";
 
 export default function TermsConditionsLayout({ children }) {
   return (
@@ -297,7 +296,7 @@ export default function TermsConditionsLayout({ children }) {
         }}
       />
       
-      <ClientLayout>{children}</ClientLayout>
+    {children}
     </>
   );
 }

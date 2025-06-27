@@ -219,7 +219,6 @@ const articleSchema = {
   ]
 };
 
-import ClientLayout from "@/app/privacy-policy/clientLayout";
 
 export default function PrivacyPolicyLayout({ children }) {
   return (
@@ -238,7 +237,7 @@ export default function PrivacyPolicyLayout({ children }) {
         }}
       />
       
-      <ClientLayout>{children}</ClientLayout>
+   {children}
     </>
   );
 }
