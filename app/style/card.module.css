@@ -45,10 +45,32 @@
   }
 
   .cardStatus span {
-    font-size: 0.8rem;
     font-weight: 400;
-    color: var(--loose-color);
+    font-size: 0.8rem;
     text-transform: capitalize;
+  }
+
+  .cardStatus .statusWon {
+    color: var(--win-color);
+  }
+  .cardStatus .statusCancelled {
+    color: var(--loose-color);
+  }
+  .cardStatus .statusLoss {
+    color: var(--loose-color);
+  }
+
+  .cardStatus .statusRefund {
+    color: var(--draw-color);
+  }
+  .cardStatus .statusCancelled {
+    color: var(--draw-color);
+  }
+  .cardStatus .statusPostponed {
+    color: var(--draw-color);
+  }
+  .cardStatus .statusRefund {
+    color: var(--draw-color);
   }
 
   .cardMiddle {
@@ -188,7 +210,7 @@
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
   .cardContainer {
-    width: 100%; 
+    width: 100%;
     max-width: 400px;
   }
 

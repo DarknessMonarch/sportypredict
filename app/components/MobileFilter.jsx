@@ -41,29 +41,21 @@ export default function MobileFilter({
       };
     }
 
-    const sports = [...new Set(
-      predictions
-        .map((pred) => pred.sport)
-        .filter(Boolean) 
-    )].sort();
+    const sports = [
+      ...new Set(predictions.map((pred) => pred.sport).filter(Boolean)),
+    ].sort();
 
-    const countries = [...new Set(
-      predictions
-        .map((pred) => pred.country)
-        .filter(Boolean) 
-    )].sort();
+    const countries = [
+      ...new Set(predictions.map((pred) => pred.country).filter(Boolean)),
+    ].sort();
 
-    const leagues = [...new Set(
-      predictions
-        .map((pred) => pred.league)
-        .filter(Boolean) 
-    )].sort();
+    const leagues = [
+      ...new Set(predictions.map((pred) => pred.league).filter(Boolean)),
+    ].sort();
 
-    const tips = [...new Set(
-      predictions
-        .map((pred) => pred.tip)
-        .filter(Boolean) 
-    )].sort();
+    const tips = [
+      ...new Set(predictions.map((pred) => pred.tip).filter(Boolean)),
+    ].sort();
 
     return {
       sports: sports.length > 0 ? ["All", ...sports] : [],
@@ -273,7 +265,10 @@ export default function MobileFilter({
   return (
     <div className={styles.mobileFilterContainer}>
       <div className={styles.mobileFilterHead}>
-        <h1>{lastParam} Betting tips and prediction</h1>
+        <h1>
+          {lastParam === "day" ? "Bet of the day" : lastParam} Betting tips and
+          prediction
+        </h1>
       </div>
       <div className={styles.filterContainer}>
         <h1>Filter by:</h1>

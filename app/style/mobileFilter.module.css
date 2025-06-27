@@ -5,6 +5,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    flex-direction: column;
     justify-content: center;
   }
 
@@ -215,6 +216,7 @@
 @media only screen and (min-width: 48em) {
   .mobileFilterContainer {
     width: 100%;
+    flex-direction: row;
     justify-content: space-between;
   }
 

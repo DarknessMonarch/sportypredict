@@ -170,6 +170,7 @@
     padding: 10px;
     cursor: pointer;
     min-width: 120px;
+    text-wrap: nowrap;
     font-size: 0.9rem;
     font-weight: 300px;
     border-radius: 10px;

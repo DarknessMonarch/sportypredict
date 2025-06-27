@@ -58,9 +58,9 @@ export default function VipCard({
   const getStatusIcon = (status) => {
     const statusIcons = {
       won: "✓",
-      loss: "✗",
+      loss: "x",
       refund: "↻",
-      cancelled: "⊗",
+      cancelled: "/",
       postponed: "⏸",
     };
     return statusIcons[status] || "";
@@ -72,28 +72,21 @@ export default function VipCard({
     const statuses = predictions.map((p) => p.status).filter(Boolean);
     if (statuses.length === 0) return null;
 
-    // If any game is a loss, overall is loss
     if (statuses.includes("loss")) return "loss";
 
-    // If any game is cancelled, overall is cancelled
     if (statuses.includes("cancelled")) return "cancelled";
 
-    // If any game is postponed, overall is postponed
     if (statuses.includes("postponed")) return "postponed";
 
-    // If all games are won, overall is won
     if (statuses.every((s) => s === "won")) return "won";
 
-    // If mix of won and refund, overall is won
     if (statuses.includes("won") && statuses.includes("refund")) return "won";
 
-    // If all are refund, overall is refund
     if (statuses.every((s) => s === "refund")) return "refund";
 
     return null;
   };
 
-  // Get status class name
   const getStatusClassName = (status) => {
     const statusClasses = {
       won: styles.statusWon,

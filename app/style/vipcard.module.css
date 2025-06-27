@@ -129,51 +129,37 @@
     justify-content: center;
   }
 
+
   .statusIcon {
-    font-size: 1rem;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    font-size: .9rem;
+    border-radius: 50%;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
   }
 
-  .statusWon {
-    color: var(--win-color);
-  }
-
-  .statusWon .statusIcon {
+  .oddWithStatus .statusWon {
     color: var(--background-color);
+    background-color: var(--win-color);
   }
-
-  .statusLoss {
-    color: var(--loose-color);
-  }
-
-  .statusLoss .statusIcon {
+  .oddWithStatus .statusLoss {
     color: var(--background-color);
-
+    background-color: var(--loose-color);
   }
-
-  .statusRefund {
-    color: var(--draw-color);
-  }
-
-  .statusRefund .statusIcon {
+  .oddWithStatus .statusRefund {
     color: var(--background-color);
+    background-color: var(--draw-color);
   }
-
-  .statusCancelled {
-    color: var(--draw-color);
-
-  }
-
-  .statusCancelled .statusIcon {
+  .oddWithStatus .statusCancelled {
     color: var(--background-color);
+    background-color: var(--loose-color);
   }
-
-  .statusPostponed {
-    color: var(--draw-color);
-
-  }
-
-  .statusPostponed .statusIcon {
+  .oddWithStatus .statusPostponed {
     color: var(--background-color);
+    background-color: var(--draw-color);
   }
 
   .overallStatus {
@@ -181,6 +167,25 @@
     align-items: center;
   }
 
+  .statusLoss .overallStatus {
+    color: var(--loose-color);
+  }
+
+  .statusWon .overallStatus {
+    color: var(--win-color);
+  }
+
+  .statusRefund .overallStatus {
+    color: var(--draw-color);
+  }
+
+  .statusCancelled .overallStatus {
+    color: var(--draw-color);
+  }
+
+  .statusPostponed .overallStatus {
+    color: var(--draw-color);
+  }
 
   .adBanner {
     flex: 1;

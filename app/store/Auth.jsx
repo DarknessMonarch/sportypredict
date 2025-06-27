@@ -32,7 +32,7 @@ export const useAuthStore = create(
       statusCheckTimeoutId: null,
       vipCheckTimeoutId: null,
       emailVerified: false,
-      isInitialized: false, 
+      isInitialized: false,
 
       activeUsersCount: 0,
       vipUsersCount: 0,
@@ -48,11 +48,11 @@ export const useAuthStore = create(
 
       notifyVipStatusChange: (newStatus, oldStatus) => {
         const { vipStatusListeners } = get();
-        vipStatusListeners.forEach(callback => {
+        vipStatusListeners.forEach((callback) => {
           try {
             callback(newStatus, oldStatus);
           } catch (error) {
-            console.error('VIP status listener error:', error);
+            console.error("VIP status listener error:", error);
           }
         });
 
@@ -67,18 +67,18 @@ export const useAuthStore = create(
 
       isVipActive: () => {
         const { isVip, expires, isAdmin } = get();
-        
+
         // If user is not VIP, return false
         if (!isVip) return false;
-        
+
         // If there's no expiration date, consider it active (permanent)
         if (!expires) return true;
-        
+
         // Check if the subscription is still active based on expiration date
         const now = new Date();
         const expirationDate = new Date(expires);
         const isActive = expirationDate > now;
-        
+
         // If VIP status expired, handle the expiration
         if (isVip && !isActive) {
           setTimeout(() => {
@@ -92,7 +92,7 @@ export const useAuthStore = create(
       handleVipExpiration: () => {
         const currentState = get();
         if (currentState.isVip && !get().isVipActive()) {
-          console.log('VIP subscription expired, updating status...');
+          console.log("VIP subscription expired, updating status...");
           get().updateUser({ isVip: false });
           get().forceVipStatusRefresh();
         }
@@ -100,7 +100,7 @@ export const useAuthStore = create(
 
       initializeAuth: async () => {
         const state = get();
-        
+
         if (state.isInitialized) return;
         set({ isInitialized: true });
 
@@ -109,15 +109,17 @@ export const useAuthStore = create(
         }
 
         const now = Date.now();
-        const tokenExpired = !state.tokenExpirationTime || state.tokenExpirationTime <= now;
-        const tokenExpiringSoon = state.tokenExpirationTime && (state.tokenExpirationTime - now) < 300000; // 5 minutes
+        const tokenExpired =
+          !state.tokenExpirationTime || state.tokenExpirationTime <= now;
+        const tokenExpiringSoon =
+          state.tokenExpirationTime && state.tokenExpirationTime - now < 300000; // 5 minutes
 
         if (tokenExpired || tokenExpiringSoon) {
-          console.log('Token expired or expiring soon, attempting refresh...');
+          console.log("Token expired or expiring soon, attempting refresh...");
           const refreshSuccess = await get().refreshAccessToken();
-          
+
           if (!refreshSuccess) {
-            console.log('Token refresh failed, clearing user data');
+            console.log("Token refresh failed, clearing user data");
             get().clearUser();
             return;
           }
@@ -126,24 +128,23 @@ export const useAuthStore = create(
         try {
           const isValid = await get().validateAuthState();
           if (!isValid) {
-            console.log('Auth state validation failed, clearing user data');
+            console.log("Auth state validation failed, clearing user data");
             get().clearUser();
             return;
           }
 
-          console.log('Auth state validated successfully');
-          
+          console.log("Auth state validated successfully");
+
           get().handleVipExpiration();
-          
+
           get().scheduleTokenRefresh();
           get().scheduleStatusCheck();
           get().scheduleVipStatusCheck();
           get().startVipExpirationMonitor();
-          
+
           setTimeout(() => {
             get().forceVipStatusRefresh();
           }, 1000);
-
         } catch (error) {
           get().clearUser();
         }
@@ -155,7 +156,7 @@ export const useAuthStore = create(
           if (!accessToken) return false;
 
           const response = await fetch(`${SERVER_API}/auth/validate`, {
-            method: 'GET',
+            method: "GET",
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -175,7 +176,7 @@ export const useAuthStore = create(
 
           return false;
         } catch (error) {
-          console.error('Auth validation error:', error);
+          console.error("Auth validation error:", error);
           return false;
         }
       },
@@ -187,7 +188,7 @@ export const useAuthStore = create(
       setUser: (userData) => {
         const currentVipStatus = get().isVipActive();
         const tokenExpirationTime = Date.now() + TOKEN_REFRESH_INTERVAL;
-        
+
         set({
           isAuth: true,
           userId: userData.id,
@@ -209,7 +210,7 @@ export const useAuthStore = create(
           refreshToken: userData.tokens.refreshToken,
           lastLogin: userData.lastLogin || new Date().toISOString(),
           tokenExpirationTime,
-          isInitialized: true, 
+          isInitialized: true,
         });
 
         const newVipStatus = get().isVipActive();
@@ -225,7 +226,7 @@ export const useAuthStore = create(
       updateUser: (userData) => {
         const currentState = get();
         const oldVipStatus = currentState.isVipActive();
-        
+
         set((state) => ({
           ...state,
           ...userData,
@@ -239,11 +240,11 @@ export const useAuthStore = create(
 
       clearUser: () => {
         const currentVipStatus = get().isVipActive();
-        
+
         get().cancelTokenRefresh();
         get().cancelStatusCheck();
         get().cancelVipStatusCheck();
-        
+
         set({
           isAuth: false,
           userId: "",
@@ -267,11 +268,37 @@ export const useAuthStore = create(
           statusCheckTimeoutId: null,
           vipCheckTimeoutId: null,
           emailVerified: false,
-          isInitialized: false, 
+          isInitialized: false,
         });
 
         if (currentVipStatus) {
           get().notifyVipStatusChange(false, currentVipStatus);
+        }
+      },
+
+      resendVerificationCode: async (email) => {
+        try {
+          const response = await fetch(
+            `${SERVER_API}/auth/resend-verification`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            }
+          );
+
+          const data = await response.json();
+          return {
+            success: data.status === "success",
+            message: data.message,
+          };
+        } catch (error) {
+          return {
+            success: false,
+            message: "Failed to resend verification code",
+          };
         }
       },
 
@@ -292,10 +319,10 @@ export const useAuthStore = create(
           if (data.status === "success") {
             const serverVipStatus = data.data.isVip;
             const serverExpires = data.data.expires;
-            
+
             // Always update with server data
-            const hasChanges = 
-              get().isVip !== serverVipStatus || 
+            const hasChanges =
+              get().isVip !== serverVipStatus ||
               expires !== serverExpires ||
               get().vipPlan !== data.data.vipPlan;
 
@@ -351,7 +378,7 @@ export const useAuthStore = create(
           const data = await response.json();
           if (data.status === "success") {
             const currentState = get();
-            
+
             const hasChanges =
               currentState.isVip !== data.data.isVip ||
               currentState.vipPlan !== data.data.vipPlan ||
@@ -410,29 +437,27 @@ export const useAuthStore = create(
       },
 
       forceVipStatusRefresh: async () => {
-        await Promise.all([
-          get().checkVipStatus(),
-          get().checkUserStatus()
-        ]);
+        await Promise.all([get().checkVipStatus(), get().checkUserStatus()]);
       },
 
       startVipExpirationMonitor: () => {
         const checkExpiration = () => {
           const { isVip, expires, isAdmin } = get();
-          
+
           // Only skip expiration monitoring if admin has no expiration date
           if (isAdmin && !expires) return;
-          
+
           if (isVip && expires) {
             const now = new Date();
             const expirationDate = new Date(expires);
             const timeUntilExpiration = expirationDate - now;
 
             if (timeUntilExpiration <= 0) {
-              console.log('VIP expired, updating status...');
+              console.log("VIP expired, updating status...");
               get().updateUser({ isVip: false });
               get().forceVipStatusRefresh();
-            } else if (timeUntilExpiration <= 60000) { // 1 minute
+            } else if (timeUntilExpiration <= 60000) {
+              // 1 minute
               setTimeout(checkExpiration, 5000); // Check every 5 seconds
             } else {
               setTimeout(checkExpiration, VIP_STATUS_CHECK_INTERVAL);
@@ -493,12 +518,12 @@ export const useAuthStore = create(
         try {
           const response = await fetch(`${SERVER_API}/auth/verify-email`, {
             method: "POST",
-            headers: { 
+            headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ email, verificationCode }),
           });
-      
+
           const data = await response.json();
           if (data.status === "success") {
             set({ emailVerified: true });
@@ -517,15 +542,15 @@ export const useAuthStore = create(
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData),
           });
-      
+
           const data = await response.json();
-      
+
           if (data.status === "success") {
             const userWithTokens = {
               ...data.data.user,
               tokens: data.data.tokens,
             };
-            
+
             get().setUser(userWithTokens);
             return { success: true, message: data.message };
           }
@@ -542,54 +567,58 @@ export const useAuthStore = create(
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
           });
-      
+
           const data = await response.json();
-      
+
           if (data.data?.user?.emailVerified === false) {
-            return { 
-              success: false, 
+            return {
+              success: false,
               message: "Please verify your email to log in. Check your inbox.",
               requiresVerification: true,
               email: data.data.user.email,
-              username: data.data.user.username
+              username: data.data.user.username,
             };
           }
-      
-          if (data.status === "success" && data.data?.user && data.data?.tokens) {
+
+          if (
+            data.status === "success" &&
+            data.data?.user &&
+            data.data?.tokens
+          ) {
             const userWithTokens = {
               ...data.data.user,
               tokens: data.data.tokens,
             };
-      
+
             get().setUser(userWithTokens);
             get().startVipExpirationMonitor();
-            
-            return { 
-              success: true, 
+
+            return {
+              success: true,
               message: data.message,
               isVip: get().isVipActive(), // Use computed VIP status
-              isAdmin: data.data.user.isAdmin 
+              isAdmin: data.data.user.isAdmin,
             };
           }
-      
-          return { 
-            success: false, 
-            message: data.message || "Login failed"
+
+          return {
+            success: false,
+            message: data.message || "Login failed",
           };
         } catch (error) {
-          return { 
-            success: false, 
-            message: "Login failed"
+          return {
+            success: false,
+            message: "Login failed",
           };
         }
       },
-      
+
       logout: async () => {
         try {
           const { accessToken } = get();
-          
+
           get().clearUser();
-          
+
           if (accessToken) {
             try {
               await fetch(`${SERVER_API}/auth/logout`, {
@@ -602,7 +631,7 @@ export const useAuthStore = create(
               console.warn("Server logout notification failed:", error);
             }
           }
-          
+
           return { success: true, message: "Logout successful" };
         } catch (error) {
           get().clearUser();
@@ -638,7 +667,7 @@ export const useAuthStore = create(
               get().forceVipStatusRefresh();
               get().startVipExpirationMonitor();
             }, 1000);
-            
+
             return { success: true, message: data.message };
           }
           return { success: false, message: data.message };
@@ -692,14 +721,17 @@ export const useAuthStore = create(
       updateProfileImage: async (imageData) => {
         try {
           const { accessToken } = get();
-          const response = await fetch(`${SERVER_API}/auth/update-profile-image`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ image: imageData }),
-          });
+          const response = await fetch(
+            `${SERVER_API}/auth/update-profile-image`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+              body: JSON.stringify({ image: imageData }),
+            }
+          );
 
           const data = await response.json();
           if (data.status === "success") {
@@ -714,11 +746,14 @@ export const useAuthStore = create(
 
       requestPasswordReset: async (email) => {
         try {
-          const response = await fetch(`${SERVER_API}/auth/reset-password-request`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          });
+          const response = await fetch(
+            `${SERVER_API}/auth/reset-password-request`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email }),
+            }
+          );
 
           const data = await response.json();
           return { success: data.status === "success", message: data.message };
@@ -749,11 +784,11 @@ export const useAuthStore = create(
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, username, message }),
           });
-      
+
           const data = await response.json();
-          return { 
-            success: data.status === "success", 
-            message: data.message 
+          return {
+            success: data.status === "success",
+            message: data.message,
           };
         } catch (error) {
           return { success: false, message: "Failed to submit contact form" };
@@ -767,7 +802,7 @@ export const useAuthStore = create(
           if (!accessToken) {
             return { success: false, message: "Not authenticated" };
           }
-          
+
           const response = await fetch(`${SERVER_API}/auth/delete-account`, {
             method: "DELETE",
             headers: {
@@ -840,7 +875,7 @@ export const useAuthStore = create(
       getVipTimeRemaining: () => {
         const { expires, isAdmin } = get();
         // Only return Infinity for admins without expiration dates
-        if (isAdmin && !expires) return Infinity; 
+        if (isAdmin && !expires) return Infinity;
         if (!expires) return 0;
         const remaining = new Date(expires) - new Date();
         return Math.max(0, remaining);
@@ -849,7 +884,7 @@ export const useAuthStore = create(
       getVipDaysRemaining: () => {
         const { isAdmin, expires } = get();
         // Only return null for admins without expiration dates
-        if (isAdmin && !expires) return null; 
+        if (isAdmin && !expires) return null;
         const timeRemaining = get().getVipTimeRemaining();
         return Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
       },

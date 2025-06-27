@@ -116,20 +116,40 @@
   }
 
   .statusIcon {
-    font-size: var(--font-size-3);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    font-size: .9rem;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+
   }
 
-  .success {
-    border: 1px solid var(--win-color);
+  .statusWon .statusIcon {
+    background-color: var(--win-color);
+  }
+  .statusCancelled .statusIcon {
+    background-color: var(--loose-color);
+  }
+  .statusLoss .statusIcon {
+    background-color: var(--loose-color);
   }
 
-  .failure {
-    border: 1px solid var(--loose-color);
+  .statusRefund .statusIcon {
+    background-color: var(--draw-color);
+  }
+  .statusCancelled .statusIcon {
+    background-color: var(--draw-color);
+  }
+  .statusPostponed .statusIcon {
+    background-color: var(--draw-color);
+  }
+  .statusRefund .statusIcon {
+    background-color: var(--draw-color);
   }
 
-  .pending {
-    border: 1px solid var(--draw-color);
-  }
 
   .countdownSection {
     gap: 10px;

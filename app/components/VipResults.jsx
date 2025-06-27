@@ -120,6 +120,34 @@ export default function VipResults({ }) {
     setTimeRemaining(calculateTimeRemaining());
   }, [matchTime, clearTimer, calculateTimeRemaining]);
 
+  const getStatusIcon = (status) => {
+    const statusIcons = {
+      win: "✓",
+      won: "✓",
+      loss: "×",
+      refund: "↻",
+      cancelled: "/",
+      postponed: "⏸",
+      draw: "○",
+      pending: "○",
+    };
+    return statusIcons[status] || "○";
+  };
+
+  const getStatusClassName = (status) => {
+    const statusClasses = {
+      win: styles.statusWon,
+      won: styles.statusWon,
+      loss: styles.statusLoss,
+      refund: styles.statusRefund,
+      cancelled: styles.statusCancelled,
+      postponed: styles.statusPostponed,
+      draw: styles.statusPending,
+      pending: styles.statusPending,
+    };
+    return statusClasses[status] || styles.statusPending;
+  };
+
   useEffect(() => {
     fetchResults();
     getMatchTime();
@@ -130,25 +158,22 @@ export default function VipResults({ }) {
   }, [fetchResults, getMatchTime, clearTimer]);
 
   useEffect(() => {
-    // Check if matchTime exists and has valid data
     if (matchTime && matchTime.active && matchTime.time && matchTime.time !== "") {
       startCountdown();
     } else {
-      // Clear timer and reset to 0:0:0 when matchTime is invalid
       clearTimer();
       setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
     }
   }, [matchTime, startCountdown, clearTimer]);
 
-const formattedResults = results
-  .slice(0, 6) 
-  .map((result) => ({
-    day: result.day,
-    date: result.date,
-    success: result.result === "win",
-    failure: result.result === "loss",
-    pending: result.result === "draw" || result.result === "pending",
-  }));
+  const formattedResults = results
+    .slice(0, 6) 
+    .map((result) => ({
+      day: result.day,
+      date: result.date,
+      result: result.result,
+      status: result.result,
+    }));
   
   const hasTimeRemaining = timeRemaining.hours > 0 || timeRemaining.minutes > 0 || timeRemaining.seconds > 0;
   const hasValidMatchTime = matchTime?.active && matchTime?.time && matchTime.time !== "";
@@ -217,17 +242,11 @@ const formattedResults = results
                 <div key={index} className={styles.resultItem}>
                   <h3>{result.day}</h3>
                   <div
-                    className={`${styles.resultBadge} ${
-                      result.pending
-                        ? styles.pending
-                        : result.success
-                        ? styles.success
-                        : styles.failure
-                    }`}
+                    className={`${styles.resultBadge} ${getStatusClassName(result.status)}`}
                   >
-                    {result.date}
+                    <span className={styles.resultDate}>{result.date}</span>
                     <span className={styles.statusIcon}>
-                      {result.pending ? "○" : result.success ? "✓" : "×"}
+                      {getStatusIcon(result.status)}
                     </span>
                   </div>
                 </div>

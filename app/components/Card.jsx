@@ -42,6 +42,20 @@ export default function SportCard({
     }
   };
 
+  const getStatusClassName = (status) => {
+    const statusClasses = {
+      win: styles.statusWon,
+      won: styles.statusWon,
+      loss: styles.statusLoss,
+      refund: styles.statusRefund,
+      cancelled: styles.statusCancelled,
+      postponed: styles.statusPostponed,
+      draw: styles.statusPending,
+      pending: styles.statusPending,
+    };
+    return statusClasses[status] || styles.statusDefault;
+  };
+
   return (
     <div className={styles.cardContainer}>
       <div className={styles.cardTop}>
@@ -57,7 +71,9 @@ export default function SportCard({
           <h1>{league}</h1>
         </div>
         <div className={styles.cardStatus}>
-          <span>{status ? status : ""}</span>
+          <span className={status ? getStatusClassName(status) : ""}>
+            {status ? status.charAt(0).toUpperCase() + status.slice(1) : ""}
+          </span>
         </div>
       </div>
       <div className={styles.cardMiddle}>

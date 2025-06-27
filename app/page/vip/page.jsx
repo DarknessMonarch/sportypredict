@@ -310,10 +310,8 @@ export default function Vip() {
 
   const handleVipSlipFilterChange = useCallback(
     (vipSlipValue) => {
-      // Update local state immediately for UI responsiveness
       setVipSlipFilter(vipSlipValue);
 
-      // Update URL parameters
       const params = new URLSearchParams(searchParams.toString());
       if (vipSlipValue) {
         params.set("vipSlip", vipSlipValue);
@@ -323,9 +321,6 @@ export default function Vip() {
 
       const newUrl = `${pathname}?${params.toString()}`;
       router.push(newUrl, { scroll: false });
-
-      // Don't manually refresh here - let the useEffect handle it
-      // The useEffect watching searchParams will trigger the fetch
     },
     [searchParams, pathname, router]
   );
