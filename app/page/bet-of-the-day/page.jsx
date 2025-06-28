@@ -114,6 +114,27 @@ export default function Sport() {
 
   const shouldShowNothing = !loading && filteredPredictions.length === 0;
 
+   const renderPredictionInfo = () => {
+    return (
+      <div className={styles.predictionInfo}>
+        <h1>Bet of the day</h1>
+        <p>
+          {" "}
+           On this page we offer Free Bet Of The Day in either football, basketball or tennis
+        predictions from our experts, Once you get access to our Bet of The Day prediction you would
+        get the opportunity to win huge. We ensure that our predictions are accurate and you can now
+        get rid of all confusion.
+        </p>
+        <h2>What does Bet of the day mean?</h2>
+        <p>
+          {" "}
+            It&apos; the safest tip, usually with low odds. They are perfect for accumulators/ rollovers.
+        </p>
+      </div>
+    );
+  };
+
+
   const renderEmptyCards = () => {
     return Array(emptyCardCount)
       .fill(0)
@@ -215,6 +236,7 @@ export default function Sport() {
             }
           />
         </div>
+        {renderPredictionInfo()}
       </div>
     );
   }
@@ -276,6 +298,7 @@ export default function Sport() {
         ))}
         {isMobile && <VipResults />}
       </div>
+       {renderPredictionInfo()}
     </div>
   );
 }

@@ -114,6 +114,30 @@ export default function Sport() {
 
   const shouldShowNothing = !loading && filteredPredictions.length === 0;
 
+  const renderPredictionInfo = () => {
+    return (
+      <div className={styles.predictionInfo}>
+        <h1>Basketball Predictions.</h1>
+        <p>
+          {" "}
+          Basketball predictions involve attempting to forecast the outcome of
+          basketball games, such as those in the NBA (National Basketball
+          Association) or other professional leagues, college basketball, or
+          international competitions.
+        </p>
+        <p>
+          {" "}
+          When making basketball predictions, we consider factors like team
+          form, player injuries, head-to-head records, home-court advantage, and
+          recent performance. Advanced statistical analysis, historical data,
+          and expert opinions are often used to inform predictions. Keep in mind
+          that sports predictions are subject to uncertainty, and outcomes can
+          be influenced by unexpected events during the game.
+        </p>
+      </div>
+    );
+  };
+
   const renderEmptyCards = () => {
     return Array(emptyCardCount)
       .fill(0)
@@ -128,34 +152,34 @@ export default function Sport() {
   const handleCardClick = (teamA, teamB, id) => {
     if (id !== "empty") {
       let selectedDate = searchParams.get("date");
-      
+
       if (!selectedDate) {
         const today = new Date();
-        selectedDate = today.toISOString().split('T')[0];
+        selectedDate = today.toISOString().split("T")[0];
       }
-      
-      const cleanTeamA = teamA
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, '-')
-        ?.replace(/[^\w\-]/g, '')
-        ?.replace(/--+/g, '-')
-        ?.replace(/^-|-$/g, '')
-        || 'team-a';
-        
-      const cleanTeamB = teamB
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, '-')
-        ?.replace(/[^\w\-]/g, '')
-        ?.replace(/--+/g, '-')
-        ?.replace(/^-|-$/g, '')
-        || 'team-b';
-      
+
+      const cleanTeamA =
+        teamA
+          ?.toString()
+          ?.trim()
+          ?.replace(/\s+/g, "-")
+          ?.replace(/[^\w\-]/g, "")
+          ?.replace(/--+/g, "-")
+          ?.replace(/^-|-$/g, "") || "team-a";
+
+      const cleanTeamB =
+        teamB
+          ?.toString()
+          ?.trim()
+          ?.replace(/\s+/g, "-")
+          ?.replace(/[^\w\-]/g, "")
+          ?.replace(/--+/g, "-")
+          ?.replace(/^-|-$/g, "") || "team-b";
+
       const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
       const baseUrl = `/page/${currentCategory}/single/${matchSlug}`;
       const fullUrl = `${baseUrl}?date=${selectedDate}`;
-      
+
       router.push(fullUrl, { scroll: false });
     }
   };
@@ -215,6 +239,7 @@ export default function Sport() {
             }
           />
         </div>
+        {renderPredictionInfo()}
       </div>
     );
   }
@@ -233,7 +258,7 @@ export default function Sport() {
         />
       </div>
       <ExclusiveOffers />
-       <div
+      <div
         className={`${styles.content} ${
           predictions ? styles.predictionMinHeight : ""
         }`}
@@ -276,6 +301,7 @@ export default function Sport() {
         ))}
         {isMobile && <VipResults />}
       </div>
+      {renderPredictionInfo()}
     </div>
   );
 }

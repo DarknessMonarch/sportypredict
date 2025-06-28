@@ -1,4 +1,3 @@
-// Remove the Metadata import since it's not being used
 export const metadata = {
   title: "Football Betting Tips & Predictions Today",
   description: "Get today's best football betting tips and predictions. Expert analysis on Premier League, Champions League, and more. Free daily football tips.",
@@ -28,7 +27,7 @@ export const metadata = {
   alternates: {
     canonical: "https://sportypredict.com/page/football",
   }
-};
+}; 
 
 // Structured Data Schemas
 const websiteSchema = {

@@ -114,6 +114,35 @@ export default function Sport() {
 
   const shouldShowNothing = !loading && filteredPredictions.length === 0;
 
+  const renderPredictionInfo = () => {
+    return (
+      <div className={styles.predictionInfo}>
+        <h1>Football Predictions</h1>
+        <p>
+          {" "}
+          Football predictions involve trying to predict the outcome of football
+          (soccer) matches. People make football predictions for various
+          purposes, including betting, sports analysis, or simply for fun. Some
+          common types of football predictions include: Match Outcome
+          Predictions (1 for home team, 2 for away team, X for draw, Over/Under
+          Predictions (i.e 0ver 1.5 goals under 2.5 goals), Both Teams to Score
+          (BTTS) Predictions (i.e BTTS-Yes and BTTS-No), Double Chance
+          Predictions (1X, 12,X2), and many more.
+        </p>
+        <p>
+          {" "}
+          When making football predictions, it&apos;s essential to consider
+          factors like team form, player injuries, head-to-head statistics,
+          home-field advantage, weather conditions, and other relevant data.
+          Keep in mind that predicting the outcome of sports events always
+          carries an element of uncertainty, and responsible betting is crucial.
+          Additionally, some people make predictions for fun or as part of
+          sports analysis without involving betting.
+        </p>
+      </div>
+    );
+  };
+
   const renderEmptyCards = () => {
     return Array(emptyCardCount)
       .fill(0)
@@ -128,34 +157,34 @@ export default function Sport() {
   const handleCardClick = (teamA, teamB, id) => {
     if (id !== "empty") {
       let selectedDate = searchParams.get("date");
-      
+
       if (!selectedDate) {
         const today = new Date();
-        selectedDate = today.toISOString().split('T')[0];
+        selectedDate = today.toISOString().split("T")[0];
       }
-      
-      const cleanTeamA = teamA
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, '-')
-        ?.replace(/[^\w\-]/g, '')
-        ?.replace(/--+/g, '-')
-        ?.replace(/^-|-$/g, '')
-        || 'team-a';
-        
-      const cleanTeamB = teamB
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, '-')
-        ?.replace(/[^\w\-]/g, '')
-        ?.replace(/--+/g, '-')
-        ?.replace(/^-|-$/g, '')
-        || 'team-b';
-      
+
+      const cleanTeamA =
+        teamA
+          ?.toString()
+          ?.trim()
+          ?.replace(/\s+/g, "-")
+          ?.replace(/[^\w\-]/g, "")
+          ?.replace(/--+/g, "-")
+          ?.replace(/^-|-$/g, "") || "team-a";
+
+      const cleanTeamB =
+        teamB
+          ?.toString()
+          ?.trim()
+          ?.replace(/\s+/g, "-")
+          ?.replace(/[^\w\-]/g, "")
+          ?.replace(/--+/g, "-")
+          ?.replace(/^-|-$/g, "") || "team-b";
+
       const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
       const baseUrl = `/page/${currentCategory}/single/${matchSlug}`;
       const fullUrl = `${baseUrl}?date=${selectedDate}`;
-      
+
       router.push(fullUrl, { scroll: false });
     }
   };
@@ -215,6 +244,7 @@ export default function Sport() {
             }
           />
         </div>
+        {renderPredictionInfo()}
       </div>
     );
   }
@@ -233,7 +263,7 @@ export default function Sport() {
         />
       </div>
       <ExclusiveOffers />
-       <div
+      <div
         className={`${styles.content} ${
           predictions ? styles.predictionMinHeight : ""
         }`}
@@ -274,8 +304,10 @@ export default function Sport() {
             }
           />
         ))}
+        
         {isMobile && <VipResults />}
       </div>
+         {renderPredictionInfo()}
     </div>
   );
 }

@@ -114,6 +114,30 @@ export default function Sport() {
 
   const shouldShowNothing = !loading && filteredPredictions.length === 0;
 
+  const renderPredictionInfo = () => {
+    return (
+      <div className={styles.predictionInfo}>
+        <h1>Tennis Predictions.</h1>
+        <p>
+          {" "}
+          Get Today&apos;s Over 1.5 goals Predictions from our experts for free
+          on this page. Over 1.5 goals is a popular football (soccer) betting
+          strategy one can use to make profit daily.
+        </p>
+        <p>
+          {" "}
+          It&apos;s one of the simplest and more popular betting options for
+          those looking to bet on the total number of goals in a game. We use
+          various strategies to consider when making over 1.5 goals predictions.
+          The predictions in this case are from Experts at
+          <a href="https://sportypredict.com/" target="_blank">
+            sportypredict.com
+          </a>
+        </p>
+      </div>
+    );
+  };
+
   const renderEmptyCards = () => {
     return Array(emptyCardCount)
       .fill(0)
@@ -128,34 +152,34 @@ export default function Sport() {
   const handleCardClick = (teamA, teamB, id) => {
     if (id !== "empty") {
       let selectedDate = searchParams.get("date");
-      
+
       if (!selectedDate) {
         const today = new Date();
-        selectedDate = today.toISOString().split('T')[0];
+        selectedDate = today.toISOString().split("T")[0];
       }
-      
-      const cleanTeamA = teamA
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, '-')
-        ?.replace(/[^\w\-]/g, '')
-        ?.replace(/--+/g, '-')
-        ?.replace(/^-|-$/g, '')
-        || 'team-a';
-        
-      const cleanTeamB = teamB
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, '-')
-        ?.replace(/[^\w\-]/g, '')
-        ?.replace(/--+/g, '-')
-        ?.replace(/^-|-$/g, '')
-        || 'team-b';
-      
+
+      const cleanTeamA =
+        teamA
+          ?.toString()
+          ?.trim()
+          ?.replace(/\s+/g, "-")
+          ?.replace(/[^\w\-]/g, "")
+          ?.replace(/--+/g, "-")
+          ?.replace(/^-|-$/g, "") || "team-a";
+
+      const cleanTeamB =
+        teamB
+          ?.toString()
+          ?.trim()
+          ?.replace(/\s+/g, "-")
+          ?.replace(/[^\w\-]/g, "")
+          ?.replace(/--+/g, "-")
+          ?.replace(/^-|-$/g, "") || "team-b";
+
       const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
       const baseUrl = `/page/${currentCategory}/single/${matchSlug}`;
       const fullUrl = `${baseUrl}?date=${selectedDate}`;
-      
+
       router.push(fullUrl, { scroll: false });
     }
   };
@@ -215,6 +239,7 @@ export default function Sport() {
             }
           />
         </div>
+        {renderPredictionInfo()}
       </div>
     );
   }
@@ -233,7 +258,7 @@ export default function Sport() {
         />
       </div>
       <ExclusiveOffers />
-       <div
+      <div
         className={`${styles.content} ${
           predictions ? styles.predictionMinHeight : ""
         }`}
@@ -276,6 +301,7 @@ export default function Sport() {
         ))}
         {isMobile && <VipResults />}
       </div>
+      {renderPredictionInfo()}
     </div>
   );
 }
