@@ -1,0 +1,120 @@
+@media screen {
+  .card {
+    display: flex;
+    cursor: pointer;
+    flex-direction: column;
+    box-shadow: var(--line-shadow-box);
+  }
+
+  .cardHeader {
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--light-background-color);
+  }
+
+  .cardHeader h2 {
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  .matchRow {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .matchDetails {
+    padding: 10px;
+    border-top: 2px solid var(--light-background-color);
+    border-bottom: 2px solid var(--light-background-color);
+  }
+
+  .teamSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .teamInfo {
+    gap: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid var(--light-background-color);
+  }
+
+  .teamInfo span {
+    text-transform: capitalize;
+  }
+
+  .teamIcon {
+    object-fit: contain;
+  }
+
+  .circularShape {
+    border-radius: 360%;
+  }
+
+  .formation {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+  }
+
+  .formationCircle {
+    width: 21px;
+    height: 21px;
+    display: flex;
+    border-radius: 360%;
+    align-items: center;
+    justify-content: center;
+    color: var(--background-color);
+  }
+
+  .win {
+    background-color: var(--win-color);
+  }
+
+  .draw {
+    background-color: var(--draw-color);
+  }
+
+  .lose {
+    background-color: var(--loose-color);
+  }
+
+  .defaultColor {
+    background-color: var(--background-color);
+  }
+
+  .formationCircle span {
+    font-size: 0.7rem;
+  }
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .teamSection:nth-child(3) .teamInfo {
+    flex-direction: row-reverse;
+  }
+
+  .teamSection:nth-child(3) .formation {
+    justify-content: flex-end;
+  }
+
+  .matchDetails {
+    padding: 10px;
+    border-top: none;
+    border-bottom: none;
+    border-left: 2px solid var(--light-background-color);
+    border-right: 2px solid var(--light-background-color);
+  }
+
+  .matchRow {
+    padding: 10px;
+    flex-direction: row;
+  }
+}

@@ -2,7 +2,7 @@ export default function manifest() {
   return {
     name: 'Sportypredict',
     short_name: 'Sportypredict',
-    description: 'Get expert sports betting predictions and tips on football, soccer, basketball, tennis and more at Sportypredict. Join us for winning insights and tips to boost your betting game.',
+    description: 'Best Online Free Sports Prediction website with expert tips in Football, Basketball and Tennis. We Predict You Win.',
     start_url: '/page/football',
     scope: '/',
     display: 'standalone',

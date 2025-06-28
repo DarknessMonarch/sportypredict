@@ -15,6 +15,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { RiBasketballLine as BasketballIcon } from "react-icons/ri";
 import { GiTakeMyMoney as MoneyIcon } from "react-icons/gi";
 import { RiVipLine as VipIcon } from "react-icons/ri";
+import { GoHomeFill as HomeIcon } from "react-icons/go";
 import {
   IoClose as CloseIcon,
   IoFootball as FootballIcon,
@@ -141,7 +142,6 @@ export default function SideNavComponent() {
               toast.error(result.message || "Failed to update profile image");
             }
           } catch (error) {
-            console.error("Profile image update error:", error);
             toast.error("Failed to update profile image");
           } finally {
             setIsUploadingImage(false);
@@ -158,7 +158,6 @@ export default function SideNavComponent() {
 
         reader.readAsDataURL(file);
       } catch (error) {
-        console.error("File processing error:", error);
         toast.error("Failed to process the image");
         setIsUploadingImage(false);
       }
@@ -266,12 +265,10 @@ export default function SideNavComponent() {
         toast.error(result.message || "Logout failed");
       }
     } catch (error) {
-      console.error("Logout error:", error);
       toast.error("An error occurred during logout");
       
-      // Force clear user data even if logout fails
       clearUser();
-      setClose(); // Close the sidebar
+      setClose(); 
       router.push("/page/football", { scroll: false });
     } finally {
       setIsLoggingOut(false);
@@ -338,6 +335,19 @@ export default function SideNavComponent() {
 
             <div className={styles.sideNavContainerTop}>
               <Link
+                href="/"
+                className={`${styles.sideNavLinkContainer} ${
+                  pathname === "/"  
+                    ? styles.activesideNav
+                    : ""
+                }`}
+                onClick={handleLinkClick}
+              >
+                <HomeIcon className={styles.sideNavIcon} alt="home icon" />
+                <h1>Home</h1>
+              </Link>
+              
+              <Link
                 href="/page/vip"
                 className={`${styles.sideNavLinkContainer} ${
                   pathname === "/page/vip" || pathname.startsWith("/page/vip/")
@@ -362,6 +372,21 @@ export default function SideNavComponent() {
                 <MoneyIcon className={styles.sideNavIcon} alt="Offer icon" />
                 <h1>How to pay </h1>
               </Link>
+                  <Link
+                href="/page/bet-of-the-day"
+                className={`${styles.sideNavLinkContainer} ${
+                  pathname === "/page/bet-of-the-day" || pathname.startsWith("/page/bet-of-the-day")
+                    ? styles.activesideNav
+                    : ""
+                }`}
+                onClick={handleLinkClick}
+              >
+                <BetOfTheDayIcon
+                  className={styles.sideNavIcon}
+                  alt="bet of the day icon"
+                />
+                <h1>Bet of the day</h1>
+              </Link>
               <Link
                 href="/page/football"
                 className={`${styles.sideNavLinkContainer} ${
@@ -378,21 +403,7 @@ export default function SideNavComponent() {
                 />
                 <h1>Football</h1>
               </Link>
-              <Link
-                href="/page/bet-of-the-day"
-                className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/bet-of-the-day" || pathname.startsWith("/page/bet-of-the-day")
-                    ? styles.activesideNav
-                    : ""
-                }`}
-                onClick={handleLinkClick}
-              >
-                <BetOfTheDayIcon
-                  className={styles.sideNavIcon}
-                  alt="bet of the day icon"
-                />
-                <h1>Bet of the day</h1>
-              </Link>
+          
               <Link
                 href="/page/basketball"
                 className={`${styles.sideNavLinkContainer} ${

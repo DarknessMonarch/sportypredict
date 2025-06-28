@@ -29,7 +29,7 @@ export const metadata = {
   },
   applicationName: "SportyPredict",
   description:
-    "Get expert sports betting predictions and tips on football, soccer, basketball, tennis and more at Sportypredict. Join us for winning insights and tips to boost your betting game.",
+    "Best Online Free Sports Prediction website with expert tips in Football, Basketball and Tennis. We Predict You Win.",
   authors: [{ name: "SportyPredict", url: SITE_URL }],
   generator: "Next.js",
   keywords: [

@@ -5,6 +5,7 @@
     position: relative;
     border-radius: 4px;
     flex-direction: column;
+    text-transform: capitalize;
     box-shadow: var(--line-shadow-box);
     background-color: var(--background-color);
   }

@@ -114,26 +114,67 @@ export default function Sport() {
 
   const shouldShowNothing = !loading && filteredPredictions.length === 0;
 
-   const renderPredictionInfo = () => {
+  const renderPredictionInfo = () => {
     return (
       <div className={styles.predictionInfo}>
-        <h1>Bet of the day</h1>
+        <h1>Bet of the Day – Today’s Top Sports Prediction</h1>
         <p>
-          {" "}
-           On this page we offer Free Bet Of The Day in either football, basketball or tennis
-        predictions from our experts, Once you get access to our Bet of The Day prediction you would
-        get the opportunity to win huge. We ensure that our predictions are accurate and you can now
-        get rid of all confusion.
+          Looking for the most trusted daily betting tip? SportyPredict’s Bet of
+          the Day delivers one high-value prediction every day—carefully
+          selected from football, basketball, or tennis by our expert analysts.
+          This is not just any pick. It&apos;s the best value bet today, based
+          on deep data, team form, player news, and real betting odds. Whether
+          it’s a Champions League fixture, an NBA clash, or a Grand Slam
+          showdown—we focus on one confident prediction to help you win.
         </p>
-        <h2>What does Bet of the day mean?</h2>
+
+        <h2>What Makes It the Bet of the Day?</h2>
         <p>
-          {" "}
-            It&apos; the safest tip, usually with low odds. They are perfect for accumulators/ rollovers.
+          We only label a prediction as our Bet of the Day when it passes strict
+          value checks, including:
+        </p>
+        <ul>
+          <li>
+            <strong>Current form & injuries:</strong> Evaluating momentum and
+            fitness levels.
+          </li>
+          <li>
+            <strong>Team/player motivation:</strong> Considering tournament
+            stakes, qualification needs, or mental drive.
+          </li>
+          <li>
+            <strong>Historical stats & trends:</strong> H2H records, surface or
+            matchup patterns.
+          </li>
+          <li>
+            <strong>Odds vs. probability value:</strong> Only bets with a clear
+            value edge make the cut.
+          </li>
+        </ul>
+
+        <h2>Also Covering Basketball & Tennis</h2>
+        <p>
+          While football often takes the spotlight, our Bet of the Day may also
+          come from:
+        </p>
+        <ul>
+          <li>
+            <strong>Basketball:</strong> Spread or total points markets from
+            NBA, EuroLeague, or FIBA fixtures.
+          </li>
+          <li>
+            <strong>Tennis:</strong> Match winner, correct set score, or
+            over/under total games in ATP & WTA events.
+          </li>
+        </ul>
+
+        <p>
+          Our goal? One confident, high-value pick daily—so you can bet smarter
+          and win more with SportyPredict.
         </p>
       </div>
     );
   };
-
 
   const renderEmptyCards = () => {
     return Array(emptyCardCount)
@@ -149,34 +190,34 @@ export default function Sport() {
   const handleCardClick = (teamA, teamB, id) => {
     if (id !== "empty") {
       let selectedDate = searchParams.get("date");
-      
+
       if (!selectedDate) {
         const today = new Date();
-        selectedDate = today.toISOString().split('T')[0];
+        selectedDate = today.toISOString().split("T")[0];
       }
-      
-      const cleanTeamA = teamA
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, '-')
-        ?.replace(/[^\w\-]/g, '')
-        ?.replace(/--+/g, '-')
-        ?.replace(/^-|-$/g, '')
-        || 'team-a';
-        
-      const cleanTeamB = teamB
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, '-')
-        ?.replace(/[^\w\-]/g, '')
-        ?.replace(/--+/g, '-')
-        ?.replace(/^-|-$/g, '')
-        || 'team-b';
-      
+
+      const cleanTeamA =
+        teamA
+          ?.toString()
+          ?.trim()
+          ?.replace(/\s+/g, "-")
+          ?.replace(/[^\w\-]/g, "")
+          ?.replace(/--+/g, "-")
+          ?.replace(/^-|-$/g, "") || "team-a";
+
+      const cleanTeamB =
+        teamB
+          ?.toString()
+          ?.trim()
+          ?.replace(/\s+/g, "-")
+          ?.replace(/[^\w\-]/g, "")
+          ?.replace(/--+/g, "-")
+          ?.replace(/^-|-$/g, "") || "team-b";
+
       const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
       const baseUrl = `/page/${currentCategory}/single/${matchSlug}`;
       const fullUrl = `${baseUrl}?date=${selectedDate}`;
-      
+
       router.push(fullUrl, { scroll: false });
     }
   };
@@ -255,7 +296,7 @@ export default function Sport() {
         />
       </div>
       <ExclusiveOffers />
-       <div
+      <div
         className={`${styles.content} ${
           predictions ? styles.predictionMinHeight : ""
         }`}
@@ -298,7 +339,7 @@ export default function Sport() {
         ))}
         {isMobile && <VipResults />}
       </div>
-       {renderPredictionInfo()}
+      {renderPredictionInfo()}
     </div>
   );
 }

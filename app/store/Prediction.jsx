@@ -220,6 +220,55 @@ export const usePredictionStore = create(
         }
       },
 
+      fetchAllPredictionsForDate: async (date) => {
+  try {
+    set({ loading: true, error: null });
+    const accessToken = useAuthStore.getState().accessToken;
+    
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        ...(accessToken && { 'Authorization': `Bearer ${accessToken}` })
+      }
+    };
+
+    const response = await fetch(
+      `${SERVER_API}/predictions/all/${date}`,
+      requestOptions
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.status === "success" && Array.isArray(data.data)) {
+      const sortedPredictions = data.data.sort((a, b) => {
+        const timeA = a.time ? new Date(a.time).getTime() : 0;
+        const timeB = b.time ? new Date(b.time).getTime() : 0;
+        return timeA - timeB;
+      });
+      
+      set({ predictions: sortedPredictions });
+      return { 
+        success: true, 
+        data: sortedPredictions, 
+        totalCount: data.totalCount || sortedPredictions.length 
+      };
+    } else {
+      set({ predictions: [] });
+      throw new Error(data.message || 'Invalid data format received from server');
+    }
+  } catch (error) {
+    set({ error: error.message, predictions: [] });
+    return { success: false, message: error.message };
+  } finally {
+    set({ loading: false });
+  }
+},
 
       getVIPPredictionsByStake: (stake) => {
         const state = get();

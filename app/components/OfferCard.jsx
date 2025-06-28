@@ -25,7 +25,6 @@ export default function Bonus() {
         toast.success("Copied to clipboard");
       })
       .catch((err) => {
-        console.error("Failed to copy text: ", err);
       });
   };
 

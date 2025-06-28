@@ -77,7 +77,6 @@ export default function VipResults({ }) {
       }
 
     } catch (error) {
-      console.error('Error parsing match time:', error);
       return { hours: 0, minutes: 0, seconds: 0 };
     }
     

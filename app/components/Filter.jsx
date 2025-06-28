@@ -62,9 +62,6 @@ export default function FilterComponent() {
     const countries = Array.from(countryMap.values()).sort();
     const leagues = Array.from(leagueMap.values()).sort();
 
-    console.log('Final countries after Map deduplication:', countries);
-    console.log('Final leagues after Map deduplication:', leagues);
-
     const leagueImages = {};
     predictions.forEach((pred) => {
       if (pred.league && pred.leagueImage) {

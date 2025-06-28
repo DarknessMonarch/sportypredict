@@ -72,7 +72,6 @@ export default function NavbarComponent() {
         toast.error(result.message || "Logout failed");
       }
     } catch (error) {
-      console.error("Logout error:", error);
       toast.error("An error occurred during logout");
       
 
@@ -129,7 +128,6 @@ export default function NavbarComponent() {
               toast.error(result.message || "Failed to update profile image");
             }
           } catch (error) {
-            console.error("Profile image update error:", error);
             toast.error("Failed to update profile image");
           } finally {
             setIsUploadingImage(false);
@@ -146,7 +144,6 @@ export default function NavbarComponent() {
 
         reader.readAsDataURL(file);
       } catch (error) {
-        console.error("File processing error:", error);
         toast.error("Failed to process the image");
         setIsUploadingImage(false);
       }

@@ -7,11 +7,11 @@ import styles from "@/app/style/exclusiveOffers.module.css";
 import { IoIosArrowDroprightCircle as RightIcon } from "react-icons/io";
 
 export default function ExclusiveOffers() {
-  const { bonuses, loading, error, fetchBonuses } = useBonusStore();
+  const { exclusiveBonuses, exclusiveLoading, error, fetchExclusiveBonuses } = useBonusStore();
 
   useEffect(() => {
-    fetchBonuses("location=FrontBanner");
-  }, [fetchBonuses]);
+    fetchExclusiveBonuses("location=FrontBanner");
+  }, [fetchExclusiveBonuses]);
 
   const offer = (bonusLink) => {
     if (bonusLink) {
@@ -19,13 +19,13 @@ export default function ExclusiveOffers() {
     }
   };
 
-  if (loading || error || bonuses.length === 0) {
+  if (exclusiveLoading || error || exclusiveBonuses.length === 0) {
     return null;
   }
 
   return (
     <div className={styles.exclusiveContainer}>
-      {bonuses.map((bonus, index) => (
+      {exclusiveBonuses.map((bonus, index) => (
         <div key={index} className={styles.offerContainer} onClick={() => offer(bonus.bonusLink)}>
           <div className={styles.offerWrap}>
             <h1>Exclusive offer</h1>

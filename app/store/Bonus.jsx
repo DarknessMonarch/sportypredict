@@ -7,9 +7,11 @@ const SERVER_API = process.env.NEXT_PUBLIC_SERVER_API;
 export const useBonusStore = create(
   persist(
     (set, get) => ({
-      bonuses: [],
+      bonuses: [], // General bonuses (for HomeBonus)
+      exclusiveBonuses: [], // Exclusive bonuses (for ExclusiveOffers)
       locations: [],
       loading: false,
+      exclusiveLoading: false, // Separate loading state
       error: null,
 
       fetchBonuses: async (query = "") => {
@@ -29,6 +31,27 @@ export const useBonusStore = create(
           return { success: false, message: error.message };
         } finally {
           set({ loading: false });
+        }
+      },
+
+      // New method specifically for exclusive bonuses
+      fetchExclusiveBonuses: async (query = "") => {
+        try {
+          set({ exclusiveLoading: true, error: null });
+          const response = await fetch(`${SERVER_API}/bonus?${query}`);
+          const data = await response.json();
+
+          if (response.ok) {
+            set({ exclusiveBonuses: data.data || [] });
+            return { success: true, data };
+          }
+
+          throw new Error(data.error || "Failed to fetch exclusive bonuses");
+        } catch (error) {
+          set({ error: error.message });
+          return { success: false, message: error.message };
+        } finally {
+          set({ exclusiveLoading: false });
         }
       },
 
@@ -72,96 +95,7 @@ export const useBonusStore = create(
         }
       },
 
-      createBonus: async (formData) => {
-        try {
-          set({ loading: true, error: null });
-          const accessToken = useAuthStore.getState().accessToken;
 
-          const response = await fetch(`${SERVER_API}/bonus`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: formData,
-          });
-
-          const data = await response.json();
-          if (response.ok) {
-            set((state) => ({
-              bonuses: [...state.bonuses, data.data],
-            }));
-            return { success: true, data };
-          }
-
-          throw new Error(data.error || "Failed to create bonus");
-        } catch (error) {
-          set({ error: error.message });
-          return { success: false, message: error.message };
-        } finally {
-          set({ loading: false });
-        }
-      },
-
-      deleteBonus: async (id) => {
-        try {
-          set({ loading: true, error: null });
-          const accessToken = useAuthStore.getState().accessToken;
-
-          const response = await fetch(`${SERVER_API}/bonus/${id}`, {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-
-          const data = await response.json();
-          if (response.ok) {
-            set((state) => ({
-              bonuses: state.bonuses.filter((b) => b._id !== id),
-            }));
-            return { success: true };
-          }
-
-          throw new Error(data.error || "Failed to delete bonus");
-        } catch (error) {
-          set({ error: error.message });
-          return { success: false, message: error.message };
-        } finally {
-          set({ loading: false });
-        }
-      },
-
-      updateBonus: async (id, formData) => {
-        try {
-          set({ loading: true, error: null });
-          const accessToken = useAuthStore.getState().accessToken;
-
-          const response = await fetch(`${SERVER_API}/bonus/${id}`, {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: formData,
-          });
-
-          const data = await response.json();
-          if (response.ok) {
-            set((state) => ({
-              bonuses: state.bonuses.map((b) =>
-                b._id === id ? data.data : b
-              ),
-            }));
-            return { success: true, data };
-          }
-
-          throw new Error(data.error || "Failed to update bonus");
-        } catch (error) {
-          set({ error: error.message });
-          return { success: false, message: error.message };
-        } finally {
-          set({ loading: false });
-        }
-      },
 
       // Helper function to filter bonuses by location in the store
       getBonusesByLocation: (location) => {
@@ -173,7 +107,7 @@ export const useBonusStore = create(
       },
 
       // Clear bonuses from store
-      clearBonuses: () => set({ bonuses: [] }),
+      clearBonuses: () => set({ bonuses: [], exclusiveBonuses: [] }),
 
       // Clear error
       clearError: () => set({ error: null }),

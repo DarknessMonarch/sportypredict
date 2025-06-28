@@ -1,0 +1,126 @@
+@media screen {
+  .pageLayout {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    position: fixed;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+
+  .pageContent {
+    background-color: var(-background-color);
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .homeContainer {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .predictionsSection {
+    gap: 10px;
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+  }
+
+  .loadingContainer {
+    display: flex;
+    padding: 20px 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .noContentContainer {
+    display: flex;
+    padding: 20px 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contentSection {
+    gap: 10px;
+    display: flex;
+    padding: 10px 0;
+    flex-direction: column;
+  }
+
+  .sectionHeader {
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sectionHeader h2 {
+    font-size: 1.2rem;
+    font-weight: 400px;
+    line-height: 1.6;
+  }
+
+  .viewAllBtn {
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 200px;
+    background: transparent;
+    text-decoration: underline;
+  }
+
+  .viewAllBtn:hover {
+    color: var(--secondary-color);
+  }
+
+  .cardsGrid {
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .pageLayout {
+    width: 100%;
+    height: 100vh;
+    overflow-y: hidden;
+  }
+
+  .pageChildren {
+    flex: 1;
+  }
+
+  .predictionsSection {
+    gap: 30px;
+    flex-direction: row;
+  }
+
+  .loadingContainer {
+    min-height: 500px;
+  }
+
+  .noContentContainer {
+    min-height: 500px;
+  }
+
+  .predictionsInner {
+    flex: 80%;
+    flex: 90dvh;
+  }
+
+  .homeBonusContainer {
+    flex: 20%;
+    flex: 10dvh;
+  }
+}
