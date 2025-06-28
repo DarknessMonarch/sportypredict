@@ -13,7 +13,6 @@ import { useAuthStore } from "@/app/store/Auth";
 import HomeCard from "@/app/components/HomeCard";
 import styles from "@/app/style/home.module.css";
 import NewsCard from "@/app/components/NewsCard";
-import HomeBonus from "@/app/components/HomeBonus";
 import { useState, useEffect, useRef } from "react";
 import ArticleCard from "@/app/components/BlogCard";
 import { useAdvertStore } from "@/app/store/Advert";
@@ -21,6 +20,7 @@ import { useDrawerStore } from "@/app/store/Drawer";
 import VipResults from "@/app/components/VipResults";
 import LoadingLogo from "@/app/components/LoadingLogo";
 import Telegram from "@/app/components/TelegramAdvert";
+import OfferCard from "@/app/components/SingleOfferCard";
 import { usePredictionStore } from "@/app/store/Prediction";
 import EmptySportImage from "@/public/assets/emptysport.png";
 import ExclusiveOffers from "@/app/components/ExclusiveOffer";
@@ -50,17 +50,30 @@ export default function Home() {
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
 
-  // Group predictions by sport
-  const predictionsBySport = {
-    football: predictions.filter((p) => p.sport?.toLowerCase() === "football"),
-    basketball: predictions.filter(
-      (p) => p.sport?.toLowerCase() === "basketball"
-    ),
-    tennis: predictions.filter((p) => p.sport?.toLowerCase() === "tennis"),
-    "bet-of-the-day": predictions.filter(
-      (p) => p.sport?.toLowerCase() === "bet-of-the-day"
-    ),
-  };
+  // Create a combined array of all predictions with sport order priority
+  const sportOrder = ["football", "basketball", "tennis", "bet-of-the-day"];
+  
+  const allPredictions = predictions
+    .filter(p => p.sport) // Ensure sport exists
+    .sort((a, b) => {
+      const sportA = a.sport.toLowerCase();
+      const sportB = b.sport.toLowerCase();
+      
+      const indexA = sportOrder.indexOf(sportA);
+      const indexB = sportOrder.indexOf(sportB);
+      
+      // If sport is in our order list, use that priority
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      
+      // If only one sport is in our list, prioritize it
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      
+      // If neither sport is in our list, sort alphabetically
+      return sportA.localeCompare(sportB);
+    });
 
   // Get first 3 blog posts and news articles
   const featuredBlogs = blogs.slice(0, 3);
@@ -301,16 +314,27 @@ export default function Home() {
     }
   };
 
-  const renderSportSection = (sportName, sportPredictions) => {
-    if (sportPredictions.length === 0) return null;
+  const renderPredictionsSection = () => {
+    if (allPredictions.length === 0) {
+      return (
+        <div className={styles.noPredictionsContainer}>
+          <p>No predictions available for today</p>
+        </div>
+      );
+    }
 
     return (
-      <div key={sportName} className={styles.sportSection}>
-        <div className={styles.predictionsGrid}>
-          {sportPredictions.map((prediction, index) => (
+      <div className={styles.predictionsGrid}>
+        {allPredictions.map((prediction, index) => {
+          const previousPrediction = allPredictions[index - 1];
+          const currentSport = prediction.sport?.toLowerCase();
+          const previousSport = previousPrediction?.sport?.toLowerCase();
+          const showSportHeader = !previousPrediction || previousSport !== currentSport;
+
+          return (
             <HomeCard
-              key={`${sportName}-${prediction._id || index}`}
-              sport={sportName.charAt(0).toUpperCase() + sportName.slice(1)}
+              key={`${currentSport}-${prediction._id || index}`}
+              sport={prediction.sport}
               leagueImage={prediction.leagueImage}
               teamAImage={prediction.teamAImage}
               teamBImage={prediction.teamBImage}
@@ -321,6 +345,8 @@ export default function Home() {
               date={prediction.time}
               teamAForm={prediction.formationA || []}
               teamBForm={prediction.formationB || []}
+              showSportHeader={showSportHeader}
+              previousSport={previousSport}
               onCardClick={() =>
                 handleCardClick(
                   prediction.teamA,
@@ -329,8 +355,8 @@ export default function Home() {
                 )
               }
             />
-          ))}
-        </div>
+          );
+        })}
       </div>
     );
   };
@@ -404,23 +430,11 @@ export default function Home() {
 
           <div className={styles.predictionsSection}>
             <div className={styles.predictionsInner}>
-              {renderSportSection("football", predictionsBySport.football)}
-              {renderSportSection("basketball", predictionsBySport.basketball)}
-              {renderSportSection("tennis", predictionsBySport.tennis)}
-              {renderSportSection(
-                "bet-of-the-day",
-                predictionsBySport["bet-of-the-day"]
-              )}
-
-              {predictions.length === 0 && !predictionsLoading && (
-                <div className={styles.noPredictionsContainer}>
-                  <p>No predictions available for today</p>
-                </div>
-              )}
+              {renderPredictionsSection()}
             </div>
             <div className={styles.homeBonusContainer}>
               <VipResults />
-              <HomeBonus />
+              <OfferCard />
             </div>
           </div>
           {renderBlogSection()}
