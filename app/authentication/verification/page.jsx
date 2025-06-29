@@ -18,7 +18,6 @@ export default function Verify() {
   const router = useRouter();
   const { verifyEmail, resendVerificationCode, email } = useAuthStore();
 
-  // Timer effect for resend cooldown
   useEffect(() => {
     let interval;
     if (resendTimer > 0) {
@@ -43,7 +42,7 @@ export default function Verify() {
 
       if (result.success) {
         toast.success(result.message);
-        router.push("/page/football", { scroll: false });
+        router.push("/", { scroll: false });
       } else {
         toast.error(result.message);
       }

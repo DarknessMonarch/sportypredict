@@ -41,21 +41,66 @@ export default function MobileFilter({
       };
     }
 
-    const sports = [
-      ...new Set(predictions.map((pred) => pred.sport).filter(Boolean)),
-    ].sort();
+    const normalizeText = (text) => {
+      if (!text) return '';
+      return text.toString()
+        .trim()
+        .replace(/\s+/g, ' ') 
+        .toLowerCase()
+    };
 
-    const countries = [
-      ...new Set(predictions.map((pred) => pred.country).filter(Boolean)),
-    ].sort();
+    // Process sports with normalization
+    const sportMap = new Map();
+    predictions.forEach(pred => {
+      if (pred.sport) {
+        const originalSport = pred.sport.toString().trim();
+        const normalizedKey = normalizeText(pred.sport);
+        if (normalizedKey && !sportMap.has(normalizedKey)) {
+          sportMap.set(normalizedKey, originalSport);
+        }
+      }
+    });
 
-    const leagues = [
-      ...new Set(predictions.map((pred) => pred.league).filter(Boolean)),
-    ].sort();
+    // Process countries with normalization
+    const countryMap = new Map();
+    predictions.forEach(pred => {
+      if (pred.country) {
+        const originalCountry = pred.country.toString().trim();
+        const normalizedKey = normalizeText(pred.country);
+        if (normalizedKey && !countryMap.has(normalizedKey)) {
+          countryMap.set(normalizedKey, originalCountry);
+        }
+      }
+    });
 
-    const tips = [
-      ...new Set(predictions.map((pred) => pred.tip).filter(Boolean)),
-    ].sort();
+    // Process leagues with normalization  
+    const leagueMap = new Map();
+    predictions.forEach(pred => {
+      if (pred.league) {
+        const originalLeague = pred.league.toString().trim();
+        const normalizedKey = normalizeText(pred.league);
+        if (normalizedKey && !leagueMap.has(normalizedKey)) {
+          leagueMap.set(normalizedKey, originalLeague);
+        }
+      }
+    });
+
+    // Process tips with normalization
+    const tipMap = new Map();
+    predictions.forEach(pred => {
+      if (pred.tip) {
+        const originalTip = pred.tip.toString().trim();
+        const normalizedKey = normalizeText(pred.tip);
+        if (normalizedKey && !tipMap.has(normalizedKey)) {
+          tipMap.set(normalizedKey, originalTip);
+        }
+      }
+    });
+
+    const sports = Array.from(sportMap.values()).sort();
+    const countries = Array.from(countryMap.values()).sort();
+    const leagues = Array.from(leagueMap.values()).sort();
+    const tips = Array.from(tipMap.values()).sort();
 
     return {
       sports: sports.length > 0 ? ["All", ...sports] : [],

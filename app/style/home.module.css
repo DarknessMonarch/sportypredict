@@ -48,6 +48,12 @@
     flex-direction: column;
   }
 
+  .predictionsGrid h1 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+  }
+
   .loadingContainer {
     display: flex;
     padding: 20px 0;
@@ -68,6 +74,11 @@
     padding: 10px;
     flex-wrap: wrap;
     flex-direction: column;
+  }
+
+ 
+  .contentSection h2 {
+    font-size: 1.5rem;
   }
 
   .cardsGrid {

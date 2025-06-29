@@ -68,7 +68,7 @@ export default function Login() {
 
         switch (true) {
           case result.isAdmin:
-            router.push("/page/football", { scroll: false });
+            router.push("/", { scroll: false });
             toast.success("Welcome Admin!");
             break;
 
@@ -78,7 +78,7 @@ export default function Login() {
             break;
 
           default:
-            router.push("/page/football", { scroll: false });
+            router.push("/", { scroll: false });
             toast.success("Welcome back!");
             break;
         }

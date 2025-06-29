@@ -11,7 +11,7 @@ import { PiCourtBasketball as BetOfTheDayIcon } from "react-icons/pi";
 import { IoChevronForwardOutline as ChevronIcon } from "react-icons/io5";
 import styles from "@/app/style/homecard.module.css";
 
-export default function HomeCard({ sport, predictions = [], onCardClick }) {
+export default function HomeCard({ sport, predictions = [] }) {
   const router = useRouter();
 
   const getSportIcon = (sportType) => {
@@ -64,24 +64,38 @@ export default function HomeCard({ sport, predictions = [], onCardClick }) {
   };
 
   const handlePredictionClick = (prediction) => {
-    if (onCardClick) {
-      onCardClick({
-        sport: prediction.sport,
-        league: prediction.league,
-        teamA: prediction.teamA,
-        teamB: prediction.teamB,
-        time: prediction.time,
-        date: prediction.time,
-      });
-    } else {
-      const matchSlug = `${prediction.teamA
-        .toLowerCase()
-        .replace(/\s+/g, "-")}-vs-${prediction.teamB
-        .toLowerCase()
-        .replace(/\s+/g, "-")}`;
-      const actualSport = prediction.sport?.toLowerCase() || "football";
-      router.push(`/match/${actualSport}/${matchSlug}`);
-    }
+    const { teamA, teamB, category, time } = prediction;
+    if (!teamA || !teamB) return;
+
+    const sportCategory = category?.toLowerCase() || "football";
+
+    const selectedDate = time
+      ? time.split("T")[0]
+      : new Date().toISOString().split("T")[0];
+
+    const cleanTeamA =
+      teamA
+        ?.toString()
+        ?.trim()
+        ?.replace(/\s+/g, "-")
+        ?.replace(/[^\w\-]/g, "")
+        ?.replace(/--+/g, "-")
+        ?.replace(/^-|-$/g, "") || "team-a";
+
+    const cleanTeamB =
+      teamB
+        ?.toString()
+        ?.trim()
+        ?.replace(/\s+/g, "-")
+        ?.replace(/[^\w\-]/g, "")
+        ?.replace(/--+/g, "-")
+        ?.replace(/^-|-$/g, "") || "team-b";
+
+    const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
+    const baseUrl = `/page/${sportCategory}/single/${matchSlug}`;
+    const fullUrl = `${baseUrl}?date=${selectedDate}`;
+
+    router.push(fullUrl, { scroll: false });
   };
 
   const getFormationColorClass = (formation) => {
@@ -137,9 +151,6 @@ export default function HomeCard({ sport, predictions = [], onCardClick }) {
             <span>
               ({formatDate(prediction.time)}) ({formatTime(prediction.time)})
             </span>
-            <div className={styles.chevronSection}>
-              <ChevronIcon size={20} />
-            </div>
           </div>
 
           <div className={styles.matchRowInner}>
@@ -162,6 +173,9 @@ export default function HomeCard({ sport, predictions = [], onCardClick }) {
                 <div className={styles.formation}>
                   {renderFormIndicators(prediction.formationA)}
                 </div>
+              </div>
+              <div className={styles.chevronSectionInner}>
+                <ChevronIcon size={20} />
               </div>
               {/*- desktop only */}
               <div className={styles.matchDetails}>

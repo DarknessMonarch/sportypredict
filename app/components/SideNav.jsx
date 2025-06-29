@@ -260,7 +260,7 @@ export default function SideNavComponent() {
       if (result.success) {
         toast.success(result.message || "Logged out successfully");
         setClose(); 
-        router.push("/page/football", { scroll: false });
+        router.push("/", { scroll: false });
       } else {
         toast.error(result.message || "Logout failed");
       }
@@ -269,7 +269,7 @@ export default function SideNavComponent() {
       
       clearUser();
       setClose(); 
-      router.push("/page/football", { scroll: false });
+      router.push("/", { scroll: false });
     } finally {
       setIsLoggingOut(false);
     }

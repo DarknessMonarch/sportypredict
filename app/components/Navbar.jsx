@@ -67,7 +67,7 @@ export default function NavbarComponent() {
       if (result.success) {
         toast.success(result.message || "Logged out successfully");
        
-        router.push("/page/football", { scroll: false });
+        router.push("/", { scroll: false });
       } else {
         toast.error(result.message || "Logout failed");
       }
@@ -76,14 +76,14 @@ export default function NavbarComponent() {
       
 
       clearUser();
-      router.push("/page/football", { scroll: false });
+      router.push("/", { scroll: false });
     } finally {
       setIsLoggingOut(false);
     }
   };
 
   const sportypredict = () => {
-    router.push("/page/football", { scroll: false });
+    router.push("/", { scroll: false });
   };
 
   const handleProfileImageClick = useCallback(() => {

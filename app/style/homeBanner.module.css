@@ -1,0 +1,85 @@
+@media screen {
+  .advertContainer {
+    width: 100%;
+    position: relative;
+  }
+
+  .bannerContent {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    padding: 10px;
+    height: fit-content;
+    flex-direction: column;
+    color: var(--background-color);
+    background: var(--primary-color);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .bannerContent h1 {
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: var(--secondary-color);
+  }
+
+  .bannerContent h1 span {
+    color: var(--secondary-color);
+  }
+
+  .advertContainer p {
+    font-size: 0.8rem;
+    text-align: justify;
+  }
+
+  .btnContainer {
+    gap: 5px;
+    padding: 5px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .bannerBtn {
+    gap: 10px;
+    padding: 10px;
+    display: flex;
+    cursor: pointer;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    color: var(--background-color);
+    background: var(--primary-color);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .bannerBtn h1 {
+    font-size: .8rem;
+    font-weight: 400;
+    text-transform: capitalize;
+    color: var(--secondary-color);
+  }
+
+  .bannerBtn:hover {
+    background-color: var(--secondary-color);
+  }
+
+  .bannerBtn:hover .bannerIcon {
+    color: var(--primary-color);
+  }
+
+  .bannerBtn:hover h1 {
+    color: var(--primary-color);
+  }
+
+  .bannerIcon {
+    font-size: 20px;
+    color: var(--secondary-color);
+  }
+}
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+
+  
+}

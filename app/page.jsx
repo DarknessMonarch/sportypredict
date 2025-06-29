@@ -3,7 +3,6 @@
 import Popup from "@/app/components/Popup";
 import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/Navbar";
-import Banner from "@/app/components/Banner";
 import Footer from "@/app/components/Footer";
 import SideNav from "@/app/components/SideNav";
 import Nothing from "@/app/components/Nothing";
@@ -13,6 +12,7 @@ import { useAuthStore } from "@/app/store/Auth";
 import HomeCard from "@/app/components/HomeCard";
 import styles from "@/app/style/home.module.css";
 import NewsCard from "@/app/components/NewsCard";
+import HomeBanner from "@/app/components/HomeBanner";
 import { useState, useEffect, useRef } from "react";
 import ArticleCard from "@/app/components/BlogCard";
 import { useAdvertStore } from "@/app/store/Advert";
@@ -47,12 +47,9 @@ export default function Home() {
   const popupBannerAds = adverts.filter((ad) => ad.location === "PopupBanner");
   const hasPopupAds = popupBannerAds.length > 0;
 
-  // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
 
-  // Group predictions by sport, but use category for bet-of-the-day
   const groupedPredictions = predictions.reduce((groups, prediction) => {
-    // For bet-of-the-day, use the category, otherwise use sport
     let groupKey;
     if (prediction.category === "bet-of-the-day") {
       groupKey = "bet-of-the-day";
@@ -67,26 +64,21 @@ export default function Home() {
     return groups;
   }, {});
 
-  // Sort sports by priority and then alphabetically
-  const sportOrder = ["football", "basketball", "tennis", "bet-of-the-day"];
+  const sportOrder = ["bet-of-the-day", "football", "basketball", "tennis"];
   const sortedSports = Object.keys(groupedPredictions).sort((a, b) => {
     const indexA = sportOrder.indexOf(a);
     const indexB = sportOrder.indexOf(b);
 
-    // If both sports are in the priority list, use that order
     if (indexA !== -1 && indexB !== -1) {
       return indexA - indexB;
     }
 
-    // If only one sport is in the priority list, prioritize it
     if (indexA !== -1) return -1;
     if (indexB !== -1) return 1;
 
-    // If neither sport is in the priority list, sort alphabetically
     return a.localeCompare(b);
   });
 
-  // Get first 3 blog posts and news articles
   const featuredBlogs = blogs.slice(0, 3);
   const featuredNews = articles.slice(0, 3);
 
@@ -182,7 +174,7 @@ export default function Home() {
         <div className={styles.pageContent}>
           <Navbar />
           <div className={styles.homeMain}>
-            <Banner />
+            <HomeBanner />
             <ExclusiveOffers />
             <div className={styles.loadingContainer}>
               <LoadingLogo />
@@ -203,7 +195,7 @@ export default function Home() {
         <div className={styles.pageContent}>
           <Navbar />
           <div className={styles.homeMain}>
-            <Banner />
+            <HomeBanner />
             <ExclusiveOffers />
             <div className={styles.noContentContainer}>
               <Nothing
@@ -220,39 +212,6 @@ export default function Home() {
       </div>
     );
   }
-
-  const handleCardClick = (predictionData) => {
-    const { teamA, teamB, sport } = predictionData;
-    if (!teamA || !teamB) return;
-
-    // Use the actual sport from prediction data for navigation
-    const category = sport?.toLowerCase() || "football";
-    const selectedDate = today;
-
-    const cleanTeamA =
-      teamA
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, "-")
-        ?.replace(/[^\w\-]/g, "")
-        ?.replace(/--+/g, "-")
-        ?.replace(/^-|-$/g, "") || "team-a";
-
-    const cleanTeamB =
-      teamB
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, "-")
-        ?.replace(/[^\w\-]/g, "")
-        ?.replace(/--+/g, "-")
-        ?.replace(/^-|-$/g, "") || "team-b";
-
-    const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
-    const baseUrl = `/page/${category}/single/${matchSlug}`;
-    const fullUrl = `${baseUrl}?date=${selectedDate}`;
-
-    router.push(fullUrl, { scroll: false });
-  };
 
   const handleBlogReadMore = (post) => {
     const slug = post.title
@@ -330,6 +289,8 @@ export default function Home() {
   const renderPredictionsSection = () => {
     return (
       <div className={styles.predictionsGrid}>
+        <h1>Free Sport tips and Predictions</h1>
+
         {sortedSports.map((sport) => {
           const sportPredictions = groupedPredictions[sport];
           const sortedPredictions = [...sportPredictions].sort((a, b) => {
@@ -343,7 +304,6 @@ export default function Home() {
               key={sport}
               sport={sport}
               predictions={sortedPredictions}
-              onCardClick={handleCardClick}
             />
           );
         })}
@@ -412,7 +372,7 @@ export default function Home() {
         <Navbar />
         <div className={styles.homeContainer}>
           <div className={styles.homeMain}>
-            <Banner />
+            <HomeBanner />
             <ExclusiveOffers />
             {renderPredictionsSection()}
             {renderBlogSection()}
