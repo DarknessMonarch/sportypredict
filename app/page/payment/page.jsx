@@ -280,7 +280,7 @@ const ManualPaymentPopupContent = ({
   return (
     <div className={styles.manualPaymentPopupContainer}>
       <div className={styles.manualPaymentPopupHeader}>
-        <h2>Manual Payment Instructions</h2>
+        <h2>{countryCode === 'ng' ? 'Bank Payment Instructions' : 'Manual Payment Instructions'}</h2>
         <CloseIcon onClick={onClose} />
       </div>
 
@@ -353,11 +353,13 @@ const ManualPaymentCard = ({
   isSelected,
   onClick,
 }) => {
+  const isNigeria = countryCode === 'ng';
+  
   return (
     <PaymentMethodCard
       image={manualImage}
-      alt="Manual Payment"
-      title="Pay Manually"
+      alt={isNigeria ? "Bank Payment" : "Manual Payment"}
+      title={isNigeria ? "Pay via Bank" : "Pay Manually"}
       isSelected={isSelected}
       onClick={onClick}
     />
@@ -406,7 +408,6 @@ export default function Payment() {
     []
   );
 
-  // Set mounted state after component mounts
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -591,7 +592,7 @@ export default function Payment() {
 
   const shouldShowManualPayment = (countryName) => {
     if (!countryName) return false;
-    return true; // Show manual payment for all countries
+    return true; 
   };
 
   const handlePaymentMethodSelect = (methodId) => {
@@ -943,8 +944,21 @@ export default function Payment() {
                     );
                   }
 
+                  const isNigeria = getCountryMapping(country) === "nigeria";
+                  
                   return (
                     <div className={styles.paymentMethods}>
+                      {isNigeria && showManualPayment && (
+                        <ManualPaymentCard
+                          countryCode={countryCode}
+                          price={selectedPlan.price}
+                          currency={selectedPlan.currency}
+                          isSelected={selectedPaymentMethod === "manual"}
+                          onClick={() => handlePaymentMethodSelect("manual")}
+                        />
+                      )}
+
+                      {/* Then show other available methods */}
                       {availableMethods.map((method) => (
                         <PaymentMethodCard
                           key={method.id}
@@ -957,7 +971,7 @@ export default function Payment() {
                         />
                       ))}
 
-                      {showManualPayment && (
+                      {!isNigeria && showManualPayment && (
                         <ManualPaymentCard
                           countryCode={countryCode}
                           price={selectedPlan.price}
