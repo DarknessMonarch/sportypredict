@@ -240,7 +240,7 @@ export default function Home() {
   const renderPredictionsSection = () => {
     return (
       <div className={styles.predictionsGrid}>
-        <h1>Free Sport Tips and Predictions</h1>
+        <h1>Free Sports Tips and Predictions</h1>
 
         {sortedSports.map((sport) => {
           const sportPredictions = groupedPredictions[sport];
