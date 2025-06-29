@@ -289,7 +289,7 @@ export default function SingleSport() {
             }`}
             onClick={() => handleTabChange("formation")}
           >
-             Recent Formation
+             Recent Form
           </button>
         </div>
 

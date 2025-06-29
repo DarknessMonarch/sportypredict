@@ -10,8 +10,8 @@ export default function Loading() {
         src={AnimatedLogo}
         alt="Animated Logo "
         height={300}
-        loading="lazy"
         optimize="false"
+        priority={true}
 
       />
     </div>

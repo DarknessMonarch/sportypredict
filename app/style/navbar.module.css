@@ -7,7 +7,6 @@
     padding: 10px;
     z-index: 1000;
     height: var(--navbar-mobile-height);
-    box-shadow: var(--shadow-background-color);
     background-color: var(--background-color);
     border-bottom: 2px solid var(--light-background-color);
   }

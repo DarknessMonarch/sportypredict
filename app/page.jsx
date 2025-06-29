@@ -79,8 +79,12 @@ export default function Home() {
     return a.localeCompare(b);
   });
 
-  const featuredBlogs = blogs.slice(0, 3);
-  const featuredNews = articles.slice(0, 3);
+  const featuredBlogs = blogs.slice(0, 2);
+  const featuredNews = articles.slice(0, 2);
+
+  // Check if dynamic content is still loading
+  const isDynamicContentLoading = predictionsLoading || blogsLoading || newsLoading;
+  const hasAnyContent = predictions.length > 0 || blogs.length > 0 || articles.length > 0;
 
   useEffect(() => {
     const initAuth = async () => {
@@ -99,7 +103,6 @@ export default function Home() {
     }
   }, [initializeAuth, isInitialized, isAuthInitialized]);
 
-  // Fetch all data when auth is initialized
   useEffect(() => {
     if (isAuthInitialized) {
       fetchAllPredictionsForDate(today);
@@ -162,57 +165,6 @@ export default function Home() {
     setIsPopupOpen(false);
   };
 
-  const isLoading =
-    predictionsLoading || blogsLoading || newsLoading || !isAuthInitialized;
-
-  if (isLoading) {
-    return (
-      <div className={styles.pageLayout}>
-        <div ref={sideNavRef}>
-          <SideNav />
-        </div>
-        <div className={styles.pageContent}>
-          <Navbar />
-          <div className={styles.homeMain}>
-            <HomeBanner />
-            <ExclusiveOffers />
-            <div className={styles.loadingContainer}>
-              <LoadingLogo />
-            </div>
-          </div>
-          <Footer />
-        </div>
-      </div>
-    );
-  }
-
-  if (predictions.length === 0 && blogs.length === 0 && articles.length === 0) {
-    return (
-      <div className={styles.pageLayout}>
-        <div ref={sideNavRef}>
-          <SideNav />
-        </div>
-        <div className={styles.pageContent}>
-          <Navbar />
-          <div className={styles.homeMain}>
-            <HomeBanner />
-            <ExclusiveOffers />
-            <div className={styles.noContentContainer}>
-              <Nothing
-                Alt="No prediction"
-                NothingImage={EmptySportImage}
-                Text={
-                  "No predictions, blogs or news available at the moment. Please check back later."
-                }
-              />
-            </div>
-          </div>
-          <Footer />
-        </div>
-      </div>
-    );
-  }
-
   const handleBlogReadMore = (post) => {
     const slug = post.title
       .toLowerCase()
@@ -254,7 +206,6 @@ export default function Home() {
         });
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        // You might want to show a toast here
       }
     } catch (err) {
       console.error("Failed to share blog post");
@@ -289,7 +240,7 @@ export default function Home() {
   const renderPredictionsSection = () => {
     return (
       <div className={styles.predictionsGrid}>
-        <h1>Free Sport tips and Predictions</h1>
+        <h1>Free Sport Tips and Predictions</h1>
 
         {sortedSports.map((sport) => {
           const sportPredictions = groupedPredictions[sport];
@@ -363,45 +314,88 @@ export default function Home() {
     );
   };
 
-  return (
-    <div className={styles.pageLayout}>
-      <div ref={sideNavRef}>
-        <SideNav />
-      </div>
-      <div className={styles.pageContent}>
-        <Navbar />
-        <div className={styles.homeContainer}>
-          <div className={styles.homeMain}>
-            <HomeBanner />
-            <ExclusiveOffers />
-            {renderPredictionsSection()}
-            {renderBlogSection()}
-            {renderNewsSection()}
-          </div>
-          <div className={styles.predictionsSection}>
-            <VipResults />
-            <OfferCard />
-          </div>
-        </div>
-        <Footer />
-      </div>
-      {hasPopupAds && (
-        <Popup
-          Top={0}
-          Right={0}
-          Left={0}
-          Bottom={0}
-          OnClose={closePopup}
-          Blur={5}
-          Zindex={9999}
-          IsOpen={isPopupOpen}
-          Content={<Telegram />}
-          BorderRadiusTopLeft={15}
-          BorderRadiusTopRight={15}
-          BorderRadiusBottomRight={15}
-          BorderRadiusBottomLeft={15}
+const renderDynamicContent = () => {
+  if (!isAuthInitialized) {
+    return (
+      <div className={styles.noContentContainer}>
+        <Nothing
+          Alt="Initializing"
+          NothingImage={EmptySportImage}
+          Text="Loading home content..."
         />
-      )}
-    </div>
+      </div>
+    );
+  }
+
+  if (isDynamicContentLoading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <LoadingLogo />
+      </div>
+    );
+  }
+
+  if (!hasAnyContent) {
+    return (
+      <div className={styles.noContentContainer}>
+        <Nothing
+          Alt="No prediction"
+          NothingImage={EmptySportImage}
+          Text={
+            "No predictions, blogs or news available at the moment. Please check back later."
+          }
+        />
+      </div>
+    );
+  }
+
+  // Render all content sections
+  return (
+    <>
+      {renderPredictionsSection()}
+      {renderBlogSection()}
+      {renderNewsSection()}
+    </>
   );
-}
+};
+
+return (
+  <div className={styles.pageLayout}>
+    <div ref={sideNavRef}>
+      <SideNav />
+    </div>
+    <div className={styles.pageContent}>
+      <Navbar />
+      <div className={styles.homeContainer}>
+        <div className={styles.homeMain}>
+          <HomeBanner />
+          <ExclusiveOffers />
+          {renderDynamicContent()}
+        </div>
+        <div className={styles.predictionsSection}>
+          <VipResults />
+          <OfferCard />
+        </div>
+      </div>
+      <Footer />
+    </div>
+    {hasPopupAds && (
+      <Popup
+        Top={0}
+        Right={0}
+        Left={0}
+        Bottom={0}
+        OnClose={closePopup}
+        Blur={5}
+        Zindex={9999}
+        IsOpen={isPopupOpen}
+        Content={<Telegram />}
+        BorderRadiusTopLeft={15}
+        BorderRadiusTopRight={15}
+        BorderRadiusBottomRight={15}
+        BorderRadiusBottomLeft={15}
+      />
+    )}
+  </div>
+);
+};

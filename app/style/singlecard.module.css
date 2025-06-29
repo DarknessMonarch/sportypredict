@@ -25,6 +25,7 @@
 
   .leagueInfo h1 {
     font-size: 1rem;
+    text-transform: capitalize;
     font-weight: var(--font-weight-medium);
   }
 
@@ -59,6 +60,7 @@
 
   .teamContainer h1 {
     color: var(--secondary-color);
+    text-transform: capitalize;
     font-size: 1.5rem;
   }
 

@@ -10,6 +10,7 @@ export default function Nothing({ NothingImage, Text, Alt}) {
         src={NothingImage}
         alt={Alt}
         height={200}
+        width={200}
         priority
         className={styles.emptyStateImage}
       />
