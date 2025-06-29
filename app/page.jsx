@@ -50,30 +50,41 @@ export default function Home() {
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
 
-  // Create a combined array of all predictions with sport order priority
+  // Group predictions by sport, but use category for bet-of-the-day
+  const groupedPredictions = predictions.reduce((groups, prediction) => {
+    // For bet-of-the-day, use the category, otherwise use sport
+    let groupKey;
+    if (prediction.category === "bet-of-the-day") {
+      groupKey = "bet-of-the-day";
+    } else {
+      groupKey = prediction.sport?.toLowerCase() || "unknown";
+    }
+
+    if (!groups[groupKey]) {
+      groups[groupKey] = [];
+    }
+    groups[groupKey].push(prediction);
+    return groups;
+  }, {});
+
+  // Sort sports by priority and then alphabetically
   const sportOrder = ["football", "basketball", "tennis", "bet-of-the-day"];
-  
-  const allPredictions = predictions
-    .filter(p => p.sport) // Ensure sport exists
-    .sort((a, b) => {
-      const sportA = a.sport.toLowerCase();
-      const sportB = b.sport.toLowerCase();
-      
-      const indexA = sportOrder.indexOf(sportA);
-      const indexB = sportOrder.indexOf(sportB);
-      
-      // If sport is in our order list, use that priority
-      if (indexA !== -1 && indexB !== -1) {
-        return indexA - indexB;
-      }
-      
-      // If only one sport is in our list, prioritize it
-      if (indexA !== -1) return -1;
-      if (indexB !== -1) return 1;
-      
-      // If neither sport is in our list, sort alphabetically
-      return sportA.localeCompare(sportB);
-    });
+  const sortedSports = Object.keys(groupedPredictions).sort((a, b) => {
+    const indexA = sportOrder.indexOf(a);
+    const indexB = sportOrder.indexOf(b);
+
+    // If both sports are in the priority list, use that order
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+
+    // If only one sport is in the priority list, prioritize it
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+
+    // If neither sport is in the priority list, sort alphabetically
+    return a.localeCompare(b);
+  });
 
   // Get first 3 blog posts and news articles
   const featuredBlogs = blogs.slice(0, 3);
@@ -170,7 +181,7 @@ export default function Home() {
         </div>
         <div className={styles.pageContent}>
           <Navbar />
-          <div className={styles.homeContainer}>
+          <div className={styles.homeMain}>
             <Banner />
             <ExclusiveOffers />
             <div className={styles.loadingContainer}>
@@ -191,7 +202,7 @@ export default function Home() {
         </div>
         <div className={styles.pageContent}>
           <Navbar />
-          <div className={styles.homeContainer}>
+          <div className={styles.homeMain}>
             <Banner />
             <ExclusiveOffers />
             <div className={styles.noContentContainer}>
@@ -210,9 +221,11 @@ export default function Home() {
     );
   }
 
-  const handleCardClick = (teamA, teamB, sport) => {
+  const handleCardClick = (predictionData) => {
+    const { teamA, teamB, sport } = predictionData;
     if (!teamA || !teamB) return;
 
+    // Use the actual sport from prediction data for navigation
     const category = sport?.toLowerCase() || "football";
     const selectedDate = today;
 
@@ -315,45 +328,22 @@ export default function Home() {
   };
 
   const renderPredictionsSection = () => {
-    if (allPredictions.length === 0) {
-      return (
-        <div className={styles.noPredictionsContainer}>
-          <p>No predictions available for today</p>
-        </div>
-      );
-    }
-
     return (
       <div className={styles.predictionsGrid}>
-        {allPredictions.map((prediction, index) => {
-          const previousPrediction = allPredictions[index - 1];
-          const currentSport = prediction.sport?.toLowerCase();
-          const previousSport = previousPrediction?.sport?.toLowerCase();
-          const showSportHeader = !previousPrediction || previousSport !== currentSport;
+        {sortedSports.map((sport) => {
+          const sportPredictions = groupedPredictions[sport];
+          const sortedPredictions = [...sportPredictions].sort((a, b) => {
+            const timeA = a.time ? new Date(a.time).getTime() : 0;
+            const timeB = b.time ? new Date(b.time).getTime() : 0;
+            return timeA - timeB;
+          });
 
           return (
             <HomeCard
-              key={`${currentSport}-${prediction._id || index}`}
-              sport={prediction.sport}
-              leagueImage={prediction.leagueImage}
-              teamAImage={prediction.teamAImage}
-              teamBImage={prediction.teamBImage}
-              league={prediction.league}
-              teamA={prediction.teamA}
-              teamB={prediction.teamB}
-              time={prediction.time}
-              date={prediction.time}
-              teamAForm={prediction.formationA || []}
-              teamBForm={prediction.formationB || []}
-              showSportHeader={showSportHeader}
-              previousSport={previousSport}
-              onCardClick={() =>
-                handleCardClick(
-                  prediction.teamA,
-                  prediction.teamB,
-                  prediction.sport
-                )
-              }
+              key={sport}
+              sport={sport}
+              predictions={sortedPredictions}
+              onCardClick={handleCardClick}
             />
           );
         })}
@@ -366,15 +356,7 @@ export default function Home() {
 
     return (
       <div className={styles.contentSection}>
-        <div className={styles.sectionHeader}>
-          <h2>Latest Blog Posts</h2>
-          <button
-            className={styles.viewAllBtn}
-            onClick={() => router.push("/page/blog")}
-          >
-            View All
-          </button>
-        </div>
+        <h2>Latest Blog Posts</h2>
         <div className={styles.cardsGrid}>
           {featuredBlogs.map((post) => (
             <ArticleCard
@@ -385,6 +367,12 @@ export default function Home() {
             />
           ))}
         </div>
+        <button
+          className={styles.viewAllBtn}
+          onClick={() => router.push("/page/blog")}
+        >
+          See more blogs
+        </button>
       </div>
     );
   };
@@ -394,15 +382,7 @@ export default function Home() {
 
     return (
       <div className={styles.contentSection}>
-        <div className={styles.sectionHeader}>
-          <h2>Latest Sports News</h2>
-          <button
-            className={styles.viewAllBtn}
-            onClick={() => router.push("/page/news")}
-          >
-            View All
-          </button>
-        </div>
+        <h2>Latest Sports News</h2>
         <div className={styles.cardsGrid}>
           {featuredNews.map((post) => (
             <NewsCard
@@ -413,6 +393,12 @@ export default function Home() {
             />
           ))}
         </div>
+        <button
+          className={styles.viewAllBtn}
+          onClick={() => router.push("/page/news")}
+        >
+          See more news
+        </button>
       </div>
     );
   };
@@ -425,20 +411,17 @@ export default function Home() {
       <div className={styles.pageContent}>
         <Navbar />
         <div className={styles.homeContainer}>
-          <Banner />
-          <ExclusiveOffers />
-
-          <div className={styles.predictionsSection}>
-            <div className={styles.predictionsInner}>
-              {renderPredictionsSection()}
-            </div>
-            <div className={styles.homeBonusContainer}>
-              <VipResults />
-              <OfferCard />
-            </div>
+          <div className={styles.homeMain}>
+            <Banner />
+            <ExclusiveOffers />
+            {renderPredictionsSection()}
+            {renderBlogSection()}
+            {renderNewsSection()}
           </div>
-          {renderBlogSection()}
-          {renderNewsSection()}
+          <div className={styles.predictionsSection}>
+            <VipResults />
+            <OfferCard />
+          </div>
         </div>
         <Footer />
       </div>

@@ -193,3 +193,10 @@
     text-transform: capitalize;
   }
 }
+
+/* using it as global style for larger devices  */
+@media only screen and (min-width: 48em) {
+  .vipContainer {
+    flex-shrink: 0;
+  }
+}

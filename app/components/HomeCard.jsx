@@ -11,34 +11,8 @@ import { PiCourtBasketball as BetOfTheDayIcon } from "react-icons/pi";
 import { IoChevronForwardOutline as ChevronIcon } from "react-icons/io5";
 import styles from "@/app/style/homecard.module.css";
 
-export default function HomeCard({
-  sport, 
-  teamAImage,
-  teamBImage,
-  league,
-  teamA,
-  teamB,
-  time,
-  date,
-  teamAForm = [],
-  teamBForm = [],
-  onCardClick,
-  showSportHeader = false, 
-  previousSport, 
-}) {
+export default function HomeCard({ sport, predictions = [], onCardClick }) {
   const router = useRouter();
-
-  const formattedTime = useMemo(() => {
-    if (!time) return "00:00";
-    const localTime = DateTime.fromISO(time).setZone(DateTime.local().zoneName);
-    return localTime.toFormat("HH:mm");
-  }, [time]);
-
-  const formattedDate = useMemo(() => {
-    if (!date) return "";
-    const localDate = DateTime.fromISO(date).setZone(DateTime.local().zoneName);
-    return localDate.toFormat("dd MMM");
-  }, [date]);
 
   const getSportIcon = (sportType) => {
     switch (sportType?.toLowerCase()) {
@@ -55,25 +29,58 @@ export default function HomeCard({
     }
   };
 
+  const getSportDisplayName = (sportType) => {
+    switch (sportType?.toLowerCase()) {
+      case "football":
+        return "Football";
+      case "basketball":
+        return "Basketball";
+      case "tennis":
+        return "Tennis";
+      case "bet-of-the-day":
+        return "Bet of the Day";
+      default:
+        return sportType || "Unknown";
+    }
+  };
+
   const handleSportHeaderClick = (e) => {
-    e.stopPropagation(); 
-    const sportPath = sport.toLowerCase();
+    e.stopPropagation();
+    const sportPath =
+      sport === "bet-of-the-day" ? "bet-of-the-day" : sport.toLowerCase();
     router.push(`/page/${sportPath}`);
   };
 
-  const handleCardClick = () => {
+  const formatTime = (time) => {
+    if (!time) return "00:00";
+    const localTime = DateTime.fromISO(time).setZone(DateTime.local().zoneName);
+    return localTime.toFormat("HH:mm");
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    const localDate = DateTime.fromISO(date).setZone(DateTime.local().zoneName);
+    return localDate.toFormat("dd MMM");
+  };
+
+  const handlePredictionClick = (prediction) => {
     if (onCardClick) {
       onCardClick({
-        sport,
-        league,
-        teamA,
-        teamB,
-        time,
-        date,
+        sport: prediction.sport,
+        league: prediction.league,
+        teamA: prediction.teamA,
+        teamB: prediction.teamB,
+        time: prediction.time,
+        date: prediction.time,
       });
     } else {
-      const matchSlug = `${teamA.toLowerCase().replace(/\s+/g, '-')}-vs-${teamB.toLowerCase().replace(/\s+/g, '-')}`;
-      router.push(`/match/${sport.toLowerCase()}/${matchSlug}`);
+      const matchSlug = `${prediction.teamA
+        .toLowerCase()
+        .replace(/\s+/g, "-")}-vs-${prediction.teamB
+        .toLowerCase()
+        .replace(/\s+/g, "-")}`;
+      const actualSport = prediction.sport?.toLowerCase() || "football";
+      router.push(`/match/${actualSport}/${matchSlug}`);
     }
   };
 
@@ -91,6 +98,7 @@ export default function HomeCard({
   };
 
   const renderFormIndicators = (form) => {
+    if (!form || !Array.isArray(form)) return null;
     return form.map((result, index) => (
       <div
         key={index}
@@ -103,86 +111,91 @@ export default function HomeCard({
     ));
   };
 
-  const shouldShowHeader = showSportHeader || (previousSport && previousSport !== sport);
+  if (!predictions || predictions.length === 0) {
+    return null;
+  }
 
   return (
     <div className={styles.cardContainer}>
-      {shouldShowHeader && (
-        <div 
-          className={styles.sportHeader} 
-          onClick={handleSportHeaderClick}
-        >
-          <div className={styles.sportInfo}>
-            <span className={styles.sportIcon}>{getSportIcon(sport)}</span>
-            <h2>{sport} betting tips & predictions</h2>
-          </div>
-          <div className={styles.expandIcon}>
-            <ChevronIcon size={20} />
-          </div>
+      <div className={styles.sportHeader} onClick={handleSportHeaderClick}>
+        <div className={styles.sportInfo}>
+          <span className={styles.sportIcon}>{getSportIcon(sport)}</span>
+          <h2>{getSportDisplayName(sport)} predictions</h2>
         </div>
-      )}
+        <div className={styles.expandIcon}>
+          <ChevronIcon size={20} />
+        </div>
+      </div>
 
-      <div className={styles.card} onClick={handleCardClick}>
-        {shouldShowHeader && (
+      {predictions.map((prediction, index) => (
+        <div
+          key={prediction._id || index}
+          className={styles.card}
+          onClick={() => handlePredictionClick(prediction)}
+        >
           <div className={styles.mobileMatchDetails}>
             <span>
-              ({formattedDate}) ({formattedTime})
+              ({formatDate(prediction.time)}) ({formatTime(prediction.time)})
             </span>
-          </div>
-        )}
-
-        <div className={styles.matchRow}>
-          <div className={styles.teamSection}>
-            <div className={styles.teamInfo}>
-              <Image
-                src={teamAImage || ""}
-                alt={teamA || "Team A"}
-                width={30}
-                height={30}
-                className={`${styles.teamImage} ${
-                  sport === "Tennis" || sport === "Basketball"
-                    ? " " + styles.circularShape
-                    : ""
-                }`}
-              />
-              <span>{teamA}</span>
-            </div>
-            <div className={styles.formation}>
-              {renderFormIndicators(teamAForm)}
+            <div className={styles.chevronSection}>
+              <ChevronIcon size={20} />
             </div>
           </div>
 
-          <div className={styles.matchDetails}>
-            <span>
-              ({formattedDate}) ({formattedTime})
-            </span>
-          </div>
-
-          {/* Team B */}
-          <div className={styles.teamSection}>
-            <div className={styles.teamInfo}>
-              <Image
-                src={teamBImage || ""}
-                alt={teamB || "Team B"}
-                width={30}
-                height={30}
-                className={`${styles.teamImage} ${
-                  sport === "Tennis" || sport === "Basketball"
-                    ? " " + styles.circularShape
-                    : ""
-                }`}
-              />
-              <span className={styles.teamName}>{teamB}</span>
+          <div className={styles.matchRowInner}>
+            <div className={styles.matchRow}>
+              <div className={styles.teamSection}>
+                <div className={styles.teamInfo}>
+                  <Image
+                    src={prediction.teamAImage || ""}
+                    alt={prediction.teamA || "Team A"}
+                    width={30}
+                    height={30}
+                    className={`${styles.teamImage} ${
+                      sport === "Tennis" || sport === "Basketball"
+                        ? " " + styles.circularShape
+                        : ""
+                    }`}
+                  />
+                  <span className={styles.teamName}>{prediction.teamA}</span>
+                </div>
+                <div className={styles.formation}>
+                  {renderFormIndicators(prediction.formationA)}
+                </div>
+              </div>
+              {/*- desktop only */}
+              <div className={styles.matchDetails}>
+                <span>
+                  ({formatDate(prediction.time)}) ({formatTime(prediction.time)}
+                  )
+                </span>
+              </div>
+              <div className={styles.teamSection}>
+                <div className={styles.teamInfo}>
+                  <Image
+                    src={prediction.teamBImage || ""}
+                    alt={prediction.teamB || "Team B"}
+                    width={30}
+                    height={30}
+                    className={`${styles.teamImage} ${
+                      sport === "Tennis" || sport === "Basketball"
+                        ? " " + styles.circularShape
+                        : ""
+                    }`}
+                  />
+                  <span className={styles.teamName}>{prediction.teamB}</span>
+                </div>
+                <div className={styles.formation}>
+                  {renderFormIndicators(prediction.formationB)}
+                </div>
+              </div>
             </div>
-            <div className={styles.formation}>
-              {renderFormIndicators(teamBForm)}
+            <div className={styles.chevronSection}>
+              <ChevronIcon size={20} />
             </div>
           </div>
         </div>
-        
-
-      </div>
-      
+      ))}
     </div>
   );
 }

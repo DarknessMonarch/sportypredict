@@ -2,19 +2,7 @@
   .cardContainer {
     display: flex;
     flex-direction: column;
-    border-top: 2px solid var(--light-background-color);
-    border-left: 2px solid var(--light-background-color);
-    border-right: 2px solid var(--light-background-color);
-  }
-
-  .cardContainer:last-child {
-    border-bottom: 2px solid var(--light-background-color);
-  }
-
-  .card {
-    display: flex;
-    cursor: pointer;
-    flex-direction: column;
+    box-shadow: var(--line-shadow-box);
   }
 
   .sportHeader {
@@ -27,7 +15,7 @@
   }
 
   .sportHeader h2 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 600;
     text-transform: capitalize;
   }
@@ -38,9 +26,32 @@
     align-items: center;
   }
 
-  .matchRow {
+  .card {
     display: flex;
-    
+    cursor: pointer;
+    flex-direction: column;
+    border-bottom: 2px solid var(--light-background-color);
+  }
+
+  .card span {
+    font-size: 1rem;
+    font-weight: 400;
+    text-transform: capitalize;
+  }
+
+  .matchRowInner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .matchRow {
+    width: 100%;
+    display: flex;
+  }
+
+  .matchRowInner .chevronSection {
+    display: none;
   }
 
   .matchDetails {
@@ -48,25 +59,29 @@
     display: none;
     border-top: none;
     border-bottom: none;
-    border-left: 2px solid var(--light-background-color);
-    border-right: 2px solid var(--light-background-color);
+    border-left: 1px solid var(--light-background-color);
+    border-right: 1px solid var(--light-background-color);
   }
 
   .mobileMatchDetails {
-    padding: 10px;
+    padding: 5px;
     display: flex;
+    position: relative;
     align-items: center;
     justify-content: center;
-    border-bottom: 2px solid var(--light-background-color);
-
+    border-bottom: 1px solid var(--light-background-color);
   }
 
+  .mobileMatchDetails .chevronSection {
+    position: absolute;
+    right: 10px;
+  }
 
   .teamSection {
     flex: 1;
     display: flex;
     flex-direction: column;
-
+    border-left: 1px solid var(--light-background-color);
   }
 
   .teamSection:nth-child(3) .teamInfo {
@@ -84,10 +99,6 @@
     align-items: center;
   }
 
-  .teamInfo span {
-    text-transform: capitalize;
-  }
-
   .teamIcon {
     object-fit: contain;
   }
@@ -102,12 +113,12 @@
     display: flex;
     padding: 10px;
     align-items: center;
-    border-top: 2px solid var(--light-background-color);
+    border-top: 1px solid var(--light-background-color);
   }
 
   .formationCircle {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     display: flex;
     border-radius: 360%;
     align-items: center;
@@ -132,7 +143,7 @@
   }
 
   .formationCircle span {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
   }
 }
 
@@ -144,5 +155,22 @@
 
   .matchDetails {
     display: flex;
+  }
+  
+  .matchRowInner {
+    padding-right: 10px;
+  }
+
+  .matchRowInner .chevronSection {
+    display: flex;
+  }
+
+  .formationCircle {
+    width: 21px;
+    height: 21px;
+  }
+
+  .formationCircle span {
+    font-size: 0.7rem;
   }
 }
