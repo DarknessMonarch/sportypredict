@@ -22,6 +22,7 @@ export const viewport = {
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
+  
 
   title: {
     default: "Sportypredict - Expert Sports Betting Predictions & Tips",
@@ -29,7 +30,7 @@ export const metadata = {
   },
   applicationName: "SportyPredict",
   description:
-    "Best Online Free Sports Prediction website with expert tips in Football, Basketball and Tennis. We Predict You Win.",
+    "Best Online Free Sports Prediction website with expert tips in Football, Basketball and Tennis. We Predict You Win.",
   authors: [{ name: "SportyPredict", url: SITE_URL }],
   generator: "Next.js",
   keywords: [
@@ -119,6 +120,9 @@ export const metadata = {
   verification: {
     google: "",
     yandex: "",
+    other: {
+      "msvalidate.01": "BAA68A7BB4F4E6FF29F50122B1137A1F",
+    },
   },
 
   alternates: {
