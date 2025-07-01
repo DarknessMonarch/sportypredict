@@ -53,9 +53,29 @@ async function getMatchUrls() {
       
       const url = `https://sportypredict.com/page/${sportPath}/single/${slug}?date=${prediction.date}`;
       
+      // Fix: Use match date/time for lastmod, not old database timestamps
+      let lastModified;
+      if (prediction.time) {
+        // Use the match time if available
+        lastModified = new Date(prediction.time);
+      } else if (prediction.date) {
+        // Use the match date
+        lastModified = new Date(prediction.date);
+      } else {
+        // Fallback to updated/created timestamps
+        lastModified = new Date(prediction.updatedAt || prediction.createdAt || new Date());
+      }
+      
+      // Ensure the lastmod date is not in the past for future matches
+      const today = new Date();
+      if (lastModified < today && prediction.date && new Date(prediction.date) >= today) {
+        // If it's a future match but has old timestamps, use today's date
+        lastModified = today;
+      }
+      
       return {
         url,
-        lastModified: new Date(prediction.updatedAt || prediction.createdAt || prediction.date),
+        lastModified,
         changeFrequency: 'daily',
         priority: 0.7,
       };
@@ -336,8 +356,6 @@ export default async function sitemap() {
   const blogUrlsResult = blogUrls.status === 'fulfilled' ? blogUrls.value : [];
   const newsUrlsResult = newsUrls.status === 'fulfilled' ? newsUrls.value : [];
   const categoryUrlsResult = categoryUrls.status === 'fulfilled' ? categoryUrls.value : [];
-
-
 
   const allRoutes = [
     ...mainRoutes,

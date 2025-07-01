@@ -11,14 +11,28 @@ export async function GET() {
       }, { status: 200 });
     }
 
+    // Fix: Use UTC date to avoid timezone issues
     const today = new Date();
+    const todayUTC = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     
     const dates = [];
     for (let i = 0; i < 365; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push(date.toISOString().split('T')[0]);
+      // Fix: Create new date for each iteration to avoid mutation issues
+      const date = new Date(todayUTC);
+      date.setDate(todayUTC.getDate() + i);
+      
+      // Fix: Format date consistently without timezone conversion
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      
+      dates.push(dateStr);
     }
+    
+    // Debug: Log the first few dates to verify they're correct
+    console.log('Generated dates (first 5):', dates.slice(0, 5));
+    console.log('Today should be:', dates[0]);
     
     const batchSize = 10; // Process 10 dates at a time
     const batches = [];
@@ -65,7 +79,7 @@ export async function GET() {
                 
               const cleanTeamB = prediction.teamB
                 ?.toLowerCase()
-                ?.replace(/[^a-z0-9\s]/g, '')
+                ?.replace(/[^a-z0-9\s]/g, '')  
                 ?.replace(/\s+/g, '-')
                 ?.replace(/-+/g, '-')
                 ?.replace(/^-|-$/g, '') || 'team-b';
@@ -103,7 +117,8 @@ export async function GET() {
                 odd: prediction.odd,
                 stake: prediction.stake, // Include stake for VIP predictions
                 vipSlip: prediction.vipSlip, // Include VIP slip info
-                updatedAt: prediction.updatedAt || prediction.createdAt || new Date().toISOString(),
+                // Use match time for lastmod if available, otherwise use updated/created timestamps
+                updatedAt: prediction.time || prediction.updatedAt || prediction.createdAt || new Date().toISOString(),
                 createdAt: prediction.createdAt || new Date().toISOString(),
                 slug
               };
