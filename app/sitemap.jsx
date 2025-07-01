@@ -33,9 +33,25 @@ async function getMatchUrls() {
     
     const matchUrls = predictions.map(prediction => {
       const slug = prediction.slug || `${prediction.cleanTeamA}-vs-${prediction.cleanTeamB}`;
-      const category = prediction.category?.toLowerCase() || 'football';
       
-      const url = `https://sportypredict.com/page/${category}/single/${slug}?date=${prediction.date}`;
+      const getSportPath = (sport, category) => {
+        if (category === 'bet-of-the-day') return 'day';
+        if (category === 'vip') return 'vip';
+        
+        const sportMap = {
+          'football': 'football',
+          'basketball': 'basketball', 
+          'tennis': 'tennis',
+          'soccer': 'football',
+          'extra': 'extra'
+        };
+        
+        return sportMap[sport?.toLowerCase()] || sportMap[category?.toLowerCase()] || 'football';
+      };
+      
+      const sportPath = getSportPath(prediction.sport, prediction.category);
+      
+      const url = `https://sportypredict.com/page/${sportPath}/single/${slug}?date=${prediction.date}`;
       
       return {
         url,
@@ -48,6 +64,7 @@ async function getMatchUrls() {
     return matchUrls;
     
   } catch (error) {
+    console.error('Error fetching match URLs:', error);
     return [];
   }
 }
@@ -100,6 +117,7 @@ async function getNewsUrls() {
     return newsUrls;
     
   } catch (error) {
+    console.error('Error fetching news URLs:', error);
     return [];
   }
 }
@@ -156,6 +174,7 @@ async function getBlogUrls() {
     return blogUrls;
     
   } catch (error) {
+    console.error('Error fetching blog URLs:', error);
     return [];
   }
 }
@@ -187,6 +206,7 @@ async function getCategoryUrls() {
     return categoryUrls;
     
   } catch (error) {
+    console.error('Error generating category URLs:', error);
     return [];
   }
 }
@@ -317,6 +337,8 @@ export default async function sitemap() {
   const newsUrlsResult = newsUrls.status === 'fulfilled' ? newsUrls.value : [];
   const categoryUrlsResult = categoryUrls.status === 'fulfilled' ? categoryUrls.value : [];
 
+
+
   const allRoutes = [
     ...mainRoutes,
     ...sportRoutes,
@@ -329,5 +351,21 @@ export default async function sitemap() {
     ...newsUrlsResult,
   ];
 
-  return allRoutes;
+  const uniqueRoutes = allRoutes.filter((route, index, self) => 
+    index === self.findIndex(r => r.url === route.url)
+  );
+
+  console.log(`Generated sitemap with ${uniqueRoutes.length} total URLs:`, {
+    main: mainRoutes.length,
+    sport: sportRoutes.length,
+    content: contentRoutes.length,
+    vip: vipRoutes.length,
+    static: staticRoutes.length,
+    category: categoryUrlsResult.length,
+    match: matchUrlsResult.length,
+    blog: blogUrlsResult.length,
+    news: newsUrlsResult.length,
+  });
+
+  return uniqueRoutes;
 }

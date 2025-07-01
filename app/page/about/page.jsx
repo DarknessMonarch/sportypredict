@@ -84,20 +84,7 @@ export default function About() {
             stress or worry.
           </p>
         </div>
-        <div className={styles.section}>
-          <h2>
-            The Importance of Relying on an Accurate Football Prediction
-            Website.
-          </h2>
-          <p>
-            The importance of relying on an accurate football prediction website
-            lies within the inherent pursuit of earning money. It is this
-            pursuit that drives individuals to seek out reliable sports
-            prediction sites such as SportyPredict.com, which has consistently
-            proven to be a profitable platform for many. Let us delve into the
-            reasons why accurate predictions are crucial:
-          </p>
-        </div>
+       
         <div className={styles.section}>
           <h2>
             The Importance of Relying on an Accurate Football Prediction

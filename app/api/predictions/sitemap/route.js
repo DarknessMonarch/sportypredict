@@ -13,7 +13,6 @@ export async function GET() {
 
     const today = new Date();
     
-    // Generate dates for a full year ahead
     const dates = [];
     for (let i = 0; i < 365; i++) {
       const date = new Date(today);
@@ -21,7 +20,6 @@ export async function GET() {
       dates.push(date.toISOString().split('T')[0]);
     }
     
-    // Process requests in batches to avoid overwhelming the server
     const batchSize = 10; // Process 10 dates at a time
     const batches = [];
     
@@ -39,7 +37,6 @@ export async function GET() {
       totalBatches: batches.length
     };
 
-    // Process each batch sequentially to avoid server overload
     for (const batch of batches) {
       const batchPromises = batch.map(async (dateStr) => {
       try {
@@ -75,6 +72,22 @@ export async function GET() {
               
               const slug = `${cleanTeamA}-vs-${cleanTeamB}`;
               
+              const getSportPath = (sport, category) => {
+                if (category === 'bet-of-the-day') return 'day';
+                if (category === 'vip') return 'vip';
+                
+                const sportMap = {
+                  'football': 'football',
+                  'basketball': 'basketball', 
+                  'tennis': 'tennis',
+                  'soccer': 'football' 
+                };
+                
+                return sportMap[sport?.toLowerCase()] || 'football';
+              };
+              
+              const sportPath = getSportPath(prediction.sport, prediction.category);
+              
               return {
                 teamA: prediction.teamA,
                 teamB: prediction.teamB,
@@ -84,6 +97,7 @@ export async function GET() {
                 date: dateStr,
                 league: prediction.league,
                 sport: prediction.sport,
+                sportPath, // Add sport path for URL generation
                 tip: prediction.tip,
                 time: prediction.time,
                 odd: prediction.odd,
@@ -129,10 +143,8 @@ export async function GET() {
       }
           });
       
-      // Wait for current batch to complete
       const batchResults = await Promise.allSettled(batchPromises);
       
-      // Process batch results
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           if (result.value.success) {
@@ -154,49 +166,45 @@ export async function GET() {
       
       fetchStats.batchesProcessed++;
       
-      // Small delay between batches to be respectful to the server
       if (fetchStats.batchesProcessed < batches.length) {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
     
-    // Enhanced deduplication logic
     const uniquePredictions = allPredictions.filter((prediction, index, self) => 
       index === self.findIndex(p => 
         p.teamA === prediction.teamA && 
         p.teamB === prediction.teamB && 
         p.category === prediction.category &&
         p.date === prediction.date &&
-        // For VIP predictions, also check stake and vipSlip
         (p.category !== 'vip' || (p.stake === prediction.stake && p.vipSlip === prediction.vipSlip))
       )
     );
     
-    // Enhanced sorting with multiple criteria
     const sortedPredictions = uniquePredictions.sort((a, b) => {
-      // First sort by date
       if (a.date !== b.date) return a.date.localeCompare(b.date);
       
-      // Then by category (prioritize non-VIP for public sitemap)
       if (a.category !== b.category) {
         if (a.category === 'vip' && b.category !== 'vip') return 1;
         if (b.category === 'vip' && a.category !== 'vip') return -1;
         return a.category.localeCompare(b.category);
       }
       
-      // Then by time if available
       if (a.time && b.time) {
         const timeA = new Date(a.time).getTime();
         const timeB = new Date(b.time).getTime();
         if (timeA !== timeB) return timeA - timeB;
       }
       
-      // Finally by team names for consistency
       if (a.teamA !== b.teamA) return a.teamA.localeCompare(b.teamA);
       return a.teamB.localeCompare(b.teamB);
     });
     
-    // Group predictions by category and date for better analytics
+    const urlReadyPredictions = sortedPredictions.map(prediction => ({
+      ...prediction,
+      url: `/page/${prediction.sportPath}/single/${prediction.slug}?date=${prediction.date}`,
+    }));
+    
     const predictionsByCategory = sortedPredictions.reduce((acc, pred) => {
       const key = pred.category;
       if (!acc[key]) acc[key] = [];
@@ -212,8 +220,8 @@ export async function GET() {
     }, {});
     
     const response = {
-      predictions: sortedPredictions,
-      total: sortedPredictions.length,
+      predictions: urlReadyPredictions,
+      total: urlReadyPredictions.length,
       dates,
       fetchStats,
       analytics: {

@@ -30,6 +30,9 @@ export default function Home() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+  const [currentDate, setCurrentDate] = useState(
+    () => new Date().toISOString().split("T")[0]
+  );
 
   const { adverts } = useAdvertStore();
   const { isOpen, setClose } = useDrawerStore();
@@ -46,8 +49,6 @@ export default function Home() {
 
   const popupBannerAds = adverts.filter((ad) => ad.location === "PopupBanner");
   const hasPopupAds = popupBannerAds.length > 0;
-
-  const today = new Date().toISOString().split("T")[0];
 
   const groupedPredictions = predictions.reduce((groups, prediction) => {
     let groupKey;
@@ -82,9 +83,39 @@ export default function Home() {
   const featuredBlogs = blogs.slice(0, 2);
   const featuredNews = articles.slice(0, 2);
 
-  // Check if dynamic content is still loading
-  const isDynamicContentLoading = predictionsLoading || blogsLoading || newsLoading;
-  const hasAnyContent = predictions.length > 0 || blogs.length > 0 || articles.length > 0;
+  const isDynamicContentLoading =
+    predictionsLoading || blogsLoading || newsLoading;
+  const hasAnyContent =
+    predictions.length > 0 || blogs.length > 0 || articles.length > 0;
+
+  useEffect(() => {
+    const updateDate = () => {
+      const newDate = new Date().toISOString().split("T")[0];
+      setCurrentDate(newDate);
+    };
+
+    updateDate();
+
+    const interval = setInterval(() => {
+      updateDate();
+    }, 60000);
+
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+    const midnightTimeout = setTimeout(() => {
+      updateDate();
+    }, msUntilMidnight);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(midnightTimeout);
+    };
+  }, []);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -105,7 +136,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isAuthInitialized) {
-      fetchAllPredictionsForDate(today);
+      fetchAllPredictionsForDate(currentDate);
       fetchBlogs();
       fetchArticles();
     }
@@ -114,7 +145,7 @@ export default function Home() {
     fetchAllPredictionsForDate,
     fetchBlogs,
     fetchArticles,
-    today,
+    currentDate,
   ]);
 
   // Viewport fix effect
@@ -237,6 +268,97 @@ export default function Home() {
     }
   };
 
+  const renderPredictionInfo = () => {
+    return (
+      <div className={styles.predictionInfo}>
+        <h1>Best Free Sports Predictions Website</h1>
+        <p>
+          SportyPredict is the best free online sports prediction website,
+          offering expert tips in football, basketball, and tennis. We Predict,
+          you Win. And here&apos;s why we truly are the best free sports
+          predictions website:
+        </p>
+
+        <h2>1. Comprehensive Free Sports Predictions</h2>
+        <p>
+          We deliver daily free sports predictions and expert betting tips
+          across all major disciplines, including:
+        </p>
+        <ul>
+          <li>
+            <strong>Football Predictions</strong> – From Champions League
+            showdowns to domestic league clashes, our data-driven forecasts
+            cover it all.
+          </li>
+          <li>
+            <strong>Basketball Picks</strong> – NBA matchups, EuroLeague
+            showdowns, you&apos;ll find free tips with form analysis and player
+            availability.
+          </li>
+          <li>
+            <strong>Tennis Insights</strong> – Grand Slams, ATP/WTA tour events:
+            our free tennis predictions always respect the correct set formats
+            and tournament contexts.
+          </li>
+        </ul>
+        <p>
+          This breadth of no-cost sports tips ensures you never have to look
+          elsewhere for reliable guidance.
+        </p>
+
+        <h2>2. User-Friendly</h2>
+        <p>
+          We&apos;ve structured SportyPredict.com for lightning-fast access to
+          the content you care about:
+        </p>
+        <ul>
+          <li>
+            <strong>Intuitive Navigation</strong> – Tabs for Football,
+            Basketball, Tennis, Bet of the Day, News, and Blogs let you find
+            free tips in one click.
+          </li>
+          <li>
+            <strong>Responsive Design</strong> – Whether you&apos;re on desktop
+            or mobile, our site delivers seamless performance so you never miss
+            a tip on the go.
+          </li>
+        </ul>
+
+        <h2>3. Proven Accuracy & Transparency</h2>
+        <p>We believe in full visibility of our track record:</p>
+        <ul>
+          <li>
+            <strong>Archived Results</strong> – Review our past free tips,
+            complete with hit rates and outcome breakdowns, so you can trust the
+            team behind the predictions.
+          </li>
+          <li>
+            <strong>Data-Driven Analysis</strong> – Every free tip is backed by
+            statistical modeling: current form, head-to-head history, home/away
+            performance, and situational factors like weather.
+          </li>
+        </ul>
+
+        <h2>4. Effortless VIP Subscription Path</h2>
+        <p>
+          For punters seeking extra edge, our VIP plan offers 2–5 premium odds
+          picks daily, banker selections, combo tickets, and personalized
+          support. Yet we never lock away our free sports betting tips—you
+          remain free to access all core predictions whether you subscribe or
+          not.
+        </p>
+
+        <h2>Conclusion</h2>
+        <p>
+          By combining in-depth analysis, a seamless user experience, and an
+          unwavering commitment to free access, we&apos;ve crafted the ultimate
+          destination for free sports predictions. Join thousands of satisfied
+          users and let SportyPredict power your next winning bet.
+        </p>
+      </div>
+    );
+  };
+
   const renderPredictionsSection = () => {
     return (
       <div className={styles.predictionsGrid}>
@@ -314,88 +436,89 @@ export default function Home() {
     );
   };
 
-const renderDynamicContent = () => {
-  if (!isAuthInitialized) {
-    return (
-      <div className={styles.noContentContainer}>
-        <Nothing
-          Alt="Initializing"
-          NothingImage={EmptySportImage}
-          Text="Loading home content..."
-        />
-      </div>
-    );
-  }
+  const renderDynamicContent = () => {
+    if (!isAuthInitialized) {
+      return (
+        <div className={styles.noContentContainer}>
+          <Nothing
+            Alt="Initializing"
+            NothingImage={EmptySportImage}
+            Text="Loading home content..."
+          />
+        </div>
+      );
+    }
 
-  if (isDynamicContentLoading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <LoadingLogo />
-      </div>
-    );
-  }
+    if (isDynamicContentLoading) {
+      return (
+        <div className={styles.loadingContainer}>
+          <LoadingLogo />
+        </div>
+      );
+    }
 
-  if (!hasAnyContent) {
-    return (
-      <div className={styles.noContentContainer}>
-        <Nothing
-          Alt="No prediction"
-          NothingImage={EmptySportImage}
-          Text={
-            "No predictions, blogs or news available at the moment. Please check back later."
-          }
-        />
-      </div>
-    );
-  }
+    if (!hasAnyContent) {
+      return (
+        <div className={styles.noContentContainer}>
+          <Nothing
+            Alt="No prediction"
+            NothingImage={EmptySportImage}
+            Text={
+              "No predictions, blogs or news available at the moment. Please check back later."
+            }
+          />
+        </div>
+      );
+    }
 
-  // Render all content sections
+    return (
+      <>
+        {renderPredictionsSection()}
+        {renderBlogSection()}
+        {renderNewsSection()}
+      </>
+    );
+  };
+
   return (
-    <>
-      {renderPredictionsSection()}
-      {renderBlogSection()}
-      {renderNewsSection()}
-    </>
-  );
-};
-
-return (
-  <div className={styles.pageLayout}>
-    <div ref={sideNavRef}>
-      <SideNav />
-    </div>
-    <div className={styles.pageContent}>
-      <Navbar />
-      <div className={styles.homeContainer}>
-        <div className={styles.homeMain}>
-          <HomeBanner />
-          <ExclusiveOffers />
-          {renderDynamicContent()}
-        </div>
-        <div className={styles.predictionsSection}>
-          <VipResults />
-          <OfferCard />
-        </div>
+    <div className={styles.pageLayout}>
+      <div ref={sideNavRef}>
+        <SideNav />
       </div>
-      <Footer />
+      <div className={styles.pageContent}>
+        <Navbar />
+        <div className={styles.homeContainer}>
+          <div className={styles.homeMain}>
+            <HomeBanner />
+            <ExclusiveOffers />
+            {renderDynamicContent()}
+            {!isMobile && renderPredictionInfo()}
+          </div>
+          <div className={styles.predictionsSection}>
+            <VipResults />
+            <OfferCard />
+            {isMobile && renderPredictionInfo()}
+          </div>
+        </div>
+        <Footer />
+      </div>
+      {hasPopupAds && (
+        <Popup
+          Top={0}
+          Right={0}
+          Left={0}
+          Bottom={0}
+          OnClose={closePopup}
+          Blur={5}
+          Zindex={9999}
+          IsOpen={isPopupOpen}
+          Content={<Telegram />}
+          BorderRadiusTopLeft={15}
+          BorderRadiusTopRight={15}
+          BorderRadiusBottomRight={15}
+          BorderRadiusBottomLeft={15}
+        />
+      )}
     </div>
-    {hasPopupAds && (
-      <Popup
-        Top={0}
-        Right={0}
-        Left={0}
-        Bottom={0}
-        OnClose={closePopup}
-        Blur={5}
-        Zindex={9999}
-        IsOpen={isPopupOpen}
-        Content={<Telegram />}
-        BorderRadiusTopLeft={15}
-        BorderRadiusTopRight={15}
-        BorderRadiusBottomRight={15}
-        BorderRadiusBottomLeft={15}
-      />
-    )}
-  </div>
-);
-};
+  );
+}

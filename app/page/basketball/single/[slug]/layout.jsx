@@ -114,6 +114,7 @@ export async function generateMetadata({ params, searchParams }, parent) {
 
 export default async function MatchLayout({ children, params, searchParams }) {
   const { slug } = await params;
+  const date = searchParams?.date;
   
   let sport = (await params)?.sport || 'football';
   
@@ -121,12 +122,25 @@ export default async function MatchLayout({ children, params, searchParams }) {
   const teamA = teamNames[0]?.replace(/[-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Team A';
   const teamB = teamNames[1]?.replace(/[-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Team B';
   
+  const startDate = date ? new Date(date) : new Date();
+  const startDateISO = startDate.toISOString();
+  
+  const getVenueName = (sport) => {
+    switch(sport) {
+      case 'football': return 'Football Stadium';
+      case 'basketball': return 'Basketball Arena';
+      case 'tennis': return 'Tennis Court';
+      default: return 'Sports Venue';
+    }
+  };
+  
   const matchSchema = {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
     name: `${teamA} vs ${teamB}`,
     description: `${teamA} vs ${teamB} ${sport} match prediction and betting tips`,
     sport: sport.charAt(0).toUpperCase() + sport.slice(1),
+    startDate: startDateISO, 
     competitor: [
       {
         "@type": "SportsTeam",
@@ -138,9 +152,40 @@ export default async function MatchLayout({ children, params, searchParams }) {
       }
     ],
     location: {
-      "@type": "VirtualLocation",
-      url: `https://sportypredict.com/page/${sport}/single/${slug}`
-    }
+      "@type": "Place",
+      name: getVenueName(sport),
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "Global"
+      }
+    },
+    organizer: {
+      "@type": "Organization",
+      name: "SportyPredict",
+      url: "https://sportypredict.com"
+    },
+    url: `https://sportypredict.com/page/${sport}/single/${slug}${date ? `?date=${date}` : ''}`,
+    image: "https://sportypredict.com/assets/banner.png",
+    offers: { 
+      "@type": "Offer",
+      description: "Betting predictions and tips",
+      url: `https://sportypredict.com/page/${sport}/single/${slug}${date ? `?date=${date}` : ''}`,
+      seller: {
+        "@type": "Organization",
+        name: "SportyPredict"
+      }
+    },
+    performer: [
+      {
+        "@type": "SportsTeam",
+        name: teamA
+      },
+      {
+        "@type": "SportsTeam",
+        name: teamB
+      }
+    ],
+    eventStatus: "https://schema.org/EventScheduled"
   };
   
   const articleSchema = {
@@ -158,21 +203,33 @@ export default async function MatchLayout({ children, params, searchParams }) {
       name: "SportyPredict",
       logo: {
         "@type": "ImageObject",
-        url: "https://sportypredict.com/assets/logo.png"
+        url: "https://sportypredict.com/assets/logo.png",
+        width: 400,
+        height: 400
       }
     },
-    datePublished: new Date().toISOString(),
+    datePublished: startDateISO,
     dateModified: new Date().toISOString(),
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://sportypredict.com/page/${sport}/single/${slug}`
+      "@id": `https://sportypredict.com/page/${sport}/single/${slug}${date ? `?date=${date}` : ''}`
     },
     about: {
       "@type": "SportsEvent",
-      name: `${teamA} vs ${teamB}`
-    }
+      name: `${teamA} vs ${teamB}`,
+      startDate: startDateISO
+    },
+    image: {
+      "@type": "ImageObject",
+      url: "https://sportypredict.com/assets/banner.png",
+      width: 1200,
+      height: 630
+    },
+    articleSection: sport.charAt(0).toUpperCase() + sport.slice(1),
+    keywords: `${teamA}, ${teamB}, ${sport}, prediction, betting tips, sports analysis`
   };
   
+  // Enhanced Breadcrumb schema
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -186,14 +243,14 @@ export default async function MatchLayout({ children, params, searchParams }) {
       {
         "@type": "ListItem",
         position: 2,
-        name: `${sport.charAt(0).toUpperCase() + sport.slice(1)} Tips`,
+        name: `${sport.charAt(0).toUpperCase() + sport.slice(1)} Predictions`,
         item: `https://sportypredict.com/page/${sport}`
       },
       {
         "@type": "ListItem",
         position: 3,
         name: `${teamA} vs ${teamB}`,
-        item: `https://sportypredict.com/page/${sport}/single/${slug}`
+        item: `https://sportypredict.com/page/${sport}/single/${slug}${date ? `?date=${date}` : ''}`
       }
     ]
   };
@@ -203,7 +260,19 @@ export default async function MatchLayout({ children, params, searchParams }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([matchSchema, articleSchema, breadcrumbSchema])
+          __html: JSON.stringify(matchSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema)
         }}
       />
       {children}
