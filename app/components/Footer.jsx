@@ -66,15 +66,15 @@ export default function Footer() {
           <div className={styles.linksSection}>
             <div className={styles.linkColumn}>
               <h4>Services</h4>
-              <Link href="/page/vip">VIP Membership</Link>
-              <Link href="/page/payment">How to Pay</Link>
-              <Link href="/page/offers">Special Offers</Link>
+              <Link href="/vip">VIP Membership</Link>
+              <Link href="/payment">How to Pay</Link>
+              <Link href="/offers">Special Offers</Link>
             </div>
             <div className={styles.linkColumn}>
               <h4>Legal</h4>
-              <Link href="/page/terms">Terms & Conditions</Link>
-              <Link href="/page/privacy">Privacy Policy</Link>
-              <Link href="/page/refund">Refund Policy</Link>
+              <Link href="/terms">Terms & Conditions</Link>
+              <Link href="/privacy">Privacy Policy</Link>
+              <Link href="/refund">Refund Policy</Link>
             </div>
             <div className={styles.contactSection}>
               <h4>Contact</h4>
@@ -201,9 +201,9 @@ export default function Footer() {
       <div className={styles.bottomBar}>
         <span>© {currentYear} SportyPredict. All rights reserved.</span>
         <div className={styles.bottomLinks}>
-          <Link href="/page/terms">Terms</Link>
-          <Link href="/page/privacy">Privacy</Link>
-          <Link href="/page/disclaimer">Disclaimer</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/disclaimer">Disclaimer</Link>
         </div>
       </div>
     </footer>

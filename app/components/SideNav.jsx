@@ -348,9 +348,9 @@ export default function SideNavComponent() {
               </Link>
               
               <Link
-                href="/page/vip"
+                href="/vip"
                 className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/vip" || pathname.startsWith("/page/vip/")
+                  pathname === "/vip" || pathname.startsWith("/vip/")
                     ? styles.activesideNav
                     : ""
                 }`}
@@ -360,10 +360,10 @@ export default function SideNavComponent() {
                 <h1>Vip</h1>
               </Link>
               <Link
-                href="/page/payment"
+                href="/payment"
                 className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/payment" ||
-                  pathname.startsWith("/page/payment/")
+                  pathname === "/payment" ||
+                  pathname.startsWith("/payment/")
                     ? styles.activesideNav
                     : ""
                 }`}
@@ -373,9 +373,9 @@ export default function SideNavComponent() {
                 <h1>How to pay </h1>
               </Link>
                   <Link
-                href="/page/bet-of-the-day"
+                href="/bet-of-the-day"
                 className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/bet-of-the-day" || pathname.startsWith("/page/bet-of-the-day")
+                  pathname === "/bet-of-the-day" || pathname.startsWith("/bet-of-the-day/")
                     ? styles.activesideNav
                     : ""
                 }`}
@@ -388,10 +388,10 @@ export default function SideNavComponent() {
                 <h1>Bet of the day</h1>
               </Link>
               <Link
-                href="/page/football"
+                href="/football"
                 className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/football" ||
-                  pathname.startsWith("/page/football/")
+                  pathname === "/football" ||
+                  pathname.startsWith("/football/")
                     ? styles.activesideNav
                     : ""
                 }`}
@@ -405,10 +405,10 @@ export default function SideNavComponent() {
               </Link>
           
               <Link
-                href="/page/basketball"
+                href="/basketball"
                 className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/basketball" ||
-                  pathname.startsWith("/page/basketball/")
+                  pathname === "/basketball" ||
+                  pathname.startsWith("/basketball/")
                     ? styles.activesideNav
                     : ""
                 }`}
@@ -421,10 +421,10 @@ export default function SideNavComponent() {
                 <h1>Basketball</h1>
               </Link>
               <Link
-                href="/page/tennis"
+                href="/tennis"
                 className={`${styles.sideNavLinkContainer} ${
-                  pathname === "/page/tennis" ||
-                  pathname.startsWith("/page/tennis/")
+                  pathname === "/tennis" ||
+                  pathname.startsWith("/tennis/")
                     ? styles.activesideNav
                     : ""
                 }`}
@@ -438,9 +438,9 @@ export default function SideNavComponent() {
               {isMobile && (
                 <>
                   <Link
-                    href="/page/news"
+                    href="/news"
                     className={`${styles.sideNavLinkContainer} ${
-                      pathname === "/page/news" ? styles.activesideNav : ""
+                      pathname === "/news" ? styles.activesideNav : ""
                     }`}
                     onClick={handleLinkClick}
                   >
@@ -448,9 +448,9 @@ export default function SideNavComponent() {
                     <h1>Sport News</h1>
                   </Link>
                   <Link
-                    href="/page/blog"
+                    href="/blog"
                     className={`${styles.sideNavLinkContainer} ${
-                      pathname === "/page/blog" ? styles.activesideNav : ""
+                      pathname === "/blog" ? styles.activesideNav : ""
                     }`}
                     onClick={handleLinkClick}
                   >
@@ -458,9 +458,9 @@ export default function SideNavComponent() {
                     <h1>Sport Blog</h1>
                   </Link>
                   <Link
-                    href="/page/offers"
+                    href="/offers"
                     className={`${styles.sideNavLinkContainer} ${
-                      pathname === "/page/offers" ? styles.activesideNav : ""
+                      pathname === "/offers" ? styles.activesideNav : ""
                     }`}
                     onClick={handleLinkClick}
                   >
@@ -468,9 +468,9 @@ export default function SideNavComponent() {
                     <h1>Sport offers</h1>
                   </Link>
                   <Link
-                    href="/page/about"
+                    href="/about"
                     className={`${styles.sideNavLinkContainer} ${
-                      pathname === "/page/about" ? styles.activesideNav : ""
+                      pathname === "/about" ? styles.activesideNav : ""
                     }`}
                     onClick={handleLinkClick}
                   >
@@ -478,9 +478,9 @@ export default function SideNavComponent() {
                     <h1>About us</h1>
                   </Link>
                   <Link
-                    href="/page/contact"
+                    href="/contact"
                     className={`${styles.sideNavLinkContainer} ${
-                      pathname === "/page/contact" ? styles.activesideNav : ""
+                      pathname === "/contact" ? styles.activesideNav : ""
                     }`}
                     onClick={handleLinkClick}
                   >

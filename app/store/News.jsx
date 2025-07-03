@@ -126,7 +126,7 @@ export const useNewsStore = create(
           set({ loading: true, error: null });
           
           if (!category || category === 'all') {
-            // If no category or 'all', fetch all articles
+           
             return await get().fetchArticles(page, limit);
           }
           

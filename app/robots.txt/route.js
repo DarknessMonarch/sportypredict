@@ -3,19 +3,19 @@ export function GET() {
 Allow: /
 
 # Allow important pages
-Allow: /page/football
-Allow: /page/basketball
-Allow: /page/tennis
-Allow: /page/day
-Allow: /page/blog
-Allow: /page/news
-Allow: /page/about
-Allow: /page/contact
+Allow: /football
+Allow: /basketball
+Allow: /tennis
+Allow: /day
+Allow: /blog
+Allow: /news
+Allow: /about
+Allow: /contact
 
 # Disallow admin and private areas
 Disallow: /admin
 Disallow: /api
-Disallow: /page/vip
+Disallow: /vip
 Disallow: /_next
 Disallow: /static
 

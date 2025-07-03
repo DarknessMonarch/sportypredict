@@ -3,7 +3,7 @@ export default function manifest() {
     name: 'Sportypredict',
     short_name: 'Sportypredict',
     description: 'Best Online Free Sports Prediction website with expert tips in Football, Basketball and Tennis. We Predict You Win.',
-    start_url: '/page/football',
+    start_url: 'https://sportypredict.com/football',
     scope: '/',
     display: 'standalone',
     orientation: 'portrait',
@@ -53,35 +53,35 @@ export default function manifest() {
         name: 'Football Tips',
         short_name: 'Football',
         description: 'View latest football predictions',
-        url: '/page/football',
+        url: '/football',
         icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
       },
       {
         name: 'Bet of Day',
         short_name: 'Day',
         description: 'View bet of the day predictions',
-        url: '/page/day',
+        url: '/day',
         icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
       },
       {
         name: 'Basketball Tips',
         short_name: 'Basketball',
         description: 'View basketball predictions',
-        url: '/page/basketball',
+        url: '/basketball',
         icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
       },
       {
         name: 'Tennis Tips',
         short_name: 'Tennis',
         description: 'View tennis predictions',
-        url: '/page/tennis',
+        url: '/tennis',
         icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
       },
       {
         name: 'VIP Tips',
         short_name: 'VIP',
         description: 'View VIP sports predictions',
-        url: '/page/vip',
+        url: '/vip',
         icons: [{ src: '/assets/logo.png', sizes: '96x96' }]
       }
     ],

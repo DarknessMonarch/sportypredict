@@ -7,11 +7,11 @@ const SERVER_API = process.env.NEXT_PUBLIC_SERVER_API;
 export const useBonusStore = create(
   persist(
     (set, get) => ({
-      bonuses: [], // General bonuses (for HomeBonus)
-      exclusiveBonuses: [], // Exclusive bonuses (for ExclusiveOffers)
+      bonuses: [], 
+      exclusiveBonuses: [], 
       locations: [],
       loading: false,
-      exclusiveLoading: false, // Separate loading state
+      exclusiveLoading: false, 
       error: null,
 
       fetchBonuses: async (query = "") => {

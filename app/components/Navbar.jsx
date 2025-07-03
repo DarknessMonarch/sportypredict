@@ -225,41 +225,41 @@ export default function NavbarComponent() {
           ) : (
             <div className={styles.navlinksContainer}>
               <Link
-                href="/page/news"
+                href="/news"
                 className={`${styles.navlinks} ${
-                  pathname === "/page/news" ? styles.activeNavLinks : ""
+                  pathname === "/news" ? styles.activeNavLinks : ""
                 }`}
               >
                 News
               </Link>
               <Link
-                href="/page/blog"
+                href="/blog"
                 className={`${styles.navlinks} ${
-                  pathname === "/page/blog" ? styles.activeNavLinks : ""
+                  pathname === "/blog" ? styles.activeNavLinks : ""
                 }`}
               >
                 Blogs
               </Link>
               <Link
-                href="/page/offers"
+                href="/offers"
                 className={`${styles.navlinks} ${
-                  pathname === "/page/offers" ? styles.activeNavLinks : ""
+                  pathname === "/offers" ? styles.activeNavLinks : ""
                 }`}
               >
                  Offers
               </Link>
               <Link
-                href="/page/about"
+                href="/about"
                 className={`${styles.navlinks} ${
-                  pathname === "/page/about" ? styles.activeNavLinks : ""
+                  pathname === "/about" ? styles.activeNavLinks : ""
                 }`}
               >
                 About us
               </Link>
               <Link
-                href="/page/contact"
+                href="/contact"
                 className={`${styles.navlinks} ${
-                  pathname === "/page/contact" ? styles.activeNavLinks : ""
+                  pathname === "/contact" ? styles.activeNavLinks : ""
                 }`}
               >
                 Contact us

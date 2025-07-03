@@ -15,7 +15,7 @@ export default function FilterComponent() {
   const { predictions } = usePredictionStore();
   const { isVip, isAuth, isVipActive } = useAuthStore();
 
-  const isVipPage = pathname.startsWith("/page/vip");
+  const isVipPage = pathname.startsWith("/vip");
   const [selectedLeague, setSelectedLeague] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
 

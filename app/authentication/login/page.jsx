@@ -73,7 +73,7 @@ export default function Login() {
             break;
 
           case result.isVip && !result.isAdmin:
-            router.push("/page/vip", { scroll: false });
+            router.push("/vip", { scroll: false });
             toast.success("Welcome VIP!");
             break;
 

@@ -1,19 +1,23 @@
+
 async function getMatchUrls() {
   try {
     const baseUrl = process.env.NODE_ENV === 'development' 
       ? 'http://localhost:3000' 
       : (process.env.NEXT_PUBLIC_API_URL || 'https://sportypredict.com');
     
-    const apiUrl = `${baseUrl}/api/predictions/sitemap`;
+    const timestamp = Date.now();
+    const apiUrl = `${baseUrl}/api/predictions/sitemap?t=${timestamp}`;
     
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
     
     const response = await fetch(apiUrl, {
-      next: { revalidate: 3600 },
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'NextJS-Sitemap-Generator'
+        'User-Agent': 'NextJS-Sitemap-Generator',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
       },
       signal: controller.signal
     });
@@ -28,6 +32,7 @@ async function getMatchUrls() {
     const predictions = data.predictions || [];
     
     if (predictions.length === 0) {
+      console.warn('Sitemap: No predictions returned from API');
       return [];
     }
     
@@ -35,15 +40,14 @@ async function getMatchUrls() {
       const slug = prediction.slug || `${prediction.cleanTeamA}-vs-${prediction.cleanTeamB}`;
       
       const getSportPath = (sport, category) => {
-        if (category === 'bet-of-the-day') return 'day';
+        if (category === 'bet-of-the-day') return 'bet-of-the-day';
         if (category === 'vip') return 'vip';
         
         const sportMap = {
           'football': 'football',
           'basketball': 'basketball', 
           'tennis': 'tennis',
-          'soccer': 'football',
-          'extra': 'extra'
+          'soccer': 'football'
         };
         
         return sportMap[sport?.toLowerCase()] || sportMap[category?.toLowerCase()] || 'football';
@@ -51,25 +55,19 @@ async function getMatchUrls() {
       
       const sportPath = getSportPath(prediction.sport, prediction.category);
       
-      const url = `https://sportypredict.com/page/${sportPath}/single/${slug}?date=${prediction.date}`;
+      const url = `https://sportypredict.com/${sportPath}/prediction/${slug}?date=${prediction.date}`;
       
-      // Fix: Use match date/time for lastmod, not old database timestamps
       let lastModified;
       if (prediction.time) {
-        // Use the match time if available
         lastModified = new Date(prediction.time);
       } else if (prediction.date) {
-        // Use the match date
         lastModified = new Date(prediction.date);
       } else {
-        // Fallback to updated/created timestamps
         lastModified = new Date(prediction.updatedAt || prediction.createdAt || new Date());
       }
       
-      // Ensure the lastmod date is not in the past for future matches
       const today = new Date();
       if (lastModified < today && prediction.date && new Date(prediction.date) >= today) {
-        // If it's a future match but has old timestamps, use today's date
         lastModified = today;
       }
       
@@ -84,7 +82,6 @@ async function getMatchUrls() {
     return matchUrls;
     
   } catch (error) {
-    console.error('Error fetching match URLs:', error);
     return [];
   }
 }
@@ -95,16 +92,18 @@ async function getNewsUrls() {
       ? 'http://localhost:3000' 
       : (process.env.NEXT_PUBLIC_API_URL || 'https://sportypredict.com');
     
-    const apiUrl = `${baseUrl}/api/news/sitemap`;
+    const timestamp = Date.now();
+    const apiUrl = `${baseUrl}/api/news/sitemap?t=${timestamp}`;
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
     
     const response = await fetch(apiUrl, {
-      next: { revalidate: 7200 },
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'NextJS-Sitemap-Generator'
+        'User-Agent': 'NextJS-Sitemap-Generator',
+        'Cache-Control': 'no-cache'
       },
       signal: controller.signal
     });
@@ -112,6 +111,7 @@ async function getNewsUrls() {
     clearTimeout(timeoutId);
     
     if (!response.ok) {
+      console.warn('Sitemap: Failed to fetch news API:', response.status);
       return [];
     }
     
@@ -127,7 +127,7 @@ async function getNewsUrls() {
         .replace(/^-+|-+$/g, '');
 
       return {
-        url: `https://sportypredict.com/page/news?article=${slug}`,
+        url: `https://sportypredict.com/news?article=${slug}`,
         lastModified: new Date(article.updatedAt || article.publishDate || article.createdAt),
         changeFrequency: 'daily',
         priority: article.featured ? 0.8 : 0.7,
@@ -137,7 +137,7 @@ async function getNewsUrls() {
     return newsUrls;
     
   } catch (error) {
-    console.error('Error fetching news URLs:', error);
+    console.error('Sitemap: Error fetching news URLs:', error);
     return [];
   }
 }
@@ -148,16 +148,18 @@ async function getBlogUrls() {
       ? 'http://localhost:3000' 
       : (process.env.NEXT_PUBLIC_API_URL || 'https://sportypredict.com');
     
-    const apiUrl = `${baseUrl}/api/blog/sitemap`;
+    const timestamp = Date.now();
+    const apiUrl = `${baseUrl}/api/blog/sitemap?t=${timestamp}`;
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
     
     const response = await fetch(apiUrl, {
-      next: { revalidate: 86400 },
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'NextJS-Sitemap-Generator'
+        'User-Agent': 'NextJS-Sitemap-Generator',
+        'Cache-Control': 'no-cache'
       },
       signal: controller.signal
     });
@@ -165,6 +167,7 @@ async function getBlogUrls() {
     clearTimeout(timeoutId);
     
     if (!response.ok) {
+      console.warn('Sitemap: Failed to fetch blog API:', response.status);
       return [];
     }
     
@@ -184,7 +187,7 @@ async function getBlogUrls() {
         .replace(/^-+|-+$/g, '');
 
       return {
-        url: `https://sportypredict.com/page/blog?blog=${slug}`,
+        url: `https://sportypredict.com/blog?blog=${slug}`,
         lastModified: new Date(blog.updatedAt || blog.publishedAt || blog.createdAt),
         changeFrequency: blog.featured ? 'weekly' : 'monthly',
         priority: blog.featured ? 0.8 : 0.6,
@@ -194,7 +197,7 @@ async function getBlogUrls() {
     return blogUrls;
     
   } catch (error) {
-    console.error('Error fetching blog URLs:', error);
+    console.error('Sitemap: Error fetching blog URLs:', error);
     return [];
   }
 }
@@ -206,7 +209,7 @@ async function getCategoryUrls() {
     const newsCategories = ['football', 'basketball', 'tennis'];
     newsCategories.forEach(category => {
       categoryUrls.push({
-        url: `https://sportypredict.com/page/news?category=${category}`,
+        url: `https://sportypredict.com/news?category=${category}`,
         lastModified: new Date(),
         changeFrequency: 'daily',
         priority: 0.7,
@@ -216,7 +219,7 @@ async function getCategoryUrls() {
     const blogCategories = ['Sports', 'Betting', 'Analysis', 'Tips'];
     blogCategories.forEach(category => {
       categoryUrls.push({
-        url: `https://sportypredict.com/page/blog?category=${encodeURIComponent(category)}`,
+        url: `https://sportypredict.com/blog?category=${encodeURIComponent(category)}`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
         priority: 0.6,
@@ -226,7 +229,7 @@ async function getCategoryUrls() {
     return categoryUrls;
     
   } catch (error) {
-    console.error('Error generating category URLs:', error);
+    console.error('Sitemap: Error generating category URLs:', error);
     return [];
   }
 }
@@ -245,46 +248,40 @@ export default async function sitemap() {
 
   const sportRoutes = [
     {
-      url: `${baseUrl}/page/day`,
+      url: `${baseUrl}/bet-of-the-day`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.95,
     },
     {
-      url: `${baseUrl}/page/football`,
+      url: `${baseUrl}/football`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/page/basketball`,
+      url: `${baseUrl}/basketball`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/page/tennis`,
+      url: `${baseUrl}/tennis`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/page/extra`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.85,
     },
   ];
 
   const contentRoutes = [
     {
-      url: `${baseUrl}/page/blog`,
+      url: `${baseUrl}/blog`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/page/news`,
+      url: `${baseUrl}/news`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.8,
@@ -293,7 +290,7 @@ export default async function sitemap() {
 
   const vipRoutes = [
     {
-      url: `${baseUrl}/page/vip`,
+      url: `${baseUrl}/vip`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.75,
@@ -302,43 +299,43 @@ export default async function sitemap() {
 
   const staticRoutes = [
     {
-      url: `${baseUrl}/page/contact`,
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/page/offers`,
+      url: `${baseUrl}/offers`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/page/about`,
+      url: `${baseUrl}/about`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: `${baseUrl}/page/terms`,
+      url: `${baseUrl}/terms`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/page/disclaimer`,
+      url: `${baseUrl}/disclaimer`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/page/privacy`,
+      url: `${baseUrl}/privacy`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/page/refund`,
+      url: `${baseUrl}/refund`,
       lastModified: new Date(),
       changeFrequency: "yearly",
       priority: 0.3,
@@ -357,6 +354,7 @@ export default async function sitemap() {
   const newsUrlsResult = newsUrls.status === 'fulfilled' ? newsUrls.value : [];
   const categoryUrlsResult = categoryUrls.status === 'fulfilled' ? categoryUrls.value : [];
 
+
   const allRoutes = [
     ...mainRoutes,
     ...sportRoutes,
@@ -373,17 +371,6 @@ export default async function sitemap() {
     index === self.findIndex(r => r.url === route.url)
   );
 
-  console.log(`Generated sitemap with ${uniqueRoutes.length} total URLs:`, {
-    main: mainRoutes.length,
-    sport: sportRoutes.length,
-    content: contentRoutes.length,
-    vip: vipRoutes.length,
-    static: staticRoutes.length,
-    category: categoryUrlsResult.length,
-    match: matchUrlsResult.length,
-    blog: blogUrlsResult.length,
-    news: newsUrlsResult.length,
-  });
 
   return uniqueRoutes;
 }

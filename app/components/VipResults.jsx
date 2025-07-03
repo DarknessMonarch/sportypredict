@@ -30,7 +30,6 @@ export default function VipResults({ }) {
   }, []);
 
   const calculateTimeRemaining = useCallback(() => {
-    // Return 0:0:0 if matchTime is null, undefined, empty, or inactive
     if (!matchTime || !matchTime.active || !matchTime.time || matchTime.time === "") {
       return { hours: 0, minutes: 0, seconds: 0 };
     }
@@ -41,7 +40,6 @@ export default function VipResults({ }) {
     try {
       const timeStr = matchTime.time.toString().trim();
       
-      // Return 0:0:0 if timeStr is empty after trimming
       if (!timeStr) {
         return { hours: 0, minutes: 0, seconds: 0 };
       }

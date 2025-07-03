@@ -1,10 +1,6 @@
 "use client";
 
-import Popup from "@/app/components/Popup";
 import { useRouter } from "next/navigation";
-import Navbar from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
-import SideNav from "@/app/components/SideNav";
 import Nothing from "@/app/components/Nothing";
 import { useBlogStore } from "@/app/store/Blog";
 import { useNewsStore } from "@/app/store/News";
@@ -19,7 +15,6 @@ import { useAdvertStore } from "@/app/store/Advert";
 import { useDrawerStore } from "@/app/store/Drawer";
 import VipResults from "@/app/components/VipResults";
 import LoadingLogo from "@/app/components/LoadingLogo";
-import Telegram from "@/app/components/TelegramAdvert";
 import OfferCard from "@/app/components/SingleOfferCard";
 import { usePredictionStore } from "@/app/store/Prediction";
 import EmptySportImage from "@/public/assets/emptysport.png";
@@ -204,7 +199,7 @@ export default function Home() {
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-    router.push(`/page/blog?blog=${slug}`);
+    router.push(`/blog?blog=${slug}`);
   };
 
   const handleNewsReadMore = (post) => {
@@ -215,7 +210,7 @@ export default function Home() {
       .replace(/-+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-    router.push(`/page/news?article=${slug}`);
+    router.push(`/news?article=${slug}`);
   };
 
   const handleBlogShare = async (post) => {
@@ -402,7 +397,7 @@ export default function Home() {
         </div>
         <button
           className={styles.viewAllBtn}
-          onClick={() => router.push("/page/blog")}
+          onClick={() => router.push("/blog")}
         >
           See more blogs
         </button>
@@ -428,7 +423,7 @@ export default function Home() {
         </div>
         <button
           className={styles.viewAllBtn}
-          onClick={() => router.push("/page/news")}
+          onClick={() => router.push("/news")}
         >
           See more news
         </button>
@@ -481,44 +476,18 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.pageLayout}>
-      <div ref={sideNavRef}>
-        <SideNav />
+    <div className={styles.homeContainer}>
+      <div className={styles.homeMain}>
+        <HomeBanner />
+        <ExclusiveOffers />
+        {renderDynamicContent()}
+        {!isMobile && renderPredictionInfo()}
       </div>
-      <div className={styles.pageContent}>
-        <Navbar />
-        <div className={styles.homeContainer}>
-          <div className={styles.homeMain}>
-            <HomeBanner />
-            <ExclusiveOffers />
-            {renderDynamicContent()}
-            {!isMobile && renderPredictionInfo()}
-          </div>
-          <div className={styles.predictionsSection}>
-            <VipResults />
-            <OfferCard />
-            {isMobile && renderPredictionInfo()}
-          </div>
-        </div>
-        <Footer />
+      <div className={styles.predictionsSection}>
+        <VipResults />
+        <OfferCard />
+        {isMobile && renderPredictionInfo()}
       </div>
-      {hasPopupAds && (
-        <Popup
-          Top={0}
-          Right={0}
-          Left={0}
-          Bottom={0}
-          OnClose={closePopup}
-          Blur={5}
-          Zindex={9999}
-          IsOpen={isPopupOpen}
-          Content={<Telegram />}
-          BorderRadiusTopLeft={15}
-          BorderRadiusTopRight={15}
-          BorderRadiusBottomRight={15}
-          BorderRadiusBottomLeft={15}
-        />
-      )}
     </div>
   );
 }

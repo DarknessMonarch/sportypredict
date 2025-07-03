@@ -48,7 +48,7 @@ export default function HomeCard({ sport, predictions = [] }) {
     e.stopPropagation();
     const sportPath =
       sport === "bet-of-the-day" ? "bet-of-the-day" : sport.toLowerCase();
-    router.push(`/page/${sportPath}`);
+    router.push(`/${sportPath}`);
   };
 
   const formatTime = (time) => {
@@ -92,7 +92,7 @@ export default function HomeCard({ sport, predictions = [] }) {
         ?.replace(/^-|-$/g, "") || "team-b";
 
     const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
-    const baseUrl = `/page/${sportCategory}/single/${matchSlug}`;
+    const baseUrl = `/${sportCategory}/prediction/${matchSlug}`;
     const fullUrl = `${baseUrl}?date=${selectedDate}`;
 
     router.push(fullUrl, { scroll: false });

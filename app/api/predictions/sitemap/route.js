@@ -1,5 +1,13 @@
 const SERVER_API = process.env.NEXT_PUBLIC_SERVER_API;
 
+function getDateString(date) {
+  return date.toISOString().split("T")[0];
+}
+
+function getCurrentLocalDate() {
+  return new Date().toISOString().split("T")[0];
+}
+
 export async function GET() {
   try {
     if (!SERVER_API) {
@@ -11,30 +19,16 @@ export async function GET() {
       }, { status: 200 });
     }
 
-    // Fix: Use UTC date to avoid timezone issues
-    const today = new Date();
-    const todayUTC = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
+    const currentDate = getCurrentLocalDate();
     const dates = [];
     for (let i = 0; i < 365; i++) {
-      // Fix: Create new date for each iteration to avoid mutation issues
-      const date = new Date(todayUTC);
-      date.setDate(todayUTC.getDate() + i);
-      
-      // Fix: Format date consistently without timezone conversion
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
-      
+      const date = new Date(); 
+      date.setUTCDate(date.getUTCDate() + i);
+      const dateStr = getDateString(date); 
       dates.push(dateStr);
     }
     
-    // Debug: Log the first few dates to verify they're correct
-    console.log('Generated dates (first 5):', dates.slice(0, 5));
-    console.log('Today should be:', dates[0]);
-    
-    const batchSize = 10; // Process 10 dates at a time
+    const batchSize = 10; 
     const batches = [];
     
     for (let i = 0; i < dates.length; i += batchSize) {
@@ -42,146 +36,99 @@ export async function GET() {
     }
 
     let allPredictions = [];
-    let fetchStats = {
-      successful: 0,
-      failed: 0,
-      totalRequests: dates.length,
-      dateResults: {},
-      batchesProcessed: 0,
-      totalBatches: batches.length
-    };
 
     for (const batch of batches) {
       const batchPromises = batch.map(async (dateStr) => {
-      try {
-        const apiUrl = `${SERVER_API}/predictions/all/${dateStr}`;
-        
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Content-type': 'application/json',
-            'User-Agent': 'NextJS-Sitemap-API'
-          },
-          signal: AbortSignal.timeout(30000) // Increased timeout for year-long fetch
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
+        try {
+          const apiUrl = `${SERVER_API}/predictions/all/${dateStr}`;
           
-          if (data.status === "success" && Array.isArray(data.data)) {
-            const predictionsWithMeta = data.data.map(prediction => {
-              const cleanTeamA = prediction.teamA
-                ?.toLowerCase()
-                ?.replace(/[^a-z0-9\s]/g, '')
-                ?.replace(/\s+/g, '-')
-                ?.replace(/-+/g, '-')
-                ?.replace(/^-|-$/g, '') || 'team-a';
+          const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+              'Content-type': 'application/json',
+              'User-Agent': 'NextJS-Sitemap-API'
+            },
+            signal: AbortSignal.timeout(30000) 
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            
+            if (data.status === "success" && Array.isArray(data.data)) {
+              const predictionsWithMeta = data.data.map(prediction => {
+                const cleanTeamA = prediction.teamA
+                  ?.toLowerCase()
+                  ?.replace(/[^a-z0-9\s]/g, '')
+                  ?.replace(/\s+/g, '-')
+                  ?.replace(/-+/g, '-')
+                  ?.replace(/^-|-$/g, '') || 'team-a';
+                  
+                const cleanTeamB = prediction.teamB
+                  ?.toLowerCase()
+                  ?.replace(/[^a-z0-9\s]/g, '')  
+                  ?.replace(/\s+/g, '-')
+                  ?.replace(/-+/g, '-')
+                  ?.replace(/^-|-$/g, '') || 'team-b';
                 
-              const cleanTeamB = prediction.teamB
-                ?.toLowerCase()
-                ?.replace(/[^a-z0-9\s]/g, '')  
-                ?.replace(/\s+/g, '-')
-                ?.replace(/-+/g, '-')
-                ?.replace(/^-|-$/g, '') || 'team-b';
-              
-              const slug = `${cleanTeamA}-vs-${cleanTeamB}`;
-              
-              const getSportPath = (sport, category) => {
-                if (category === 'bet-of-the-day') return 'day';
-                if (category === 'vip') return 'vip';
+                const slug = `${cleanTeamA}-vs-${cleanTeamB}`;
                 
-                const sportMap = {
-                  'football': 'football',
-                  'basketball': 'basketball', 
-                  'tennis': 'tennis',
-                  'soccer': 'football' 
+                const getSportPath = (sport, category) => {
+                  if (category === 'bet-of-the-day') return 'day';
+                  if (category === 'vip') return 'vip';
+                  
+                  const sportMap = {
+                    'football': 'football',
+                    'basketball': 'basketball', 
+                    'tennis': 'tennis',
+                    'soccer': 'football' 
+                  };
+                  
+                  return sportMap[sport?.toLowerCase()] || 'football';
                 };
                 
-                return sportMap[sport?.toLowerCase()] || 'football';
-              };
+                const sportPath = getSportPath(prediction.sport, prediction.category);
+                
+                return {
+                  teamA: prediction.teamA,
+                  teamB: prediction.teamB,
+                  cleanTeamA,
+                  cleanTeamB,
+                  category: prediction.category || 'general',
+                  date: dateStr,
+                  league: prediction.league,
+                  sport: prediction.sport,
+                  sportPath,
+                  tip: prediction.tip,
+                  time: prediction.time,
+                  odd: prediction.odd,
+                  stake: prediction.stake, 
+                  vipSlip: prediction.vipSlip, 
+                  updatedAt: prediction.time || prediction.updatedAt || prediction.createdAt || new Date().toISOString(),
+                  createdAt: prediction.createdAt || new Date().toISOString(),
+                  slug
+                };
+              });
               
-              const sportPath = getSportPath(prediction.sport, prediction.category);
-              
-              return {
-                teamA: prediction.teamA,
-                teamB: prediction.teamB,
-                cleanTeamA,
-                cleanTeamB,
-                category: prediction.category || 'general',
-                date: dateStr,
-                league: prediction.league,
-                sport: prediction.sport,
-                sportPath, // Add sport path for URL generation
-                tip: prediction.tip,
-                time: prediction.time,
-                odd: prediction.odd,
-                stake: prediction.stake, // Include stake for VIP predictions
-                vipSlip: prediction.vipSlip, // Include VIP slip info
-                // Use match time for lastmod if available, otherwise use updated/created timestamps
-                updatedAt: prediction.time || prediction.updatedAt || prediction.createdAt || new Date().toISOString(),
-                createdAt: prediction.createdAt || new Date().toISOString(),
-                slug
-              };
-            });
-            
-            fetchStats.dateResults[dateStr] = {
-              success: true,
-              count: predictionsWithMeta.length,
-              totalCount: data.totalCount || predictionsWithMeta.length
-            };
-            
-            return { success: true, predictions: predictionsWithMeta, date: dateStr };
-          } else {
-            fetchStats.dateResults[dateStr] = {
-              success: false,
-              error: 'Invalid data format',
-              count: 0
-            };
-            return { success: false, predictions: [], date: dateStr };
+              return predictionsWithMeta;
+            }
           }
-        } else {
-          const errorText = await response.text().catch(() => 'Unknown error');
-          fetchStats.dateResults[dateStr] = {
-            success: false,
-            error: `HTTP ${response.status}: ${errorText}`,
-            count: 0
-          };
-          return { success: false, predictions: [], date: dateStr };
-        }
-      } catch (error) {
-        fetchStats.dateResults[dateStr] = {
-          success: false,
-          error: error.message,
-          count: 0
-        };
-        return { success: false, predictions: [], date: dateStr };
-      }
-          });
-      
-      const batchResults = await Promise.allSettled(batchPromises);
-      
-      batchResults.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          if (result.value.success) {
-            allPredictions = [...allPredictions, ...result.value.predictions];
-            fetchStats.successful++;
-          } else {
-            fetchStats.failed++;
-          }
-        } else {
-          fetchStats.failed++;
-          const dateStr = batch[index];
-          fetchStats.dateResults[dateStr] = {
-            success: false,
-            error: result.reason?.message || 'Promise rejected',
-            count: 0
-          };
+          
+          return [];
+        } catch (error) {
+          return [];
         }
       });
       
-      fetchStats.batchesProcessed++;
+      const batchResults = await Promise.allSettled(batchPromises);
       
-      if (fetchStats.batchesProcessed < batches.length) {
+      batchResults.forEach((result) => {
+        if (result.status === 'fulfilled') {
+          allPredictions = [...allPredictions, ...result.value];
+        }
+      });
+      
+      // Small delay between batches
+      if (batches.indexOf(batch) < batches.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
@@ -217,7 +164,7 @@ export async function GET() {
     
     const urlReadyPredictions = sortedPredictions.map(prediction => ({
       ...prediction,
-      url: `/page/${prediction.sportPath}/single/${prediction.slug}?date=${prediction.date}`,
+      url: `/${prediction.sportPath}/prediction/${prediction.slug}?date=${prediction.date}`,
     }));
     
     const predictionsByCategory = sortedPredictions.reduce((acc, pred) => {
@@ -237,8 +184,8 @@ export async function GET() {
     const response = {
       predictions: urlReadyPredictions,
       total: urlReadyPredictions.length,
-      dates,
-      fetchStats,
+      currentDate,
+      dates: dates.slice(0, 10),
       analytics: {
         predictionsByCategory: Object.keys(predictionsByCategory).map(category => ({
           category,
@@ -248,16 +195,15 @@ export async function GET() {
           date,
           count: predictionsByDate[date].length
         })),
-        duplicatesRemoved: allPredictions.length - uniquePredictions.length
+        duplicatesRemoved: allPredictions.length - uniquePredictions.length,
+        todaysPredictions: predictionsByDate[currentDate]?.length || 0
       },
       generatedAt: new Date().toISOString(),
     };
-    
+
     return Response.json(response);
     
   } catch (error) {
-    console.error('Sitemap API Error:', error);
-    
     return Response.json({ 
       predictions: [], 
       total: 0,

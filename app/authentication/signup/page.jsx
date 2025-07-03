@@ -86,7 +86,7 @@ export default function Sporty() {
   };
 
   const readTerms = () => {
-    router.push("/page/terms", { scroll: false });
+    router.push("/terms", { scroll: false });
   };
 
   const Login = () => {

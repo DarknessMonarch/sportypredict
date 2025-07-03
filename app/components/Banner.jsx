@@ -39,11 +39,11 @@ export default function Banner() {
   };
 
   const openVip = () => {
-    router.push("vip", { scroll: false });
+    router.push("/vip", { scroll: false });
   };
 
   const openPricing = () => {
-    router.push("payment", { scroll: false });
+    router.push("/payment", { scroll: false });
   };
 
   const getStatus = (status) => {

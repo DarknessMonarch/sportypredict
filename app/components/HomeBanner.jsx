@@ -26,11 +26,11 @@ export default function Banner() {
   };
 
   const openVip = () => {
-    router.push("/page/vip", { scroll: false });
+    router.push("/vip", { scroll: false });
   };
 
   const openPricing = () => {
-    router.push("/page/payment", { scroll: false });
+    router.push("/payment", { scroll: false });
   };
 
   if (loading || !currentAd) {

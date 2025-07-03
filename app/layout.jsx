@@ -1,6 +1,7 @@
 import { Toaster } from "sonner";
 import "@/app/style/global.css";
 import Script from "next/script";
+import ClientLayout from "@/app/Clientlayout";
 import { Roboto_Condensed } from "next/font/google";
 
 const roboto_Condensed = Roboto_Condensed({
@@ -22,7 +23,6 @@ export const viewport = {
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
-  
 
   title: {
     default: "Sportypredict - Expert Sports Betting Predictions & Tips",
@@ -103,7 +103,7 @@ export const metadata = {
     creator: "@SportyPredict",
   },
 
- robots: {
+  robots: {
     index: true,
     follow: true,
     nocache: true,
@@ -114,7 +114,7 @@ export const metadata = {
       "max-video-preview": -1,
       "max-image-preview": "large",
       "max-snippet": -1,
-    }
+    },
   },
 
   verification: {
@@ -150,8 +150,7 @@ const organizationSchema = {
     "https://instagram.com/sportypredict_?igshid=MTIzZWMxMTBkOA==",
     "https://www.youtube.com/@Sportypredict",
     "https://t.me/sportyPredictTG",
-    "https://www.tiktok.com/@sportypredict?_t=8dxjShAnRI5&_r=1"
-
+    "https://www.tiktok.com/@sportypredict?_t=8dxjShAnRI5&_r=1",
   ],
   contactPoint: {
     "@type": "ContactPoint",
@@ -169,21 +168,19 @@ const organizationSchema = {
     "https://instagram.com/sportypredict_?igshid=MTIzZWMxMTBkOA==",
     "https://www.youtube.com/@Sportypredict",
     "https://t.me/sportyPredictTG",
-    "https://www.tiktok.com/@sportypredict?_t=8dxjShAnRI5&_r=1"
+    "https://www.tiktok.com/@sportypredict?_t=8dxjShAnRI5&_r=1",
   ],
-      
 };
-
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-            {/* Organization Schema - Global */}
+        {/* Organization Schema - Global */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema)
+            __html: JSON.stringify(organizationSchema),
           }}
         />
 
@@ -253,7 +250,7 @@ export default function RootLayout({ children }) {
             },
           }}
         />
-        {children}
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
