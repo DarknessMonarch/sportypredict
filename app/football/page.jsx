@@ -8,6 +8,7 @@ import SportCard from "@/app/components/Card";
 import Nothing from "@/app/components/Nothing";
 import styles from "@/app/style/sport.module.css";
 import VipResults from "@/app/components/VipResults";
+import { createMatchSlug } from "@/app/utility/UrlSlug"; 
 import MobileFilter from "@/app/components/MobileFilter";
 import { usePredictionStore } from "@/app/store/Prediction";
 import EmptySportImage from "@/public/assets/emptysport.png";
@@ -143,7 +144,7 @@ export default function Sport() {
           At SportyPredict, our dedicated team of football analysts and betting
           specialists delivers daily reliable football predictions and free
           football tips so you can place smarter bets and target higher returns.
-          Whether you’re a casual bettor or a seasoned punter, this
+          Whether you&apos;re a casual bettor or a seasoned punter, this
           comprehensive guide will teach you how to transform data, motivation,
           and odds analysis into consistent betting success.
         </p>
@@ -161,8 +162,8 @@ export default function Sport() {
         <p>
           <strong>Compare to Bookmaker Odds:</strong> If Megapari offers City at
           1.57, that implies about a 64% chance (because 1 divided by 1.57 ≈
-          0.64). Since your 70% estimate exceeds the bookmaker’s 64% figure,
-          you’ve found a value football prediction worth backing.
+          0.64). Since your 70% estimate exceeds the bookmaker&apos;s 64% figure,
+          you&apos;ve found a value football prediction worth backing.
         </p>
 
         <h2>Our 5 Must‑Have Strategies for Successful Football Predictions</h2>
@@ -211,8 +212,8 @@ export default function Sport() {
 
         <h3>5. Quantify Value with Odds Analysis</h3>
         <p>
-          Only back bets where your estimated chance exceeds the bookmaker’s
-          implied chance. That’s how you build a profitable strategy.
+          Only back bets where your estimated chance exceeds the bookmaker&apos;s
+          implied chance. That&apos;s how you build a profitable strategy.
         </p>
         <ul>
           <li>
@@ -225,7 +226,7 @@ export default function Sport() {
           </li>
         </ul>
 
-        <h2>Is There Such a Thing as a “Sure Win” In Football?</h2>
+        <h2>Is There Such a Thing as a &apos;Sure Win&apos; In Football?</h2>
         <p>
           No football prediction is ever 100% guaranteed—upsets happen. However,
           you can approach near-certainty by:
@@ -259,7 +260,7 @@ export default function Sport() {
         </ul>
 
         <p>
-          While “sure wins” don’t exist, these methods bring your football
+          While &apos;sure wins&apos; don&apos;t exist, these methods bring your football
           predictions as close as possible to certainty—helping you win more
           often and cash higher amounts.
         </p>
@@ -279,42 +280,23 @@ export default function Sport() {
   };
 
   const handleCardClick = (teamA, teamB, id) => {
-    if (id !== "empty") {
-      let selectedDate = searchParams.get("date");
+    if (id === "empty" || !teamA || !teamB) return;
 
-      if (!selectedDate) {
-        const today = new Date();
-        selectedDate = today.toISOString().split("T")[0];
-      }
+    let selectedDate = searchParams.get("date");
+    if (!selectedDate) {
+      const today = new Date();
+      selectedDate = today.toISOString().split("T")[0];
+    }
 
-      const cleanTeamA =
-        teamA
-          ?.toString()
-          ?.trim()
-          ?.replace(/\s+/g, "-")
-          ?.replace(/[^\w\-]/g, "")
-          ?.replace(/--+/g, "-")
-          ?.replace(/^-|-$/g, "") || "team-a";
-
-      const cleanTeamB =
-        teamB
-          ?.toString()
-          ?.trim()
-          ?.replace(/\s+/g, "-")
-          ?.replace(/[^\w\-]/g, "")
-          ?.replace(/--+/g, "-")
-          ?.replace(/^-|-$/g, "") || "team-b";
-
-     const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
-    
+    const matchSlug = createMatchSlug(teamA, teamB);
     const encodedSlug = encodeURIComponent(matchSlug);
     
     const baseUrl = `/${currentCategory}/prediction/${encodedSlug}`;
     const fullUrl = `${baseUrl}?date=${selectedDate}`;
 
     router.push(fullUrl, { scroll: false });
-  }
-};
+  };
+
   if (loading) {
     return (
       <div className={styles.sportContainer}>

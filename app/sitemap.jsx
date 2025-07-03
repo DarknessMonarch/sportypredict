@@ -1,3 +1,4 @@
+import { createMatchSlug } from '@/app/utility/UrlSlug';
 
 async function getMatchUrls() {
   try {
@@ -37,7 +38,12 @@ async function getMatchUrls() {
     }
     
     const matchUrls = predictions.map(prediction => {
-      const slug = prediction.slug || `${prediction.cleanTeamA}-vs-${prediction.cleanTeamB}`;
+      // Use original team names instead of cleanTeamA/cleanTeamB
+      const teamA = prediction.teamA || prediction.homeTeam || prediction.cleanTeamA;
+      const teamB = prediction.teamB || prediction.awayTeam || prediction.cleanTeamB;
+      
+      // Create slug using the proper slug generation function
+      const slug = prediction.slug || createMatchSlug(teamA, teamB);
       
       const getSportPath = (sport, category) => {
         if (category === 'bet-of-the-day') return 'bet-of-the-day';
@@ -354,7 +360,6 @@ export default async function sitemap() {
   const newsUrlsResult = newsUrls.status === 'fulfilled' ? newsUrls.value : [];
   const categoryUrlsResult = categoryUrls.status === 'fulfilled' ? categoryUrls.value : [];
 
-
   const allRoutes = [
     ...mainRoutes,
     ...sportRoutes,
@@ -370,7 +375,6 @@ export default async function sitemap() {
   const uniqueRoutes = allRoutes.filter((route, index, self) => 
     index === self.findIndex(r => r.url === route.url)
   );
-
 
   return uniqueRoutes;
 }

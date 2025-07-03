@@ -8,12 +8,14 @@ import SportCard from "@/app/components/Card";
 import Nothing from "@/app/components/Nothing";
 import styles from "@/app/style/sport.module.css";
 import VipResults from "@/app/components/VipResults";
+import { createMatchSlug } from "@/app/utility/UrlSlug"; 
 import MobileFilter from "@/app/components/MobileFilter";
 import { usePredictionStore } from "@/app/store/Prediction";
 import EmptySportImage from "@/public/assets/emptysport.png";
 import ExclusiveOffers from "@/app/components/ExclusiveOffer";
 import { IoIosArrowForward as RightIcon } from "react-icons/io";
 import { usePathname, useSearchParams } from "next/navigation";
+
 
 export default function Sport() {
   const emptyCardCount = 12;
@@ -328,41 +330,21 @@ export default function Sport() {
   };
 
   const handleCardClick = (teamA, teamB, id) => {
-    if (id !== "empty") {
-      let selectedDate = searchParams.get("date");
+    if (id === "empty" || !teamA || !teamB) return;
 
-      if (!selectedDate) {
-        const today = new Date();
-        selectedDate = today.toISOString().split("T")[0];
-      }
-
-      const cleanTeamA =
-        teamA
-          ?.toString()
-          ?.trim()
-          ?.replace(/\s+/g, "-")
-          ?.replace(/[^\w\-]/g, "")
-          ?.replace(/--+/g, "-")
-          ?.replace(/^-|-$/g, "") || "team-a";
-
-      const cleanTeamB =
-        teamB
-          ?.toString()
-          ?.trim()
-          ?.replace(/\s+/g, "-")
-          ?.replace(/[^\w\-]/g, "")
-          ?.replace(/--+/g, "-")
-          ?.replace(/^-|-$/g, "") || "team-b";
-
-      const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
-
-      const encodedSlug = encodeURIComponent(matchSlug);
-
-      const baseUrl = `/${currentCategory}/prediction/${encodedSlug}`;
-      const fullUrl = `${baseUrl}?date=${selectedDate}`;
-
-      router.push(fullUrl, { scroll: false });
+    let selectedDate = searchParams.get("date");
+    if (!selectedDate) {
+      const today = new Date();
+      selectedDate = today.toISOString().split("T")[0];
     }
+
+    const matchSlug = createMatchSlug(teamA, teamB);
+    const encodedSlug = encodeURIComponent(matchSlug);
+    
+    const baseUrl = `/${currentCategory}/prediction/${encodedSlug}`;
+    const fullUrl = `${baseUrl}?date=${selectedDate}`;
+
+    router.push(fullUrl, { scroll: false });
   };
 
   if (loading) {

@@ -1,3 +1,4 @@
+// Updated HomeCard component with fixed routing
 "use client";
 
 import Image from "next/image";
@@ -10,6 +11,7 @@ import { MdOutlineSportsTennis as TennisIcon } from "react-icons/md";
 import { PiCourtBasketball as BetOfTheDayIcon } from "react-icons/pi";
 import { IoChevronForwardOutline as ChevronIcon } from "react-icons/io5";
 import styles from "@/app/style/homecard.module.css";
+import { createMatchSlug } from "@/app/utility/UrlSlug";
 
 export default function HomeCard({ sport, predictions = [] }) {
   const router = useRouter();
@@ -48,7 +50,10 @@ export default function HomeCard({ sport, predictions = [] }) {
     e.stopPropagation();
     const sportPath =
       sport === "bet-of-the-day" ? "bet-of-the-day" : sport.toLowerCase();
-    router.push(`/${sportPath}`);
+    
+    // Add today's date as query parameter
+    const today = new Date().toISOString().split("T")[0];
+    router.push(`/${sportPath}?date=${today}`);
   };
 
   const formatTime = (time) => {
@@ -63,9 +68,13 @@ export default function HomeCard({ sport, predictions = [] }) {
     return localDate.toFormat("dd MMM");
   };
 
+  // FIXED: Improved handlePredictionClick function
   const handlePredictionClick = (prediction) => {
     const { teamA, teamB, category, time } = prediction;
-    if (!teamA || !teamB) return;
+    if (!teamA || !teamB) {
+      console.error('Missing team names:', { teamA, teamB });
+      return;
+    }
 
     const sportCategory = category?.toLowerCase() || "football";
 
@@ -73,28 +82,12 @@ export default function HomeCard({ sport, predictions = [] }) {
       ? time.split("T")[0]
       : new Date().toISOString().split("T")[0];
 
-    const cleanTeamA =
-      teamA
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, "-")
-        ?.replace(/[^\w\-]/g, "")
-        ?.replace(/--+/g, "-")
-        ?.replace(/^-|-$/g, "") || "team-a";
-
-    const cleanTeamB =
-      teamB
-        ?.toString()
-        ?.trim()
-        ?.replace(/\s+/g, "-")
-        ?.replace(/[^\w\-]/g, "")
-        ?.replace(/--+/g, "-")
-        ?.replace(/^-|-$/g, "") || "team-b";
-
-    const matchSlug = `${cleanTeamA}-vs-${cleanTeamB}`;
+    // Use the utility function for consistent slug creation
+    const matchSlug = createMatchSlug(teamA, teamB);
     const baseUrl = `/${sportCategory}/prediction/${matchSlug}`;
     const fullUrl = `${baseUrl}?date=${selectedDate}`;
 
+    console.log('HomeCard navigating to:', fullUrl); // Debug log
     router.push(fullUrl, { scroll: false });
   };
 

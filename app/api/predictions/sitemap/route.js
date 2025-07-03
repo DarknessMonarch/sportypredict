@@ -8,6 +8,17 @@ function getCurrentLocalDate() {
   return new Date().toISOString().split("T")[0];
 }
 
+function createTeamSlug(teamName) {
+  if (!teamName) return '';
+  return encodeURIComponent(teamName.toString().trim());
+}
+
+function createMatchSlug(teamA, teamB) {
+  const slugA = createTeamSlug(teamA);
+  const slugB = createTeamSlug(teamB);
+  return `${slugA}-vs-${slugB}`;
+}
+
 export async function GET() {
   try {
     if (!SERVER_API) {
@@ -56,21 +67,12 @@ export async function GET() {
             
             if (data.status === "success" && Array.isArray(data.data)) {
               const predictionsWithMeta = data.data.map(prediction => {
-                const cleanTeamA = prediction.teamA
-                  ?.toLowerCase()
-                  ?.replace(/[^a-z0-9\s]/g, '')
-                  ?.replace(/\s+/g, '-')
-                  ?.replace(/-+/g, '-')
-                  ?.replace(/^-|-$/g, '') || 'team-a';
-                  
-                const cleanTeamB = prediction.teamB
-                  ?.toLowerCase()
-                  ?.replace(/[^a-z0-9\s]/g, '')  
-                  ?.replace(/\s+/g, '-')
-                  ?.replace(/-+/g, '-')
-                  ?.replace(/^-|-$/g, '') || 'team-b';
+                // Keep original team names for server compatibility
+                const teamA = prediction.teamA || 'team-a';
+                const teamB = prediction.teamB || 'team-b';
                 
-                const slug = `${cleanTeamA}-vs-${cleanTeamB}`;
+                // Create URL-safe slug using original team names
+                const slug = createMatchSlug(teamA, teamB);
                 
                 const getSportPath = (sport, category) => {
                   if (category === 'bet-of-the-day') return 'day';
@@ -89,10 +91,8 @@ export async function GET() {
                 const sportPath = getSportPath(prediction.sport, prediction.category);
                 
                 return {
-                  teamA: prediction.teamA,
-                  teamB: prediction.teamB,
-                  cleanTeamA,
-                  cleanTeamB,
+                  teamA: teamA,
+                  teamB: teamB,
                   category: prediction.category || 'general',
                   date: dateStr,
                   league: prediction.league,

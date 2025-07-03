@@ -13,6 +13,7 @@ import EmptySportImage from "@/public/assets/emptysport.png";
 import { useSearchParams, usePathname } from "next/navigation";
 import { usePredictionStore } from "@/app/store/Prediction";
 import { useAdvertStore } from "@/app/store/Advert";
+import { parseMatchSlug, teamNamesMatch } from "@/app/utility/UrlSlug";
 
 export default function SingleSport() {
   const [activeTab, setActiveTab] = useState("preview");
@@ -21,21 +22,12 @@ export default function SingleSport() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const idParam = searchParams.get("id");
   const pathParts = pathname.split("/");
+  const currentSport = pathParts[1];
+  const slug = pathParts[3] || "";
 
-  const currentSport = pathParts[2];
-  const slug = pathParts[4] || "";
- const decodedSlug = decodeURIComponent(slug);
+  const { teamA: teamAFromUrl, teamB: teamBFromUrl } = parseMatchSlug(slug);
 
-  const teamNames = decodedSlug.split("-vs-");
-
-  const teamAFromUrl = teamNames[0]
-    ? decodeURIComponent(teamNames[0]).replace(/[-]/g, " ").replace(/[+]/g, " ").trim()
-    : "";
-  const teamBFromUrl = teamNames[1]
-    ? decodeURIComponent(teamNames[1]).replace(/[-]/g, " ").replace(/[+]/g, " ").trim()
-    : "";
 
   const selectedDate = searchParams.get("date");
 
@@ -71,10 +63,10 @@ export default function SingleSport() {
   const getSportCategory = (sport) => {
     const sportCategoryMap = {
       football: "football",
-      basketball: "basketball",
+      basketball: "basketball", 
       tennis: "tennis",
       extra: "extra",
-      day: "day",
+      'bet-of-the-day': "bet-of-the-day",
       vip: "vip",
     };
 
@@ -106,6 +98,7 @@ export default function SingleSport() {
 
       try {
         const category = getSportCategory(currentSport);
+
 
         const result = await fetchSinglePrediction(
           category,
@@ -244,6 +237,13 @@ export default function SingleSport() {
     );
   }
 
+  const isCorrectMatch = teamNamesMatch(match.teamA, teamAFromUrl) && 
+                         teamNamesMatch(match.teamB, teamBFromUrl);
+  
+  if (!isCorrectMatch) {
+  
+  }
+
   const statA = calculateTeamStats(match, "A");
   const statB = calculateTeamStats(match, "B");
 
@@ -290,7 +290,7 @@ export default function SingleSport() {
             }`}
             onClick={() => handleTabChange("formation")}
           >
-           Recent Form
+             Recent Form
           </button>
         </div>
 
