@@ -1,5 +1,9 @@
 FROM node:18-alpine AS base
 
+# Install tzdata for timezone support
+RUN apk add --no-cache tzdata
+ENV TZ=Africa/Nairobi
+
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 
@@ -25,6 +29,7 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV TZ=Africa/Nairobi
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
