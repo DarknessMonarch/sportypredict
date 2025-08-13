@@ -492,7 +492,6 @@ export default function Payment() {
     const selectedCountry = getCountryMapping(countryName);
     const methods = [];
 
-    // For African countries - start with MPESA where available
     if (["kenya"].includes(selectedCountry)) {
       methods.push({
         id: "mpesa",
@@ -503,7 +502,6 @@ export default function Payment() {
       });
     }
 
-    // Add card payment for all countries
     if (
       [
         "kenya",
@@ -527,8 +525,6 @@ export default function Payment() {
         unavailable: false,
       });
     }
-
-    // Add Skrill for ALL countries (removed unavailable status)
     methods.push({
       id: "skrill",
       title: "Skrill",

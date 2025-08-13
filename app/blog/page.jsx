@@ -9,7 +9,7 @@ import { useBlogStore } from "@/app/store/Blog";
 import styles from "@/app/style/blog.module.css";
 import SideSlide from "@/app/components/SideSlide";
 import LoadingLogo from "@/app/components/LoadingLogo";
-import ArticleCard from "@/app/components/BlogCard";
+import BlogCard from "@/app/components/BlogCard";
 import EmptyBlogImage from "@/public/assets/emptyblog.png";
 import { useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -53,7 +53,6 @@ export default function Blog() {
       .replace(/^-+|-+$/g, "");
   }, []);
 
-  // Helper function to get author name
   const getAuthorName = (post) => {
     return post.author || post.author || "Unknown Author";
   };
@@ -539,7 +538,7 @@ export default function Blog() {
           ) : (
             <div className={styles.articlesContent}>
               {blogs.map((post) => (
-                <ArticleCard
+                <BlogCard
                   key={post._id}
                   post={post}
                   onReadMore={openModal}

@@ -1,11 +1,44 @@
+// api/predictions/sitemap/route.js
 const SERVER_API = process.env.NEXT_PUBLIC_SERVER_API;
 
+// Force timezone to Africa/Nairobi for consistent date handling
+const TIMEZONE = 'Africa/Nairobi';
+
 function getDateString(date) {
-  return date.toISOString().split("T")[0];
+  // Use Intl.DateTimeFormat to get date in specific timezone
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  return formatter.format(date);
 }
 
 function getCurrentLocalDate() {
-  return new Date().toISOString().split("T")[0];
+  // Use Intl.DateTimeFormat to get date in specific timezone
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  return formatter.format(now);
+}
+
+function getNairobiDate(dateInput) {
+  // Create a date object and convert to Nairobi timezone
+  let date;
+  if (typeof dateInput === 'string') {
+    date = new Date(dateInput);
+  } else {
+    date = new Date(dateInput);
+  }
+  
+  // Convert to Nairobi timezone
+  const nairobiDate = new Date(date.toLocaleString('en-US', { timeZone: TIMEZONE }));
+  return nairobiDate;
 }
 
 function createTeamSlug(teamName) {
@@ -27,15 +60,19 @@ export async function GET() {
         total: 0,
         error: 'SERVER_API environment variable not configured',
         generatedAt: new Date().toISOString(),
+        timezone: TIMEZONE,
+        currentLocalDate: getCurrentLocalDate()
       }, { status: 200 });
     }
 
     const currentDate = getCurrentLocalDate();
     const dates = [];
+    
+    // Generate dates in Nairobi timezone
     for (let i = 0; i < 365; i++) {
-      const date = new Date(); 
-      date.setUTCDate(date.getUTCDate() + i);
-      const dateStr = getDateString(date); 
+      const nairobiNow = getNairobiDate(new Date());
+      nairobiNow.setDate(nairobiNow.getDate() + i);
+      const dateStr = getDateString(nairobiNow);
       dates.push(dateStr);
     }
     
@@ -90,6 +127,17 @@ export async function GET() {
                 
                 const sportPath = getSportPath(prediction.sport, prediction.category);
                 
+                // Convert all dates to Nairobi timezone
+                let updatedAt = prediction.time || prediction.updatedAt || prediction.createdAt || new Date().toISOString();
+                if (typeof updatedAt === 'string') {
+                  updatedAt = getNairobiDate(updatedAt).toISOString();
+                }
+                
+                let createdAt = prediction.createdAt || new Date().toISOString();
+                if (typeof createdAt === 'string') {
+                  createdAt = getNairobiDate(createdAt).toISOString();
+                }
+                
                 return {
                   teamA: teamA,
                   teamB: teamB,
@@ -99,12 +147,12 @@ export async function GET() {
                   sport: prediction.sport,
                   sportPath,
                   tip: prediction.tip,
-                  time: prediction.time,
+                  time: prediction.time ? getNairobiDate(prediction.time).toISOString() : null,
                   odd: prediction.odd,
                   stake: prediction.stake, 
                   vipSlip: prediction.vipSlip, 
-                  updatedAt: prediction.time || prediction.updatedAt || prediction.createdAt || new Date().toISOString(),
-                  createdAt: prediction.createdAt || new Date().toISOString(),
+                  updatedAt,
+                  createdAt,
                   slug
                 };
               });
@@ -115,6 +163,7 @@ export async function GET() {
           
           return [];
         } catch (error) {
+          console.error(`Error fetching predictions for ${dateStr}:`, error.message);
           return [];
         }
       });
@@ -185,6 +234,7 @@ export async function GET() {
       predictions: urlReadyPredictions,
       total: urlReadyPredictions.length,
       currentDate,
+      timezone: TIMEZONE,
       dates: dates.slice(0, 10),
       analytics: {
         predictionsByCategory: Object.keys(predictionsByCategory).map(category => ({
@@ -198,18 +248,21 @@ export async function GET() {
         duplicatesRemoved: allPredictions.length - uniquePredictions.length,
         todaysPredictions: predictionsByDate[currentDate]?.length || 0
       },
-      generatedAt: new Date().toISOString(),
+      generatedAt: getNairobiDate(new Date()).toISOString(),
     };
 
     return Response.json(response);
     
   } catch (error) {
+    console.error('Sitemap API Error:', error);
     return Response.json({ 
       predictions: [], 
       total: 0,
       error: 'Failed to fetch predictions for sitemap',
       errorDetails: error.message,
-      generatedAt: new Date().toISOString(),
+      timezone: TIMEZONE,
+      currentLocalDate: getCurrentLocalDate(),
+      generatedAt: getNairobiDate(new Date()).toISOString(),
     }, { status: 200 });
   }
 }

@@ -23,7 +23,39 @@ const nextConfig = {
       }
     ],
 
-  }
+  },
+
+    env: {
+    TZ: 'Africa/Nairobi',
+  },
+  
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    process.env.TZ = 'Africa/Nairobi';
+    return config;
+  },
+
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    process.env.TZ = 'Africa/Nairobi';
+    return config;
+  },
+  
+ async headers() {
+    return [
+      {
+        source: '/sitemap.xml',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=3600, stale-while-revalidate=3600',
+          },
+          {
+            key: 'X-Timezone',
+            value: 'Africa/Nairobi',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

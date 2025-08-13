@@ -12,10 +12,18 @@
   }
 
   .menuContainer {
+    width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+  }
+
+  .navLogo {
+    width: 100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
 
   .menuicon {
@@ -33,7 +41,7 @@
 
   .navlinksContainer {
     gap: 15px;
-    display: flex;
+    display: none;
   }
 
   .navlinks {
@@ -104,9 +112,17 @@
     justify-content: space-between;
   }
 
+  .menuContainer {
+    display: none;
+  }
+
   .logo {
     height: 100%;
     width: 120px;
+  }
+
+  .navlinksContainer {
+    display: flex;
   }
 
   .navContainerInner {

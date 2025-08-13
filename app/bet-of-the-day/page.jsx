@@ -9,6 +9,7 @@ import Nothing from "@/app/components/Nothing";
 import styles from "@/app/style/sport.module.css";
 import VipResults from "@/app/components/VipResults";
 import { createMatchSlug } from "@/app/utility/UrlSlug"; 
+import CardSkeleton from "@/app/components/CardSkeleton";
 import MobileFilter from "@/app/components/MobileFilter";
 import { usePredictionStore } from "@/app/store/Prediction";
 import EmptySportImage from "@/public/assets/emptysport.png";
@@ -17,7 +18,6 @@ import { IoIosArrowForward as RightIcon } from "react-icons/io";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Sport() {
-  const emptyCardCount = 12;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -177,16 +177,7 @@ export default function Sport() {
     );
   };
 
-  const renderEmptyCards = () => {
-    return Array(emptyCardCount)
-      .fill(0)
-      .map((_, index) => (
-        <div
-          className={`${styles.emptyCard} skeleton`}
-          key={`empty-${index}`}
-        />
-      ));
-  };
+
 
   const handleCardClick = (teamA, teamB, id) => {
     if (id === "empty" || !teamA || !teamB) return;
@@ -221,7 +212,7 @@ export default function Sport() {
           />
         </div>
         <ExclusiveOffers />
-        <div className={styles.content}>{renderEmptyCards()}</div>
+        <div className={styles.content}><CardSkeleton count={1} /></div>
       </div>
     );
   }

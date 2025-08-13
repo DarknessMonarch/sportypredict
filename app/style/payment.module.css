@@ -102,7 +102,6 @@
   }
 
   .promoCard {
-    border-color: var(--win-color);
     background: linear-gradient(
       135deg,
       var(--background-color) 0%,

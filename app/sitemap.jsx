@@ -1,5 +1,45 @@
 import { createMatchSlug } from '@/app/utility/UrlSlug';
 
+// Force timezone to Africa/Nairobi for consistent date handling
+const TIMEZONE = 'Africa/Nairobi';
+
+function getCurrentLocalDate() {
+  // Use Intl.DateTimeFormat to get date in specific timezone
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  return formatter.format(now); // Returns YYYY-MM-DD format
+}
+
+function getDateString(date) {
+  // Convert date to specific timezone before formatting
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  return formatter.format(date);
+}
+
+function getNairobiDate(dateInput) {
+  // Create a date object and convert to Nairobi timezone
+  let date;
+  if (typeof dateInput === 'string') {
+    date = new Date(dateInput);
+  } else {
+    date = new Date(dateInput);
+  }
+  
+  // Convert to Nairobi timezone
+  const nairobiDate = new Date(date.toLocaleString('en-US', { timeZone: TIMEZONE }));
+  return nairobiDate;
+}
+
 async function getMatchUrls() {
   try {
     const baseUrl = process.env.NODE_ENV === 'development' 
@@ -65,15 +105,16 @@ async function getMatchUrls() {
       
       let lastModified;
       if (prediction.time) {
-        lastModified = new Date(prediction.time);
+        lastModified = getNairobiDate(prediction.time);
       } else if (prediction.date) {
-        lastModified = new Date(prediction.date);
+        lastModified = getNairobiDate(prediction.date);
       } else {
-        lastModified = new Date(prediction.updatedAt || prediction.createdAt || new Date());
+        lastModified = getNairobiDate(prediction.updatedAt || prediction.createdAt || new Date());
       }
       
-      const today = new Date();
-      if (lastModified < today && prediction.date && new Date(prediction.date) >= today) {
+      // Get current date in Nairobi timezone for comparison
+      const today = getNairobiDate(new Date());
+      if (lastModified < today && prediction.date && getNairobiDate(prediction.date) >= today) {
         lastModified = today;
       }
       
@@ -134,7 +175,7 @@ async function getNewsUrls() {
 
       return {
         url: `https://sportypredict.com/news?article=${slug}`,
-        lastModified: new Date(article.updatedAt || article.publishDate || article.createdAt),
+        lastModified: getNairobiDate(article.updatedAt || article.publishDate || article.createdAt),
         changeFrequency: 'daily',
         priority: article.featured ? 0.8 : 0.7,
       };
@@ -194,7 +235,7 @@ async function getBlogUrls() {
 
       return {
         url: `https://sportypredict.com/blog?blog=${slug}`,
-        lastModified: new Date(blog.updatedAt || blog.publishedAt || blog.createdAt),
+        lastModified: getNairobiDate(blog.updatedAt || blog.publishedAt || blog.createdAt),
         changeFrequency: blog.featured ? 'weekly' : 'monthly',
         priority: blog.featured ? 0.8 : 0.6,
       };
@@ -216,7 +257,7 @@ async function getCategoryUrls() {
     newsCategories.forEach(category => {
       categoryUrls.push({
         url: `https://sportypredict.com/news?category=${category}`,
-        lastModified: new Date(),
+        lastModified: getNairobiDate(new Date()),
         changeFrequency: 'daily',
         priority: 0.7,
       });
@@ -226,7 +267,7 @@ async function getCategoryUrls() {
     blogCategories.forEach(category => {
       categoryUrls.push({
         url: `https://sportypredict.com/blog?category=${encodeURIComponent(category)}`,
-        lastModified: new Date(),
+        lastModified: getNairobiDate(new Date()),
         changeFrequency: 'weekly',
         priority: 0.6,
       });
@@ -242,11 +283,12 @@ async function getCategoryUrls() {
 
 export default async function sitemap() {
   const baseUrl = "https://sportypredict.com";
+  const currentNairobiDate = getNairobiDate(new Date());
 
   const mainRoutes = [
     {
       url: `${baseUrl}/`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "daily",
       priority: 1.0,
     },
@@ -255,25 +297,25 @@ export default async function sitemap() {
   const sportRoutes = [
     {
       url: `${baseUrl}/bet-of-the-day`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "daily",
       priority: 0.95,
     },
     {
       url: `${baseUrl}/football`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/basketball`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/tennis`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "daily",
       priority: 0.9,
     },
@@ -282,13 +324,13 @@ export default async function sitemap() {
   const contentRoutes = [
     {
       url: `${baseUrl}/blog`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "daily",
       priority: 0.8,
     },
     {
       url: `${baseUrl}/news`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "daily",
       priority: 0.8,
     },
@@ -297,7 +339,7 @@ export default async function sitemap() {
   const vipRoutes = [
     {
       url: `${baseUrl}/vip`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "weekly",
       priority: 0.75,
     },
@@ -306,43 +348,43 @@ export default async function sitemap() {
   const staticRoutes = [
     {
       url: `${baseUrl}/contact`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${baseUrl}/offers`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "weekly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
       url: `${baseUrl}/disclaimer`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
       url: `${baseUrl}/refund`,
-      lastModified: new Date(),
+      lastModified: currentNairobiDate,
       changeFrequency: "yearly",
       priority: 0.3,
     },

@@ -68,7 +68,6 @@ export default function HomeCard({ sport, predictions = [] }) {
     return localDate.toFormat("dd MMM");
   };
 
-  // FIXED: Improved handlePredictionClick function
   const handlePredictionClick = (prediction) => {
     const { teamA, teamB, category, time } = prediction;
     if (!teamA || !teamB) {
@@ -87,7 +86,6 @@ export default function HomeCard({ sport, predictions = [] }) {
     const baseUrl = `/${sportCategory}/prediction/${matchSlug}`;
     const fullUrl = `${baseUrl}?date=${selectedDate}`;
 
-    console.log('HomeCard navigating to:', fullUrl); // Debug log
     router.push(fullUrl, { scroll: false });
   };
 

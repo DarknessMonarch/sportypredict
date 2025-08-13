@@ -3,7 +3,7 @@ export default function manifest() {
     name: 'Sportypredict',
     short_name: 'Sportypredict',
     description: 'Best Online Free Sports Prediction website with expert tips in Football, Basketball and Tennis. We Predict You Win.',
-    start_url: 'https://sportypredict.com/football',
+    start_url: 'https://sportypredict.com',
     scope: '/',
     display: 'standalone',
     orientation: 'portrait',

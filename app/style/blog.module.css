@@ -26,6 +26,7 @@
     border-radius: 15px;
     flex-direction: column;
     box-shadow: var(--shadow-background-color);
+    
   }
 
   .blogBanner::before {

@@ -3,6 +3,8 @@ FROM node:18-alpine AS base
 # Install tzdata for timezone support
 RUN apk add --no-cache tzdata
 ENV TZ=Africa/Nairobi
+# Create symlink for timezone
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
@@ -23,6 +25,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV TZ=Africa/Nairobi
 RUN npm run build
 
 FROM base AS runner
@@ -30,6 +33,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV TZ=Africa/Nairobi
+
+# Create symlink again in the runner stage
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001

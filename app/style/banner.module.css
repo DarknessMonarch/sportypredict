@@ -1,46 +1,23 @@
 @media screen {
-  .advertContainer {
-    width: 100%;
-    min-height: 300px;
-    position: relative;
-  }
-
-  .bannerContent {
-    gap: 10px;
-    bottom: 0;
+  .homeBanner {
     width: 100%;
     display: flex;
-    padding: 10px;
-    position: absolute;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bannerBtn:nth-child(2) {
     color: var(--background-color);
-    background: var(--primary-color);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-  }
-
-  .bannerContent h1 {
-    font-weight: 600;
-    font-size: 1.4rem;
-    color: var(--secondary-color);
-  }
-
-  .bannerContent h1 span {
-    color: var(--secondary-color);
-  }
-
-  .advertContainer p {
-    font-size: 0.8rem;
-    text-align: justify;
+    background-color: var(--telegram-color);
   }
 
   .btnContainer {
-    top: 0;
-    gap: 5px;
-    right: 0;
-    display: flex;
+    gap: 10px;
     padding: 5px;
-    position: absolute;
+    display: flex;
+    position: relative;
     align-items: center;
+    justify-content: flex-end;
   }
 
   .bannerBtn {
@@ -51,60 +28,33 @@
     border-radius: 5px;
     align-items: center;
     justify-content: center;
-    color: var(--background-color);
-    background: var(--primary-color);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-box);
   }
 
   .bannerBtn h1 {
-    font-size: .8rem;
+    font-size: 0.8rem;
     font-weight: 400;
     text-transform: capitalize;
-    color: var(--secondary-color);
   }
 
   .bannerBtn:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
   }
 
   .bannerBtn:hover .bannerIcon {
-    color: var(--primary-color);
+    color: var(--background-color);
   }
 
   .bannerBtn:hover h1 {
-    color: var(--primary-color);
+    color: var(--background-color);
   }
 
   .bannerIcon {
     font-size: 20px;
-    color: var(--secondary-color);
   }
 }
 
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
-  .advertContainer {
-    margin-top: 0;
-    min-height: 200px;
-  }
-
-  .advertImageContainer {
-    border-radius: inherit;
-  }
-
-  .advertImage {
-    border-radius: inherit;
-  }
-
-  .bannerContent {
-    width: 500px;
-  }
-
-  .advertContainer p {
-    font-size: 1rem;
-  }
-
-  .bannerBtn h2 {
-    font-size: 1rem;
-  }
 }

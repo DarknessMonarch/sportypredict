@@ -289,7 +289,7 @@ export default function SideNavComponent() {
 
         <div
           className={`${styles.sideNavContainer} ${
-            isOpen ? styles.showSideNav : ""
+            isOpen && isMobile ? styles.showSideNav : ""
           }`}
         >
           <CloseIconComponent />

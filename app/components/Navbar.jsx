@@ -58,22 +58,21 @@ export default function NavbarComponent() {
   };
 
   const handleLogout = async () => {
-    if (isLoggingOut) return; 
-    
+    if (isLoggingOut) return;
+
     setIsLoggingOut(true);
     try {
       const result = await logout();
-      
+
       if (result.success) {
         toast.success(result.message || "Logged out successfully");
-       
+
         router.push("/", { scroll: false });
       } else {
         toast.error(result.message || "Logout failed");
       }
     } catch (error) {
       toast.error("An error occurred during logout");
-      
 
       clearUser();
       router.push("/", { scroll: false });
@@ -205,68 +204,66 @@ export default function NavbarComponent() {
 
       <div className={styles.navContainer}>
         <div className={styles.navContainerInner}>
-          {isMobile ? (
-            <>
-              <MenuIcon
-                onClick={toggleOpen}
-                className={styles.menuicon}
-                alt="menu icon"
+          {/* mobile */}
+          <div className={styles.menuContainer}>
+            <MenuIcon
+              onClick={toggleOpen}
+              className={styles.menuicon}
+              alt="menu icon"
+            />
+            <div className={styles.navLogo} onClick={sportypredict}>
+              <Image
+                className={styles.logo}
+                src={LogoImg}
+                alt="logo"
+                width={120}
+                priority={true}
               />
-              <div className={styles.navLogo} onClick={sportypredict}>
-                <Image
-                  className={styles.logo}
-                  src={LogoImg}
-                  alt="logo"
-                  width={120}
-                  priority={true}
-                />
-              </div>
-            </>
-          ) : (
-            <div className={styles.navlinksContainer}>
-              <Link
-                href="/news"
-                className={`${styles.navlinks} ${
-                  pathname === "/news" ? styles.activeNavLinks : ""
-                }`}
-              >
-                News
-              </Link>
-              <Link
-                href="/blog"
-                className={`${styles.navlinks} ${
-                  pathname === "/blog" ? styles.activeNavLinks : ""
-                }`}
-              >
-                Blogs
-              </Link>
-              <Link
-                href="/offers"
-                className={`${styles.navlinks} ${
-                  pathname === "/offers" ? styles.activeNavLinks : ""
-                }`}
-              >
-                 Offers
-              </Link>
-              <Link
-                href="/about"
-                className={`${styles.navlinks} ${
-                  pathname === "/about" ? styles.activeNavLinks : ""
-                }`}
-              >
-                About us
-              </Link>
-              <Link
-                href="/contact"
-                className={`${styles.navlinks} ${
-                  pathname === "/contact" ? styles.activeNavLinks : ""
-                }`}
-              >
-                Contact us
-              </Link>
-  
             </div>
-          )}
+          </div>
+          {/* desktop  */}
+          <div className={styles.navlinksContainer}>
+            <Link
+              href="/news"
+              className={`${styles.navlinks} ${
+                pathname === "/news" ? styles.activeNavLinks : ""
+              }`}
+            >
+              News
+            </Link>
+            <Link
+              href="/blog"
+              className={`${styles.navlinks} ${
+                pathname === "/blog" ? styles.activeNavLinks : ""
+              }`}
+            >
+              Blogs
+            </Link>
+            <Link
+              href="/offers"
+              className={`${styles.navlinks} ${
+                pathname === "/offers" ? styles.activeNavLinks : ""
+              }`}
+            >
+              Offers
+            </Link>
+            <Link
+              href="/about"
+              className={`${styles.navlinks} ${
+                pathname === "/about" ? styles.activeNavLinks : ""
+              }`}
+            >
+              About us
+            </Link>
+            <Link
+              href="/contact"
+              className={`${styles.navlinks} ${
+                pathname === "/contact" ? styles.activeNavLinks : ""
+              }`}
+            >
+              Contact us
+            </Link>
+          </div>
 
           <div className={styles.navStartContainer}>
             {isMobile && isAuth && (
@@ -283,19 +280,22 @@ export default function NavbarComponent() {
                     <h2>{isAdmin ? "Admin" : isVip ? "VIP" : "User"}</h2>
                   </div>
 
-                  <button 
-                    onClick={handleLogout} 
+                  <button
+                    onClick={handleLogout}
                     className={styles.navButton}
                     disabled={isLoggingOut}
                     style={{
                       opacity: isLoggingOut ? 0.6 : 1,
-                      cursor: isLoggingOut ? "not-allowed" : "pointer"
+                      cursor: isLoggingOut ? "not-allowed" : "pointer",
                     }}
                   >
                     {isLoggingOut ? (
                       <Loader size="small" />
                     ) : (
-                      <LogoutIcon className={styles.userIcon} alt="logout icon" />
+                      <LogoutIcon
+                        className={styles.userIcon}
+                        alt="logout icon"
+                      />
                     )}
                   </button>
                 </div>

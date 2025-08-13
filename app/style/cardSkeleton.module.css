@@ -207,15 +207,7 @@
     font-size: 0.7rem;
   }
 
-    .formationCircle.skeleton {
-    width: 21px;
-    height: 21px;
-    background-color: var(--light-background-color);
-  }
 
-  .circularShape.skeleton {
-    border-radius: 50%;
-  }
 }
 
 /* using it as global style for larger devices  */

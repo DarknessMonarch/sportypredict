@@ -12,8 +12,10 @@
     --light-secondary-color: #54daf5;
     --dark-secondary-color: #08a7c7;
     --background-color: #ffffff;
+    --telegram-color: #0088cc;
     --light-background-color: #f8f9fa;
-    --shadow-line-less: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+    --shadow-line-less: rgb(204, 219, 232) 3px 3px 6px 0px inset,
+      rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
     --nav-shadow-box: 0 8px 24px rgba(0, 0, 0, 0.15);
     --shadow-box: 0 4px 8px rgba(0, 0, 0, 0.1);
     --line-shadow-box: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
@@ -71,8 +73,18 @@
     } */
 
   body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-weight: var(--font-weight-light);
+    font-size: var(--font-size-3);
+    font-display: swap;
     color: var(--primary-color);
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: attr(width) / attr(height);
   }
 
   p {
@@ -160,11 +172,17 @@
     border: none;
     outline: none;
     cursor: pointer;
+    transition: transform 0.2s ease-out;
   }
 
   input:focus,
   input:hover {
     outline: none;
+  }
+
+  :focus {
+    outline: none;
+    outline-offset: 0;
   }
 
   textarea {
@@ -195,27 +213,50 @@
   }
 }
 
-.skeleton {
-  cursor: progress;
-  background: linear-gradient(
-    90deg,
-    var(--background-color) 25%,
-    #f2f2f3 50%,
-    var(--background-color) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite linear;
-  box-shadow: var(--shadow-background-color);
-}
-
 @keyframes shimmer {
   0% {
-    background-position: 200% 0;
+    background-position: -1000px 0;
   }
   100% {
-    background-position: -200% 0;
+    background-position: 1000px 0;
   }
 }
+
+.skeleton {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(
+    90deg,
+    var(--light-background-color) 0%,
+    rgba(114, 134, 158, 0.1) 20%,
+    var(--light-background-color) 40%
+  );
+  background-size: 1000px 100%;
+  border-radius: var(--radius-sx);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shimmerOverlay 2s infinite;
+}
+
+@keyframes shimmerOverlay {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+
 
 .mobileIcon {
   fill: var(--secondary-color);

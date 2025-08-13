@@ -4,8 +4,7 @@ import { IoMdShare } from "react-icons/io";
 import { FaRegClock } from "react-icons/fa";
 import styles from "@/app/style/articleCard.module.css";
 
-
-export default function ArticleCard({
+export default function BlogCard({
   post,
   onReadMore,
   onShare,
@@ -30,15 +29,6 @@ export default function ArticleCard({
   return (
     <div className={`${styles.articleCard} ${className}`}>
       <div className={styles.articleImageWrapper}>
-        <div className={styles.articleFooter}>
-          <span className={styles.readTime}>
-            <FaRegClock /> {post.readTime}
-          </span>
-          <span className={styles.date}>
-            {post.formattedDate ||
-              new Date(post.publishedAt || post.createdAt).toLocaleDateString()}
-          </span>
-        </div>
         <Image
           className={styles.articleImage}
           src={post.image}
