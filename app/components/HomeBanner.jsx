@@ -7,7 +7,7 @@ import { PiTelegramLogoDuotone as TelegramIcon } from "react-icons/pi";
 import { FaMoneyBill as PaymentIcon } from "react-icons/fa";
 import { RiVipCrownLine as VipIcon } from "react-icons/ri";
 
-export default function Banner() {
+export default function HomeBanner() {
   const router = useRouter();
 
   const openTelegram = () => {
