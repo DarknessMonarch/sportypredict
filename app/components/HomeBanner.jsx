@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import styles from "@/app/style/homebanner.module.css";
+import styles from "@/app/style/mainbanner.module.css";
 import { PiTelegramLogoDuotone as TelegramIcon } from "react-icons/pi";
 import { FaMoneyBill as PaymentIcon } from "react-icons/fa";
 import { RiVipCrownLine as VipIcon } from "react-icons/ri";
