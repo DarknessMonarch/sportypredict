@@ -412,8 +412,8 @@ export default function Home() {
         
         <main>
           {renderPredictionsSection()}
-          {renderBlogsSection()}
           {renderNewsSection()}
+          {renderBlogsSection()}
         </main>
 
         {!isMobile && (

@@ -41,13 +41,7 @@ export default function BlogCard({
           }}
           priority={true}
         />
-        {post.tags.length > 0 && (
-          <div className={styles.articleTags}>
-            {post.tags.map((tag) => (
-              <span key={tag}>#{tag}</span>
-            ))}
-          </div>
-        )}
+     
       </div>
       <div className={styles.articleContent}>
         <div className={styles.articleHeader}>
